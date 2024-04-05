@@ -18,7 +18,21 @@ export const theme = extendTheme({
       "html, body": {
         fontFamily: "Lexend",
         scrollBehavior: "smooth",
-        backgroundColor:'gray.900'
+        backgroundColor: "gray.900",
+        "*::-webkit-scrollbar": {
+          width: "6px",
+          height: "6px",
+        },
+        "*::-webkit-scrollbar-track": {
+          background: "transparent",
+        },
+        "*::-webkit-scrollbar-thumb": {
+          borderRadius: "14px",
+          background: "rgba(217,217,217,0.3)",
+          "&:hover": {
+            background: "rgba(217,217,217,0.5)",
+          },
+        },
       },
       body: {
         bg: "transparent",
