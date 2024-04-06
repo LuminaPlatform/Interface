@@ -55,7 +55,7 @@ export const Sidebar = () => {
     },
     {
       id: 1,
-      href: "#",
+      href: "/reviews",
       title: "Reviews",
       icon: (isActive: boolean) => (
         <Box
@@ -91,6 +91,8 @@ export const Sidebar = () => {
     },
   ];
   const router = useRouter();
+  console.log({ router });
+
   const sidebarDispatcher = useDispatchIsOpenSidebar();
   const isOpen = useIsOpenSidebar();
 
@@ -151,7 +153,7 @@ export const Sidebar = () => {
             <ChakraLink
               key={route.id}
               href={route.href}
-              {...(route.href === router.asPath && {
+              {...(route.href === router.pathname && {
                 bg: "gray.800",
                 _before: {
                   content: "''",
@@ -165,7 +167,7 @@ export const Sidebar = () => {
               })}
             >
               <HStack>
-                {route.icon(route.href === router.asPath)}
+                {route.icon(route.href === router.pathname)}
                 {isOpen && <Text>{route.title}</Text>}
               </HStack>
             </ChakraLink>
@@ -173,7 +175,7 @@ export const Sidebar = () => {
         ))}
       </VStack>
       <ChakraLink
-        {...("/settings" === router.asPath && {
+        {...("/settings" === router.pathname && {
           bg: "gray.800",
           _before: {
             content: "''",
@@ -189,7 +191,7 @@ export const Sidebar = () => {
       >
         <HStack>
           <Box
-            {...("/setting" === router.asPath && {
+            {...("/setting" === router.pathname && {
               __css: {
                 "&>svg>path": {
                   stroke: "primary.300 !important",
