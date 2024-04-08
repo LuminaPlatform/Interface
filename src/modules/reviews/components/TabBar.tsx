@@ -39,7 +39,11 @@ const TabBar = () => {
       </TabList>
 
       <TabPanels>
-        <TabBody reviews={query.tab} />
+        {tabs.map((item) => (
+          <TabPanel key={item.id}>
+            <TabBody reviews={item.title} />
+          </TabPanel>
+        ))}
       </TabPanels>
     </Tabs>
   );
