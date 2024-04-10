@@ -40,7 +40,7 @@ export const Login = ({ setStep }: ModalBodyProps) => {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<loginFromType>();
+  } = useForm<loginFromType>({ mode: "all", reValidateMode: "onChange" });
 
   const [showPassword, setShowPassword] = useState(false);
   console.log({ errors });
