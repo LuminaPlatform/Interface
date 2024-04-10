@@ -6,9 +6,26 @@ export const theme = extendTheme({
   components: {
     Button: {
       baseStyle: {
+        fontFamily: "satoshi",
         boxShadow: "none !important",
         height: "40px",
         paddingInline: "16px",
+      },
+      variants: {
+        primary: {
+          fontSize: "md",
+          fontWeight: "700",
+          color: "gray.0",
+          bg: "primary.300",
+          _hover: {
+            bg: "primary.400",
+            color: "gray.10",
+          },
+          _active: {
+            bg: "primary.500",
+            color: "gray.20",
+          },
+        },
       },
     },
   },
