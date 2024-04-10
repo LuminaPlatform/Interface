@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { reviewStatuses } from "../constants";
 import { Badge } from "./Badge";
+import EmptyPage from "@/components/EmptyPage";
 
 interface ReviewCardProps {
   review: number;
@@ -78,20 +79,23 @@ const ReviewCard = ({ review }: ReviewCardProps) => (
         />
       </Stack>
       <Stack flexDirection={{ base: "column", md: "row" }} position="relative">
-        <AspectRatio
-          order={{ base: "0", md: "1" }}
-          ratio={1.14}
-          minWidth={{ base: "full", md: "192px" }}
-          maxWidth={{ base: "100%", md: "192px" }}
-        >
-          <Img
-            objectFit="cover"
-            src="/assets/images/default-img.png"
-            alt="banner"
-          />
-        </AspectRatio>
+        {false && (
+          <AspectRatio
+            order={{ base: "0", md: "1" }}
+            ratio={1.14}
+            minWidth={{ base: "full", md: "192px" }}
+            maxWidth={{ base: "100%", md: "192px" }}
+          >
+            <Img
+              objectFit="cover"
+              src="/assets/images/default-img.png"
+              alt="banner"
+            />
+          </AspectRatio>
+        )}
         <Text
-          display="inline-block"
+          width="full"
+          display="flex"
           color="gray.20"
           fontSize={{ base: "sm", md: "md" }}
           noOfLines={4}
@@ -143,9 +147,17 @@ interface TabBodyProps {
 const TabBody = ({ reviews }: TabBodyProps) => {
   return (
     <VStack rowGap="16px" py="16px">
-      {[0, 1, 2, 3].map((item) => (
-        <ReviewCard review={item} key={item} />
-      ))}
+      {reviews === "Popular" ? (
+        <EmptyPage
+          description="Looks like you haven't followed anyone yet! To see reviews, explore
+        in other categories. Expand your network and discover insightful reviews
+        from trusted voices."
+          header="Start Following for Reviews"
+          imgSrc="/assets/images/empty_reviews.png"
+        />
+      ) : (
+        [0, 1, 2, 3].map((item) => <ReviewCard review={item} key={item} />)
+      )}
     </VStack>
   );
 };
