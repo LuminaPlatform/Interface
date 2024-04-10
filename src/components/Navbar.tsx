@@ -1,6 +1,9 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
+  CloseButton,
   HStack,
   Icon,
   Img,
@@ -20,6 +23,21 @@ const Navbar = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <>
+      <Alert
+      mb="20px"
+        display="flex"
+        justifyContent="space-between"
+        borderRadius="16px"
+        status="warning"
+        bg="orange.100"
+      >
+        <AlertIcon color="orange.400" />
+        <Text fontSize="xs">
+          Kindly note: The application is currently in development, and some
+          functionalities may not be operational. We appreciate your
+          understanding.
+        </Text>
+      </Alert>
       <HStack
         fontFamily="satoshi"
         justifyContent={{ base: "flex-start", md: "flex-end" }}
