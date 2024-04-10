@@ -24,9 +24,8 @@ const Navbar = () => {
   return (
     <>
       <Alert
-      mb="20px"
+        mb="20px"
         display="flex"
-        justifyContent="space-between"
         borderRadius="16px"
         status="warning"
         bg="orange.100"
