@@ -76,6 +76,7 @@ const ReviewCard = ({ review }: ReviewCardProps) => (
         <Badge
           title={reviewStatuses[review].name}
           colorScheme={reviewStatuses[review].colorScheme}
+          icon={reviewStatuses[review].icon}
         />
       </Stack>
       <Stack flexDirection={{ base: "column", md: "row" }} position="relative">

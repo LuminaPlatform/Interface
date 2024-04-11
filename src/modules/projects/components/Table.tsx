@@ -179,7 +179,12 @@ const Table = ({ search }: TableProps) => {
               <Link href={info.getValue().href} textAlign="left">
                 {info.getValue().name}
               </Link>
-              <Icon size={18} margin="0px !important" as={PiLinkThin} marginLeft="6px" />
+              <Icon
+                size={18}
+                margin="0px !important"
+                as={PiLinkThin}
+                marginLeft="6px"
+              />
             </HStack>
             <HStack
               width="full"
