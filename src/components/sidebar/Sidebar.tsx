@@ -19,6 +19,14 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 import { FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
 import { Distribute, Project, Reviews, Setting } from "./Icons";
+import {
+  TbChartBar,
+  TbChartPie4,
+  TbChevronsLeft,
+  TbChevronsRight,
+  TbMessage,
+  TbSettings2,
+} from "react-icons/tb";
 
 const ChakraLink = chakra(Link, {
   baseStyle: {
@@ -40,17 +48,15 @@ export const Sidebar = () => {
       href: "/projects",
       title: "Projects",
       icon: (isActive: boolean) => (
-        <Box
-          {...(isActive && {
-            __css: {
-              "&>svg>path": {
-                stroke: "primary.300 !important",
-              },
-            },
-          })}
-        >
-          <Icon as={Project} />
-        </Box>
+        <Icon
+          fontSize="24px"
+          color={
+            isActive
+              ? "var(--chakra-colors-primary-300)"
+              : "var(--chakra-colors-gray-10)"
+          }
+          as={TbChartBar}
+        />
       ),
     },
     {
@@ -58,17 +64,15 @@ export const Sidebar = () => {
       href: "/reviews",
       title: "Reviews",
       icon: (isActive: boolean) => (
-        <Box
-          {...(isActive && {
-            __css: {
-              "&>svg>path": {
-                stroke: "primary.300 !important",
-              },
-            },
-          })}
-        >
-          <Icon as={Reviews} />
-        </Box>
+        <Icon
+          fontSize="24px"
+          color={
+            isActive
+              ? "var(--chakra-colors-primary-300)"
+              : "var(--chakra-colors-gray-10)"
+          }
+          as={TbMessage}
+        />
       ),
     },
     {
@@ -76,17 +80,15 @@ export const Sidebar = () => {
       href: "#",
       title: "Distribute",
       icon: (isActive: boolean) => (
-        <Box
-          {...(isActive && {
-            __css: {
-              "&>svg>path": {
-                stroke: "primary.300 !important",
-              },
-            },
-          })}
-        >
-          <Icon as={Distribute} />
-        </Box>
+        <Icon
+          fontSize="24px"
+          color={
+            isActive
+              ? "var(--chakra-colors-primary-300)"
+              : "var(--chakra-colors-gray-10)"
+          }
+          as={TbChartPie4}
+        />
       ),
     },
   ];
@@ -136,9 +138,9 @@ export const Sidebar = () => {
         transition="all 0.3 ease"
       >
         {isOpen ? (
-          <FaAngleDoubleRight size={14} color="var(--chakra-colors-gray-0)" />
+          <TbChevronsRight size={24} color="var(--chakra-colors-gray-0)" />
         ) : (
-          <FaAngleDoubleLeft size={14} color="var(--chakra-colors-gray-0)" />
+          <TbChevronsLeft size={24} color="var(--chakra-colors-gray-0)" />
         )}
       </Button>
       <VStack width="full">
@@ -190,17 +192,15 @@ export const Sidebar = () => {
         href="/setting"
       >
         <HStack>
-          <Box
-            {...("/setting" === router.pathname && {
-              __css: {
-                "&>svg>path": {
-                  stroke: "primary.300 !important",
-                },
-              },
-            })}
-          >
-            <Icon as={Setting} />
-          </Box>
+          <Icon
+            fontSize="24px"
+            color={
+              "/setting" === router.pathname
+                ? "var(--chakra-colors-primary-300)"
+                : "var(--chakra-colors-gray-10)"
+            }
+            as={TbSettings2}
+          />
           {isOpen && <Text>Setting</Text>}
         </HStack>
       </ChakraLink>

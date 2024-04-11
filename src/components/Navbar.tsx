@@ -3,9 +3,7 @@ import {
   AlertIcon,
   Box,
   Button,
-  CloseButton,
   HStack,
-  Icon,
   Img,
   Input,
   InputGroup,
@@ -14,9 +12,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { CiSearch } from "react-icons/ci";
-import { FaRegBell } from "react-icons/fa";
 import { ConnectModal } from "./modals/Connect";
+import { TbBell, TbSearch } from "react-icons/tb";
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
@@ -49,7 +46,7 @@ const Navbar = () => {
           height="40ox"
         >
           <InputLeftElement>
-            <CiSearch size={24} color="var(--chakra-colors-gray-100)" />
+            <TbSearch size={24} color="var(--chakra-colors-gray-100)" />
           </InputLeftElement>
           <Input
             px="16px"
@@ -104,7 +101,7 @@ const Navbar = () => {
               1
             </Text>
           )}
-          <FaRegBell size={24} color="var(--chakra-colors-gray-0)" />
+          <TbBell size={24} color="var(--chakra-colors-gray-0)" />
         </Box>
         <HStack cursor="pointer" columnGap="8px">
           {true ? (
