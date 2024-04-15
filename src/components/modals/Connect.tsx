@@ -19,6 +19,7 @@ import { Login } from "./Login";
 import { MethodSeparator } from "../MethodSeparator";
 import { Register } from "./Register";
 import { AnimatePresence, motion } from "framer-motion";
+import { Connectors } from "./Connectors";
 
 interface IconButtonProps {
   onClick: () => void;
@@ -85,7 +86,13 @@ const ModalBody = ({ setStep }: ModalBodyProps) => {
         Connect to join
       </Text>
       <VStack width="full" rowGap="16px" py="24px">
-        <IconButton text="Connect Wallet" onClick={() => {}} icon={LuWallet} />
+        <IconButton
+          text="Connect Wallet"
+          onClick={() => {
+            setStep(STEP_MODAL.connectors);
+          }}
+          icon={LuWallet}
+        />
         <MethodSeparator />
         <IconButton
           text="Join by Email"
@@ -106,6 +113,7 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
       [STEP_MODAL.wallet]: <ModalBody setStep={setStep} />,
       [STEP_MODAL.login]: <Login setStep={setStep} />,
       [STEP_MODAL.register]: <Register setStep={setStep} />,
+      [STEP_MODAL.connectors]: <Connectors />,
     }),
     []
   );
