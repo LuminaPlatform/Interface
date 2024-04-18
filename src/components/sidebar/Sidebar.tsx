@@ -147,7 +147,7 @@ export const Sidebar = () => {
           <Img src={logoImg} alt="lumina" />
         </Center>
         {routes.map((route, index) => (
-          <VStack margin={0} key={route.id}>
+          <VStack width="full" margin={0} key={route.id}>
             {routes.length === index + 1 && (
               <Divider width="full" height="1px" borderColor="gray.400" />
             )}
