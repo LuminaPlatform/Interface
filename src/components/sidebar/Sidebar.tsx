@@ -147,12 +147,11 @@ export const Sidebar = () => {
           <Img src={logoImg} alt="lumina" />
         </Center>
         {routes.map((route, index) => (
-          <>
+          <VStack margin={0} key={route.id}>
             {routes.length === index + 1 && (
               <Divider width="full" height="1px" borderColor="gray.400" />
             )}
             <ChakraLink
-              key={route.id}
               href={route.href}
               {...(route.href === router.pathname && {
                 bg: "gray.800",
@@ -172,7 +171,7 @@ export const Sidebar = () => {
                 {isOpen && <Text>{route.title}</Text>}
               </HStack>
             </ChakraLink>
-          </>
+          </VStack>
         ))}
       </VStack>
       <ChakraLink
