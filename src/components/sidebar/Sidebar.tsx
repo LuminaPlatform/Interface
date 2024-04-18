@@ -77,7 +77,7 @@ export const Sidebar = () => {
     },
     {
       id: 2,
-      href: "#",
+      href: "/distribute",
       title: "Distribute",
       icon: (isActive: boolean) => (
         <Icon
@@ -93,7 +93,6 @@ export const Sidebar = () => {
     },
   ];
   const router = useRouter();
-  console.log({ router });
 
   const sidebarDispatcher = useDispatchIsOpenSidebar();
   const isOpen = useIsOpenSidebar();
