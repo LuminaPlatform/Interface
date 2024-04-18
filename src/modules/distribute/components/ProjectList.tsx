@@ -291,6 +291,23 @@ export const ProjectList = () => {
                   <Divider opacity="0.8" borderColor="gray.500" />
                   <MenuItem
                     onClick={() => {
+                      const findIndex = globalSelectedProjects.findIndex(
+                        (item) => item.id === info.row.original.id
+                      );
+                      setValue(`projects.${findIndex}.value`, 0);
+                      setValue(`projects.${findIndex}.percent`, 0);
+                      const calculateTotalAllocated = () => {
+                        return (
+                          getValues("projects")?.reduce(
+                            (accumulator, current) => {
+                              return accumulator + Number(current.value);
+                            },
+                            0
+                          ) || 0
+                        );
+                      };
+
+                      setValue("totalAllocated", calculateTotalAllocated());
                       dispatchGlobalSelectedProjects((prev) =>
                         prev.filter((item) => item.id !== info.row.original.id)
                       );
