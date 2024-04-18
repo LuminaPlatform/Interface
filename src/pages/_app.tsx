@@ -1,5 +1,5 @@
 import Layout from "@/components/Layout";
-import { IsSidebarOpenProvider } from "@/context";
+import { IsSidebarOpenProvider, WalletConnectProvider } from "@/context";
 // import GoogleAnalytics from "@/GoogleAnalytics";
 import "@/styles/globals.css";
 import { theme } from "@/theme";
@@ -18,9 +18,11 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <ChakraProvider theme={theme}>
         <IsSidebarOpenProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <WalletConnectProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </WalletConnectProvider>
         </IsSidebarOpenProvider>
       </ChakraProvider>
     </>
