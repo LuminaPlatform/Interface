@@ -159,7 +159,6 @@ export const ProjectList = () => {
                           return (
                             getValues("projects")?.reduce(
                               (accumulator, current) => {
-                                console.log({ accumulator, current });
                                 return accumulator + Number(current.value);
                               },
                               0
@@ -228,23 +227,16 @@ export const ProjectList = () => {
                           `projects.${findIndex}.value`,
                           calculateValue()
                         );
-                        {
-                          console.log(
-                            getValues(`projects.${findIndex}.percent`)
-                          );
-                        }
                         const calculateTotalAllocated = () => {
                           return (
                             getValues("projects")?.reduce(
                               (accumulator, current) => {
-                                console.log({ accumulator, current });
                                 return accumulator + Number(current.value);
                               },
                               0
                             ) || 0
                           );
                         };
-                        console.log(calculateTotalAllocated());
 
                         setValue("totalAllocated", calculateTotalAllocated());
                       }
