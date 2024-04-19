@@ -1,6 +1,5 @@
 import { Box, Container, Grid, GridItem } from "@chakra-ui/react";
 import { Sidebar } from "./sidebar/Sidebar";
-import { AppProps } from "next/app";
 import { useIsOpenSidebar } from "@/hooks/bases";
 import { sidebarWidth } from "@/constant";
 import { PropsWithChildren } from "react";
