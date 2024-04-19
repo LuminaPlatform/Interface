@@ -48,7 +48,6 @@ export const Register = ({ setStep }: ModalBodyProps) => {
   } = useForm<registerFromType>({ mode: "all", reValidateMode: "onChange" });
 
   const [showPassword, setShowPassword] = useState(false);
-  console.log({ errors });
 
   return (
     <ChakraForm

@@ -56,8 +56,8 @@ const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
 };
 
 interface ConnectProps {
-  onClose: () => void;
-  isOpen: boolean;
+  onClose: UseDisclosureProps["onClose"];
+  isOpen: UseDisclosureProps["isOpen"];
 }
 interface ModalBodyProps {
   setStep: Dispatch<SetStateAction<STEP_MODAL>>;

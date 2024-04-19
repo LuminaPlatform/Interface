@@ -14,10 +14,11 @@ import {
 import { useState } from "react";
 import { ConnectModal } from "./modals/Connect";
 import { TbBell, TbSearch } from "react-icons/tb";
+import { useWalletModal } from "@/hooks/bases";
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useWalletModal();
   return (
     <>
       <Alert

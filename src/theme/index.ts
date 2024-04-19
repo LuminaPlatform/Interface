@@ -5,6 +5,20 @@ export const theme = extendTheme({
   colors: colors,
   components: {
     Button: {
+      sizes: {
+        sm: {
+          height: "32px",
+          borderRadius: "6px",
+          fontSize: "xs",
+          fontWeight: "700",
+        },
+        md: {
+          height: "40px",
+          borderRadius: "8px",
+          fontSize: "md",
+          fontWeight: "700",
+        },
+      },
       baseStyle: {
         fontFamily: "satoshi",
         boxShadow: "none !important",
@@ -16,8 +30,6 @@ export const theme = extendTheme({
       },
       variants: {
         primary: {
-          fontSize: "md",
-          fontWeight: "700",
           color: "gray.0",
           bg: "primary.300",
           _hover: {
@@ -56,6 +68,62 @@ export const theme = extendTheme({
             bg: "none",
           },
         },
+        outline: {
+          border: "1px solid",
+          borderColor: "primary.50",
+          color: "primary.50",
+          background: "transparent",
+          _hover: {
+            borderColor: "primary.300",
+            color: "primary.300",
+            background: "transparent",
+          },
+          _active: {
+            borderColor: "primary.300",
+            color: "primary.300",
+            background: "transparent",
+          },
+          _disabled: {
+            borderColor: "primary.100",
+            color: "primary.100",
+            background: "transparent",
+          },
+        },
+      },
+    },
+    Checkbox: {
+      baseStyle: {
+        control: {
+          borderRadius: "6px",
+        },
+      },
+      sizes: {
+        md: {
+          control: {
+            width: "20px",
+            height: "20px",
+          },
+        },
+      },
+      variants: {
+        primary: {
+          control: {
+            borderColor: "gray.60",
+            _hover: {
+              border: "1px solid",
+              borderColor: "gray.100 !important",
+              bg: "transparent !important",
+            },
+            _checked: {
+              bg: "primary.300",
+              border: "none",
+              _hover: {
+                bg: "primary.400 !important",
+                border: "none !important",
+              },
+            },
+          },
+        },
       },
     },
     Input: {
@@ -85,6 +153,10 @@ export const theme = extendTheme({
               background: "gray.700",
               boxShadow: "none !important",
             },
+            _placeholder: {
+              fontSize: "md",
+              color: "gray.100",
+            },
           },
         },
       },
@@ -94,7 +166,7 @@ export const theme = extendTheme({
   styles: {
     global: {
       "html, body": {
-        fontFamily: "Lexend",
+        fontFamily: "satoshi",
         scrollBehavior: "smooth",
         backgroundColor: "gray.900",
         "*::-webkit-scrollbar": {

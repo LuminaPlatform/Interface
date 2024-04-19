@@ -292,7 +292,6 @@ const Table = ({ search }: TableProps) => {
           },
           columnBData[0].value
         );
-        console.log({ rowAMinValue, rowBMinValue });
 
         return rowAMinValue < rowBMinValue ? 1 : -1;
       },
