@@ -7,11 +7,11 @@ export const dataConnectors = [
   {
     id: 0,
     type: "metaMask",
-    icon: "/public/assets/icons/metamask.svg",
+    icon: "/assets/icons/metamask.svg",
   },
   {
     id: 1,
     type: "walletConnect",
-    icon: "/public/assets/icons/walletconnect.svg",
+    icon: "/assets/icons/walletconnect.svg",
   },
 ];
