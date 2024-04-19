@@ -23,11 +23,11 @@ import { Connectors } from "./Connectors";
 
 interface IconButtonProps {
   onClick: () => void;
-  icon: IconType;
+  icon?: IconType | string;
   text: string;
 }
 
-const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
+export const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
   return (
     <Button
       bg="gray.700"
@@ -45,7 +45,12 @@ const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
       display="flex"
     >
       <HStack>
-        <Icon fontSize={21} color="gray.0" as={icon} />
+        {icon &&
+          (typeof icon === "string" ? (
+            <Img width="30px" src={icon} />
+          ) : (
+            <Icon fontSize={21} color="gray.0" as={icon} />
+          ))}
         <Text color="gray.40" fontSize="md" fontWeight="700">
           {text}
         </Text>
@@ -113,7 +118,7 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
       [STEP_MODAL.wallet]: <ModalBody setStep={setStep} />,
       [STEP_MODAL.login]: <Login setStep={setStep} />,
       [STEP_MODAL.register]: <Register setStep={setStep} />,
-      [STEP_MODAL.connectors]: <Connectors />,
+      [STEP_MODAL.connectors]: <Connectors setStep={setStep} />,
     }),
     []
   );
