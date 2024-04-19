@@ -8,22 +8,22 @@ import { useSelectedProject } from "../hooks";
 import { TbBookmarkPlus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
 import { AddProjects } from "../components/AddProjects";
+import { useAccount } from "wagmi";
 
 const Index = () => {
-  // TODO should use real state
-  const isAuthenticated = false;
+  const { isConnected } = useAccount();
   const selectedProject = useSelectedProject();
   const { onClose, isOpen, onOpen } = useDisclosure();
 
   const content = useMemo(() => {
-    if (isAuthenticated) {
+    if (!isConnected) {
       return <UnAuthorized />;
     }
     if (selectedProject.length === 0) {
       return <EmptyState onOpen={onOpen} />;
     }
     return <ProjectList />;
-  }, [selectedProject]);
+  }, [selectedProject, isConnected]);
 
   return (
     <VStack
@@ -32,7 +32,7 @@ const Index = () => {
       position="relative"
       zIndex={1}
       marginTop="28px"
-      rowGap='1rem'
+      rowGap="1rem"
     >
       <HStack width="full">
         <Text
