@@ -1,12 +1,20 @@
 import { dataConnectors } from "@/constant";
-import { Button, Img, Text, VStack } from "@chakra-ui/react";
+import { STEP_MODAL } from "@/types";
+import { Button, Icon, Img, Text, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import { Dispatch, SetStateAction } from "react";
+import { TbArrowNarrowLeft } from "react-icons/tb";
 import { useConnect } from "wagmi";
+import { IconButton } from "./Connect";
+import { useWalletModal } from "@/hooks/bases";
 
-export const Connectors = () => {
+interface ConnectorsProps {
+  setStep: Dispatch<SetStateAction<STEP_MODAL>>;
+}
+
+export const Connectors = ({ setStep }: ConnectorsProps) => {
   const { connectors, connect } = useConnect();
-  console.log({ connectors });
-
+  const { onClose } = useWalletModal();
   return (
     <VStack
       as={motion.div}
@@ -17,26 +25,38 @@ export const Connectors = () => {
       animate={{ opacity: 1 }}
       padding="0"
       margin="0"
+      mt="16px"
     >
-      {connectors?.map((connector) => (
-        <Button
-          onClick={() => connect({ connector })}
-          justifyContent="flex-start"
-          columnGap="6px"
-          width="full"
-          key={connector.uid}
-          display="flex"
-          fontSize="md"
-        >
-          <Img
-            width="28px"
-            src={
-              connector.icon ||
-              dataConnectors.find((data) => data.type === connector.type)?.icon
+      <Icon
+        cursor="pointer"
+        as={TbArrowNarrowLeft}
+        color="gray.0"
+        fontSize="24px"
+        top="16px"
+        position="absolute"
+        left="16px"
+        onClick={() => {
+          setStep(STEP_MODAL.wallet);
+        }}
+      />
+      {connectors.slice(0, connectors.length - 2)?.map((connector) => (
+        <IconButton
+          onClick={() => {
+            if (onClose) {
+              onClose();
             }
-          />
-          <Text as="span">{connector.name}</Text>
-        </Button>
+            connect({ connector });
+          }}
+          key={connector.uid}
+          icon={
+            connector.icon ||
+            dataConnectors.find((data) => {
+              console.log(data, data.type === connector.type);
+              return data.type === connector.type;
+            })?.icon
+          }
+          text={connector.name}
+        />
       ))}
     </VStack>
   );
