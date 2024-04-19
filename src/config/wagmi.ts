@@ -1,16 +1,16 @@
 import { http, createConfig } from "wagmi";
-import { base, mainnet } from "wagmi/chains";
+import { base } from "wagmi/chains";
 import { metaMask, walletConnect } from "wagmi/connectors";
+
 const walletConnectProjectId = process.env.WALLET_CONNECT_PROJECT_ID || "";
 
 export const wagmiConfig = createConfig({
-  chains: [mainnet, base],
+  chains: [base],
   connectors: [
     metaMask(),
-    walletConnect({ projectId: "" }),
+    walletConnect({ projectId: walletConnectProjectId }),
   ],
   transports: {
-    [mainnet.id]: http(),
     [base.id]: http(),
   },
 });
