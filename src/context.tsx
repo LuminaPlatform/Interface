@@ -1,3 +1,4 @@
+import { useDisclosure, UseDisclosureProps } from "@chakra-ui/react";
 import {
   createContext,
   Dispatch,
@@ -22,5 +23,19 @@ export const IsSidebarOpenProvider = ({
         {children}
       </DispatchIsSidebarOpen.Provider>
     </IsSidebarOpen.Provider>
+  );
+};
+
+export const WalletConnectData = createContext<UseDisclosureProps>({});
+
+interface WalletConnectProviderProps extends PropsWithChildren {}
+export const WalletConnectProvider = ({
+  children,
+}: WalletConnectProviderProps) => {
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  return (
+    <WalletConnectData.Provider value={{ isOpen, onClose, onOpen }}>
+      {children}
+    </WalletConnectData.Provider>
   );
 };

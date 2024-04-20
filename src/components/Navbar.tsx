@@ -11,13 +11,23 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConnectModal } from "./modals/Connect";
 import { TbBell, TbSearch } from "react-icons/tb";
+import { useWalletModal } from "@/hooks/bases";
+import { useAccount } from "wagmi";
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useWalletModal();
+  const { isConnected } = useAccount();
+
+  useEffect(() => {
+    if (isConnected && onClose) {
+      onClose();
+    }
+  }, [isConnected, onClose]);
+
   return (
     <>
       <Alert
@@ -74,37 +84,39 @@ const Navbar = () => {
             placeholder="Search"
           />
         </InputGroup>
-        <Box
-          cursor="pointer"
-          onClick={() => {
-            console.log("clicked on notif");
-          }}
-          position="relative"
-        >
-          {false && (
-            <Text
-              textAlign="center"
-              fontSize="10px"
-              fontWeight="bold"
-              margin="0px !important"
-              padding="0px"
-              lineHeight="16px"
-              rounded="full"
-              minHeight="16px"
-              minWidth="16px"
-              bg="red.300"
-              color="gray.0"
-              position="absolute"
-              right="-5px"
-              top="-5px"
-            >
-              1
-            </Text>
-          )}
-          <TbBell size={24} color="var(--chakra-colors-gray-0)" />
-        </Box>
+        {isConnected && (
+          <Box
+            cursor="pointer"
+            onClick={() => {
+              console.log("clicked on notif");
+            }}
+            position="relative"
+          >
+            {false && (
+              <Text
+                textAlign="center"
+                fontSize="10px"
+                fontWeight="bold"
+                margin="0px !important"
+                padding="0px"
+                lineHeight="16px"
+                rounded="full"
+                minHeight="16px"
+                minWidth="16px"
+                bg="red.300"
+                color="gray.0"
+                position="absolute"
+                right="-5px"
+                top="-5px"
+              >
+                1
+              </Text>
+            )}
+            <TbBell size={24} color="var(--chakra-colors-gray-0)" />
+          </Box>
+        )}
         <HStack cursor="pointer" columnGap="8px">
-          {true ? (
+          {!isConnected ? (
             <Button
               onClick={onOpen}
               borderRadius="8px"

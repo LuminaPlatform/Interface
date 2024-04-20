@@ -19,14 +19,15 @@ import { Login } from "./Login";
 import { MethodSeparator } from "../MethodSeparator";
 import { Register } from "./Register";
 import { AnimatePresence, motion } from "framer-motion";
+import { Connectors } from "./Connectors";
 
 interface IconButtonProps {
   onClick: () => void;
-  icon: IconType;
+  icon?: IconType | string;
   text: string;
 }
 
-const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
+export const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
   return (
     <Button
       bg="gray.700"
@@ -44,7 +45,12 @@ const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
       display="flex"
     >
       <HStack>
-        <Icon fontSize={21} color="gray.0" as={icon} />
+        {icon &&
+          (typeof icon === "string" ? (
+            <Img width="30px" src={icon} />
+          ) : (
+            <Icon fontSize={21} color="gray.0" as={icon} />
+          ))}
         <Text color="gray.40" fontSize="md" fontWeight="700">
           {text}
         </Text>
@@ -55,8 +61,8 @@ const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
 };
 
 interface ConnectProps {
-  onClose: () => void;
-  isOpen: boolean;
+  onClose: UseDisclosureProps["onClose"];
+  isOpen: UseDisclosureProps["isOpen"];
 }
 interface ModalBodyProps {
   setStep: Dispatch<SetStateAction<STEP_MODAL>>;
@@ -85,7 +91,13 @@ const ModalBody = ({ setStep }: ModalBodyProps) => {
         Connect to join
       </Text>
       <VStack width="full" rowGap="16px" py="24px">
-        <IconButton text="Connect Wallet" onClick={() => {}} icon={LuWallet} />
+        <IconButton
+          text="Connect Wallet"
+          onClick={() => {
+            setStep(STEP_MODAL.connectors);
+          }}
+          icon={LuWallet}
+        />
         <MethodSeparator />
         <IconButton
           text="Join by Email"
@@ -106,6 +118,7 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
       [STEP_MODAL.wallet]: <ModalBody setStep={setStep} />,
       [STEP_MODAL.login]: <Login setStep={setStep} />,
       [STEP_MODAL.register]: <Register setStep={setStep} />,
+      [STEP_MODAL.connectors]: <Connectors setStep={setStep} />,
     }),
     []
   );

@@ -1,7 +1,8 @@
 import { Container, Text } from "@chakra-ui/react";
+import { useBlockNumber } from "wagmi";
 
 export default function Home() {
-  return <Text color="gray.0">sa;a,</Text>;
+  return <></>;
 }
 
 export const getServerSideProps = () => {
