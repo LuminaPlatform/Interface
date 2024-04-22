@@ -1,4 +1,4 @@
-import { STEP_MODAL } from "@/types";
+import { ModalForm, STEP_MODAL, WalletModalBodyProps } from "@/types";
 import {
   Button,
   chakra,
@@ -15,8 +15,8 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useFormContext } from "react-hook-form";
 import {
   TbArrowNarrowLeft,
   TbBrandGoogleFilled,
@@ -28,24 +28,14 @@ import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
 
-interface ModalBodyProps {
-  setStep: Dispatch<SetStateAction<STEP_MODAL>>;
-}
-
-interface registerFromType {
-  email: string;
-  password: string;
-  isAccepted: boolean;
-}
-
 const ChakraForm = chakra("form");
 
-export const Register = ({ setStep }: ModalBodyProps) => {
+export const Register = ({ setStep }: WalletModalBodyProps) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<registerFromType>({ mode: "all", reValidateMode: "onChange" });
+  } = useFormContext<ModalForm>();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -185,6 +175,7 @@ export const Register = ({ setStep }: ModalBodyProps) => {
         type="submit"
         variant="primary"
         isDisabled={!!errors.email || !!errors.password || !!errors.isAccepted}
+        onClick={() => setStep(STEP_MODAL.otp)}
       >
         Register
       </Button>

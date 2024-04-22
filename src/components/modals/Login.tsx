@@ -1,4 +1,4 @@
-import { STEP_MODAL } from "@/types";
+import { ModalForm, STEP_MODAL, WalletModalBodyProps } from "@/types";
 import {
   Button,
   chakra,
@@ -13,8 +13,8 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useFormContext } from "react-hook-form";
 import {
   TbArrowNarrowLeft,
   TbBrandGoogleFilled,
@@ -26,21 +26,13 @@ import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
 
-interface ModalBodyProps {
-  setStep: Dispatch<SetStateAction<STEP_MODAL>>;
-}
-
-interface loginFromType {
-  email: string;
-  password: string;
-}
 const ChakraForm = chakra("form");
-export const Login = ({ setStep }: ModalBodyProps) => {
+export const Login = ({ setStep }: WalletModalBodyProps) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<loginFromType>({ mode: "all", reValidateMode: "onChange" });
+  } = useFormContext<ModalForm>();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -88,6 +80,7 @@ export const Login = ({ setStep }: ModalBodyProps) => {
               <TbMail color="var(--chakra-colors-gray-100)" />
             </InputLeftElement>
             <Input
+              type="email"
               isInvalid={!!errors.email}
               placeholder="Example@gmail.com"
               variant="outline"
