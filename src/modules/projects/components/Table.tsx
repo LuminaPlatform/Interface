@@ -13,7 +13,7 @@ import {
   Button,
   Img,
   Divider,
-  Link,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import {
   createColumnHelper,
@@ -27,6 +27,7 @@ import {
 import { useMemo, useState } from "react";
 import { tableData } from "../constant";
 import { PiLinkThin } from "react-icons/pi";
+import Link from "next/link";
 
 const CheckMarkIcon = () => (
   <svg
@@ -176,9 +177,13 @@ const Table = ({ search }: TableProps) => {
           />
           <VStack rowGap="6px" margin="0px !important">
             <HStack alignItems="center">
-              <Link href={info.getValue().href} textAlign="left">
+              <ChakraLink
+                as={Link}
+                href={`/projects/${info.row.original.id}`}
+                textAlign="left"
+              >
                 {info.getValue().name}
-              </Link>
+              </ChakraLink>
               <Icon
                 size={18}
                 margin="0px !important"

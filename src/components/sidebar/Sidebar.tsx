@@ -153,7 +153,8 @@ export const Sidebar = () => {
             )}
             <ChakraLink
               href={route.href}
-              {...(route.href === router.pathname && {
+              {...(route.href.split("/").at(-1) ===
+                router.pathname.split("/")[1] && {
                 bg: "gray.800",
                 _before: {
                   content: "''",
@@ -167,7 +168,9 @@ export const Sidebar = () => {
               })}
             >
               <HStack>
-                {route.icon(route.href === router.pathname)}
+                {route.icon(
+                  route.href.split("/").at(-1) === router.pathname.split("/")[1]
+                )}
                 {isOpen && <Text>{route.title}</Text>}
               </HStack>
             </ChakraLink>
@@ -175,7 +178,7 @@ export const Sidebar = () => {
         ))}
       </VStack>
       <ChakraLink
-        {...("/settings" === router.pathname && {
+        {...("settings" === router.pathname.split("/")[1] && {
           bg: "gray.800",
           _before: {
             content: "''",
@@ -193,7 +196,7 @@ export const Sidebar = () => {
           <Icon
             fontSize="24px"
             color={
-              "/setting" === router.pathname
+              "setting" === router.pathname.split("/")[1]
                 ? "var(--chakra-colors-primary-300)"
                 : "var(--chakra-colors-gray-10)"
             }

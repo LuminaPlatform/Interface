@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { IconType } from "react-icons";
 
 export enum STEP_MODAL {
   "wallet" = "wallet",
@@ -17,3 +18,10 @@ export interface ModalForm {
   password: string;
   isAccepted?: boolean;
 }
+
+export type ReviewStatus = {
+  id: number;
+  name: string;
+  colorScheme: string;
+  icon: IconType;
+};
