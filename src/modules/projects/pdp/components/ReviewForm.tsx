@@ -46,6 +46,8 @@ export const ReviewForm = ({ onClose }: ReviewFormProps) => {
     mode: "all",
   });
   const { description, medias } = useWatch<ReviewFormType>({ control });
+  console.log({ errors });
+
   return (
     <ChakraForm
       display="flex"
@@ -176,7 +178,16 @@ export const ReviewForm = ({ onClose }: ReviewFormProps) => {
               id="media"
               type="file"
               visibility="hidden"
-              {...register("medias", {})}
+              {...register("medias", {
+                validate: {
+                  lessThan10MB: (files) =>
+                    files[0]?.size <= 3000000 || "Max 3MB",
+                  acceptedFormats: (files) =>
+                    ["image/jpeg", "image/png", "image/gif"].includes(
+                      files[0]?.type
+                    ) || "Only PNG, JPEG e GIF",
+                },
+              })}
               onChange={(e) => {
                 if (
                   medias.length < 3 &&
@@ -192,6 +203,11 @@ export const ReviewForm = ({ onClose }: ReviewFormProps) => {
                 }
               }}
             />
+            {!!errors.medias && (
+              <Text fontSize="xs" color="red.200">
+                {errors.medias.message}
+              </Text>
+            )}
           </FormControl>
           {medias.map((media) => (
             <Box position="relative" key={media.type + media.name + media.size}>

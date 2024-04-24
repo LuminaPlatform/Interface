@@ -77,7 +77,7 @@ export const Hero = () => {
       <VStack
         borderRadius="12px"
         p="12px"
-        bg="red"
+        bg="gray.500"
         height={{ base: "200px", md: "329px" }}
         width="full"
       >
