@@ -1,12 +1,4 @@
-import {
-  AspectRatio,
-  Box,
-  HStack,
-  Img,
-  Stack,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 
 import EmptyPage from "@/components/EmptyPage";
 import { ReviewCard } from "@/components/ReviewCard";
@@ -26,7 +18,9 @@ const TabBody = ({ reviews }: TabBodyProps) => {
           imgSrc="/assets/images/empty_reviews.png"
         />
       ) : (
-        [0, 1, 2, 3].map((item) => <ReviewCard showProjectName review={item} key={item} />)
+        [0, 1, 2, 3].map((item) => (
+          <ReviewCard showProjectName review={item} key={item} />
+        ))
       )}
     </VStack>
   );
