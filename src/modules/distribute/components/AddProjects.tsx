@@ -1,28 +1,20 @@
-import { ModalBase } from "@/components/ModalBase";
-import {
-  Button,
-  Input,
-  InputGroup,
-  InputLeftAddon,
-  InputLeftElement,
-  Text,
-  useDisclosure,
-  VStack,
-} from "@chakra-ui/react";
+import { Button, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
-import { TbSearch } from "react-icons/tb";
 import { AddProjectTable } from "./AddProjectTable";
-import { useDispatchSelectedProject, useSelectedProject } from "../hooks";
 import { ProjectSearch } from "./ProjectSearch";
-import { Project } from "../types";
+import {
+  useDispatchSelectedProjects,
+  useSelectedProjects,
+} from "@/hooks/bases";
+import { Project } from "@/modules/projects/types";
 
 interface AddProjectsProps {
   onClose: () => void;
 }
 export const AddProjects = ({ onClose }: AddProjectsProps) => {
   const [search, setSearch] = useState("");
-  const globalSelectedProjects = useSelectedProject();
-  const DispatchGlobalSelectedProjects = useDispatchSelectedProject();
+  const globalSelectedProjects = useSelectedProjects();
+  const DispatchGlobalSelectedProjects = useDispatchSelectedProjects();
 
   const [selectedProjects, setSelectedProjects] = useState<Array<Project>>(
     () => globalSelectedProjects

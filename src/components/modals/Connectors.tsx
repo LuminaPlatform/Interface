@@ -1,5 +1,5 @@
 import { dataConnectors } from "@/constant";
-import { STEP_MODAL } from "@/types";
+import { STEP_MODAL, WalletModalBodyProps } from "@/types";
 import { Button, Icon, Img, Text, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { Dispatch, SetStateAction } from "react";
@@ -8,11 +8,7 @@ import { useConnect } from "wagmi";
 import { IconButton } from "./Connect";
 import { useWalletModal } from "@/hooks/bases";
 
-interface ConnectorsProps {
-  setStep: Dispatch<SetStateAction<STEP_MODAL>>;
-}
-
-export const Connectors = ({ setStep }: ConnectorsProps) => {
+export const Connectors = ({ setStep }: WalletModalBodyProps) => {
   const { connectors, connect } = useConnect();
   const { onClose } = useWalletModal();
   return (

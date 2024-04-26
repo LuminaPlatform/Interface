@@ -13,7 +13,7 @@ import {
   Button,
   Img,
   Divider,
-  Link,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import {
   createColumnHelper,
@@ -27,6 +27,8 @@ import {
 import { useMemo, useState } from "react";
 import { tableData } from "../constant";
 import { PiLinkThin } from "react-icons/pi";
+import Link from "next/link";
+import { Project } from "../types";
 
 const CheckMarkIcon = () => (
   <svg
@@ -123,33 +125,13 @@ export const ArrowDown = () => (
   </svg>
 );
 
-type RetroTable = {
-  id: number;
-  project: {
-    href: string;
-    name: string;
-    src: string;
-    cryptosImg: Array<{ id: number; src: JSX.Element; title: string }>;
-  };
-  category: string;
-  allocated: number;
-  inBallots: number;
-  inLists: number;
-  tags: Array<{
-    id: number;
-    color: { bg: string; txt: string };
-    title: string;
-    value: number;
-  }>;
-};
-
 interface TableProps {
   search: string;
 }
 const Table = ({ search }: TableProps) => {
   const networkThreshold = 7;
   const [sorting, setSorting] = useState<SortingState>([]);
-  const data = useMemo<RetroTable[]>(
+  const data = useMemo<Project[]>(
     () =>
       search
         ? tableData.filter((row) =>
@@ -158,7 +140,7 @@ const Table = ({ search }: TableProps) => {
         : tableData,
     [search]
   );
-  const columnHelper = createColumnHelper<RetroTable>();
+  const columnHelper = createColumnHelper<Project>();
 
   const columns = [
     columnHelper.accessor("id", {
@@ -176,9 +158,13 @@ const Table = ({ search }: TableProps) => {
           />
           <VStack rowGap="6px" margin="0px !important">
             <HStack alignItems="center">
-              <Link href={info.getValue().href} textAlign="left">
+              <ChakraLink
+                as={Link}
+                href={`/projects/${info.row.original.id}`}
+                textAlign="left"
+              >
                 {info.getValue().name}
-              </Link>
+              </ChakraLink>
               <Icon
                 size={18}
                 margin="0px !important"
@@ -276,17 +262,17 @@ const Table = ({ search }: TableProps) => {
     }),
     columnHelper.accessor("tags", {
       sortingFn: (rowA, rowB, columnId) => {
-        const columnAData: RetroTable["tags"] = rowA.getValue(columnId);
-        const columnBData: RetroTable["tags"] = rowB.getValue(columnId);
+        const columnAData: Project["tags"] = rowA.getValue(columnId);
+        const columnBData: Project["tags"] = rowB.getValue(columnId);
 
-        const rowAMinValue: RetroTable["tags"][0]["value"] = columnAData.reduce(
+        const rowAMinValue: Project["tags"][0]["value"] = columnAData.reduce(
           (min, obj) => {
             return obj.value < min ? obj.value : min;
           },
           columnAData[0].value
         );
 
-        const rowBMinValue: RetroTable["tags"][0]["value"] = columnBData.reduce(
+        const rowBMinValue: Project["tags"][0]["value"] = columnBData.reduce(
           (min, obj) => {
             return obj.value < min ? obj.value : min;
           },

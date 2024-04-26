@@ -14,12 +14,14 @@ import { IconType } from "react-icons";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { STEP_MODAL } from "@/types";
+import { ModalForm, STEP_MODAL, WalletModalBodyProps } from "@/types";
 import { Login } from "./Login";
 import { MethodSeparator } from "../MethodSeparator";
 import { Register } from "./Register";
 import { AnimatePresence, motion } from "framer-motion";
 import { Connectors } from "./Connectors";
+import { OTP } from "./OTP";
+import { FormProvider, useForm } from "react-hook-form";
 
 interface IconButtonProps {
   onClick: () => void;
@@ -64,10 +66,8 @@ interface ConnectProps {
   onClose: UseDisclosureProps["onClose"];
   isOpen: UseDisclosureProps["isOpen"];
 }
-interface ModalBodyProps {
-  setStep: Dispatch<SetStateAction<STEP_MODAL>>;
-}
-const ModalBody = ({ setStep }: ModalBodyProps) => {
+
+const ModalBody = ({ setStep }: WalletModalBodyProps) => {
   return (
     <VStack
       as={motion.div}
@@ -112,6 +112,11 @@ const ModalBody = ({ setStep }: ModalBodyProps) => {
 };
 
 export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
+  const methods = useForm<ModalForm>({
+    mode: "all",
+    reValidateMode: "onChange",
+  });
+
   const [step, setStep] = useState<STEP_MODAL>(STEP_MODAL.wallet);
   const modalBody = useMemo(
     () => ({
@@ -119,6 +124,7 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
       [STEP_MODAL.login]: <Login setStep={setStep} />,
       [STEP_MODAL.register]: <Register setStep={setStep} />,
       [STEP_MODAL.connectors]: <Connectors setStep={setStep} />,
+      [STEP_MODAL.otp]: <OTP setStep={setStep} />,
     }),
     []
   );
@@ -126,7 +132,11 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
     <ModalBase
       isOpen={isOpen}
       onClose={onClose}
-      modalBody={<AnimatePresence>{modalBody[step]}</AnimatePresence>}
+      modalBody={
+        <AnimatePresence>
+          <FormProvider {...methods}>{modalBody[step]}</FormProvider>
+        </AnimatePresence>
+      }
     />
   );
 };

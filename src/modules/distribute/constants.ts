@@ -1,36 +1,14 @@
-import { Project } from "./types";
+export const maximumAllocated = 30000000;
 
-export const tableData: Project[] = [
+export const distributeTabs = [
   {
     id: 0,
-    project: {
-      href: "",
-      name: "Protocol",
-      src: "",
-    },
-    isSelected: false,
-    opAllocated: 0,
+    title: "My Distribution",
+    query: "my-distributions",
   },
   {
     id: 1,
-    project: {
-      href: "",
-      name: "Guild",
-      src: "",
-    },
-    isSelected: false,
-    opAllocated: 0,
-  },
-  {
-    id: 2,
-    project: {
-      href: "",
-      name: "1 Guild",
-      src: "",
-    },
-    isSelected: false,
-    opAllocated: 0,
+    title: "Community Distributions",
+    query: "community",
   },
 ];
-
-export const maximumAllocated = 30000000;

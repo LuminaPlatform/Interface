@@ -1,5 +1,9 @@
 import { sidebarWidth } from "@/constant";
-import { useDispatchIsOpenSidebar, useIsOpenSidebar } from "@/hooks/bases";
+import {
+  useDispatchIsOpenSidebar,
+  useIsOpenSidebar,
+  useSelectedProjects,
+} from "@/hooks/bases";
 import {
   Box,
   Button,
@@ -42,6 +46,7 @@ const ChakraLink = chakra(Link, {
 });
 
 export const Sidebar = () => {
+  const selectedProjects = useSelectedProjects();
   const routes = [
     {
       id: 0,
@@ -78,7 +83,7 @@ export const Sidebar = () => {
     {
       id: 2,
       href: "/distribute",
-      title: "Distribute",
+      title: `Distribute ${selectedProjects.length}`,
       icon: (isActive: boolean) => (
         <Icon
           fontSize="24px"
@@ -153,7 +158,8 @@ export const Sidebar = () => {
             )}
             <ChakraLink
               href={route.href}
-              {...(route.href === router.pathname && {
+              {...(route.href.split("/").at(-1) ===
+                router.pathname.split("/")[1] && {
                 bg: "gray.800",
                 _before: {
                   content: "''",
@@ -167,7 +173,9 @@ export const Sidebar = () => {
               })}
             >
               <HStack>
-                {route.icon(route.href === router.pathname)}
+                {route.icon(
+                  route.href.split("/").at(-1) === router.pathname.split("/")[1]
+                )}
                 {isOpen && <Text>{route.title}</Text>}
               </HStack>
             </ChakraLink>
@@ -175,7 +183,7 @@ export const Sidebar = () => {
         ))}
       </VStack>
       <ChakraLink
-        {...("/settings" === router.pathname && {
+        {...("settings" === router.pathname.split("/")[1] && {
           bg: "gray.800",
           _before: {
             content: "''",
@@ -193,7 +201,7 @@ export const Sidebar = () => {
           <Icon
             fontSize="24px"
             color={
-              "/setting" === router.pathname
+              "setting" === router.pathname.split("/")[1]
                 ? "var(--chakra-colors-primary-300)"
                 : "var(--chakra-colors-gray-10)"
             }

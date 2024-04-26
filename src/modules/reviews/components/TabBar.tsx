@@ -6,6 +6,8 @@ import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { StringParam, useQueryParams } from "use-query-params";
 import TabBody from "./TabBody";
+import { UnAuthorized } from "./UnAuthorized";
+import { useAccount } from "wagmi";
 
 const TabBar = () => {
   const [query, setQuery] = useQueryParams({
@@ -18,6 +20,7 @@ const TabBar = () => {
         : 0,
     [query.tab]
   );
+  const { isConnected } = useAccount();
 
   return (
     <Tabs index={activeTab} width="full">
@@ -39,9 +42,13 @@ const TabBar = () => {
       </TabList>
 
       <TabPanels>
-        {tabs.map((item) => (
+        {tabs.map((item, index) => (
           <TabPanel key={item.id}>
-            <TabBody reviews={item.title} />
+            {index === 0 && !isConnected ? (
+              <UnAuthorized />
+            ) : (
+              <TabBody reviews={item.title} />
+            )}
           </TabPanel>
         ))}
       </TabPanels>
