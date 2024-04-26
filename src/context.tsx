@@ -6,7 +6,7 @@ import {
   SetStateAction,
   useState,
 } from "react";
-import { Project } from "./modules/distribute/types";
+import { Project } from "./modules/projects/types";
 
 export const IsSidebarOpen = createContext(true);
 export const DispatchIsSidebarOpen = createContext<

@@ -7,7 +7,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Header } from "../components/Header";
-import { ProjectDetailProps } from "../types";
 import { useProjectData } from "../hooks";
 import { Hero } from "../components/Hero";
 import { Reviews } from "../components/Reviews";
