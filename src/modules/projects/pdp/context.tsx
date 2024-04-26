@@ -1,8 +1,8 @@
 import { createContext, PropsWithChildren, useState } from "react";
-import { ProjectDetailProps } from "./types";
+import { Project } from "../types";
 
 interface ProjectDetailProviderProps extends PropsWithChildren {
-  project: ProjectDetailProps["project"];
+  project: Project;
 }
 export const ProjectDetail =
   createContext<ProjectDetailProviderProps["project"]>(undefined);

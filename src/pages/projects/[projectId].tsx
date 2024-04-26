@@ -1,9 +1,9 @@
 import { tableData } from "@/modules/projects/constant";
 import { ProjectDetailProvider } from "@/modules/projects/pdp/context";
 import { Index } from "@/modules/projects/pdp/page/Index";
-import { ProjectDetailProps } from "@/modules/projects/pdp/types";
+import { Project } from "@/modules/projects/types";
 
-const ProjectDetail = ({ project }: ProjectDetailProps) => {
+const ProjectDetail = ({ project }: { project: Project }) => {
   return (
     <ProjectDetailProvider project={project}>
       <Index />

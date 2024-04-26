@@ -7,7 +7,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { tableData } from "../constants";
 import {
   Checkbox,
   HStack,
@@ -30,7 +29,8 @@ import {
   TbArrowNarrowUp,
   TbExternalLink,
 } from "react-icons/tb";
-import { Project } from "../types";
+import { Project } from "@/modules/projects/types";
+import { tableData } from "@/modules/projects/constant";
 
 interface AddProjectTableProps {
   selectedProjects: Array<Project>;
@@ -87,7 +87,8 @@ export const AddProjectTable = ({
         </HStack>
       ),
     }),
-    columnHelper.accessor("isSelected", {
+    columnHelper.display({
+      id: "isSelected",
       header: () => {
         return (
           <HStack justifyContent="flex-end" width="full !important">

@@ -1,5 +1,9 @@
 import { sidebarWidth } from "@/constant";
-import { useDispatchIsOpenSidebar, useIsOpenSidebar } from "@/hooks/bases";
+import {
+  useDispatchIsOpenSidebar,
+  useIsOpenSidebar,
+  useSelectedProjects,
+} from "@/hooks/bases";
 import {
   Box,
   Button,
@@ -42,6 +46,7 @@ const ChakraLink = chakra(Link, {
 });
 
 export const Sidebar = () => {
+  const selectedProjects = useSelectedProjects();
   const routes = [
     {
       id: 0,
@@ -78,7 +83,7 @@ export const Sidebar = () => {
     {
       id: 2,
       href: "/distribute",
-      title: "Distribute",
+      title: `Distribute ${selectedProjects.length}`,
       icon: (isActive: boolean) => (
         <Icon
           fontSize="24px"

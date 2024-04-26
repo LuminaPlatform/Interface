@@ -1,19 +1,31 @@
-import { Button, HStack, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  HStack,
+  Text,
+  useDisclosure,
+  VStack,
+} from "@chakra-ui/react";
 import { UnAuthorized } from "../components/UnAuthorized";
 import { EmptyState } from "../components/EmptyState";
-import { ProjectsProvider } from "../context";
 import { ProjectList } from "../components/ProjectList";
-import { useMemo } from "react";
-import { useSelectedProject } from "../hooks";
+import { useMemo, useState } from "react";
 import { TbBookmarkPlus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
 import { AddProjects } from "../components/AddProjects";
 import { useAccount } from "wagmi";
+import { useSelectedProjects } from "@/hooks/bases";
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+import { distributeTabs } from "../constants";
+import { PopularProjectsPanel } from "../components/PopularProjectsPanel";
+import { StringParam, useQueryParams } from "use-query-params";
+import { ProjectSearch } from "../components/ProjectSearch";
 
 const Index = () => {
   const { isConnected } = useAccount();
-  const selectedProject = useSelectedProject();
+  const selectedProject = useSelectedProjects();
   const { onClose, isOpen, onOpen } = useDisclosure();
+  const [search, setSearch] = useState("");
 
   const content = useMemo(() => {
     if (!isConnected) {
@@ -22,8 +34,19 @@ const Index = () => {
     if (selectedProject.length === 0) {
       return <EmptyState onOpen={onOpen} />;
     }
-    return <ProjectList />;
-  }, [selectedProject, isConnected]);
+    return <ProjectList search={search} onOpen={onOpen} />;
+  }, [selectedProject, isConnected, search]);
+
+  const [query, setQuery] = useQueryParams({
+    tab: StringParam,
+  });
+  const activeTab = useMemo(
+    () =>
+      distributeTabs.findIndex((tab) => tab.query === query.tab) > 0
+        ? distributeTabs.findIndex((tab) => tab.query === query.tab)
+        : 0,
+    [query.tab]
+  );
 
   return (
     <VStack
@@ -44,18 +67,36 @@ const Index = () => {
         >
           Distribute
         </Text>
-        {selectedProject.length !== 0 && (
-          <Button
-            onClick={onOpen}
-            variant="outline"
-            size="md"
-            leftIcon={<TbBookmarkPlus fontSize="20px" />}
-          >
-            Add Projects
-          </Button>
-        )}
       </HStack>
-      {content}
+      <Tabs index={activeTab} width="full">
+        <TabList borderColor="gray.400">
+          {distributeTabs.map((tab) => (
+            <Tab
+              _active={{ color: "gray.100" }}
+              _hover={{ color: "primary.300", borderColor: "primary.300" }}
+              _selected={{ color: "primary.300", borderColor: "primary.300" }}
+              color="gray.40"
+              fontSize="md"
+              fontWeight="500"
+              onClick={() => setQuery({ tab: tab.query })}
+              key={tab.id}
+            >
+              {tab.title}
+            </Tab>
+          ))}
+        </TabList>
+        {(selectedProject.length !== 0 || activeTab === 1) && (
+          <Box width="full" mt="16px">
+            <ProjectSearch search={search} setSearch={setSearch} />
+          </Box>
+        )}
+        <TabPanels>
+          <TabPanel>{content}</TabPanel>
+          <TabPanel>
+            <PopularProjectsPanel search={search} />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>{" "}
       <ModalBase
         isOpen={isOpen}
         onClose={onClose}
