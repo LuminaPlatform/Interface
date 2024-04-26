@@ -1,4 +1,8 @@
-import { TbBookmarkPlus, TbChevronRight } from "react-icons/tb";
+import {
+  TbBookmarkFilled,
+  TbBookmarkPlus,
+  TbChevronRight,
+} from "react-icons/tb";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,12 +12,27 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useProjectData } from "../hooks";
+import {
+  useDispatchSelectedProjects,
+  useSelectedProjects,
+} from "@/hooks/bases";
+import { useMemo } from "react";
+import { useAccount } from "wagmi";
 
 export const Header = () => {
+  const dispatchSelectedProject = useDispatchSelectedProjects();
+  const selectedProjects = useSelectedProjects();
   const { query } = useRouter();
+  const project = useProjectData();
   const {
     project: { name },
-  } = useProjectData();
+  } = project;
+
+  const { isConnected } = useAccount();
+
+  const isProjectSelected = useMemo(() => {
+    return selectedProjects.find((item) => item.id === project.id);
+  }, [project.id, selectedProjects]);
   return (
     <Stack
       width="full"
@@ -47,9 +66,26 @@ export const Header = () => {
           </BreadcrumbLink>
         </BreadcrumbItem>
       </Breadcrumb>
-      <Button size="md" variant="primary" leftIcon={<TbBookmarkPlus />}>
-        Add to List
-      </Button>
+      {isConnected && (
+        <Button
+          onClick={() => {
+            if (isProjectSelected) {
+              dispatchSelectedProject((prev) =>
+                prev.filter((item) => item.id !== project.id)
+              );
+            } else {
+              dispatchSelectedProject((prev) => [...prev, project]);
+            }
+          }}
+          size="md"
+          variant={isProjectSelected ? "outline" : "primary"}
+          leftIcon={
+            isProjectSelected ? <TbBookmarkFilled /> : <TbBookmarkPlus />
+          }
+        >
+          {isProjectSelected ? "Added" : "Add to List"}
+        </Button>
+      )}
     </Stack>
   );
 };

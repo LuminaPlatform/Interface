@@ -24,10 +24,8 @@ import {
   Divider,
   Stack,
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { ProjectSearch } from "./ProjectSearch";
-import { useDispatchSelectedProject, useSelectedProject } from "../hooks";
-import { Project } from "../types";
 import {
   createColumnHelper,
   flexRender,
@@ -40,6 +38,7 @@ import {
   TbArrowNarrowDown,
   TbArrowNarrowUp,
   TbBookmarkOff,
+  TbBookmarkPlus,
   TbDotsVertical,
   TbExternalLink,
   TbInfoCircle,
@@ -48,6 +47,11 @@ import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { maximumAllocated } from "../constants";
 import { CustomInput } from "./CustomInput";
 import { cloneDeep } from "lodash";
+import {
+  useDispatchSelectedProjects,
+  useSelectedProjects,
+} from "@/hooks/bases";
+import { Project } from "@/modules/projects/types";
 
 const columnHelper = createColumnHelper<Project>();
 
@@ -56,10 +60,13 @@ type AllocatedForm = {
   projects: Array<{ id: Readonly<number>; value: number; percent: number }>;
   totalAllocated: number;
 };
-export const ProjectList = () => {
-  const [search, setSearch] = useState("");
-  const globalSelectedProjects = useSelectedProject();
-  const dispatchGlobalSelectedProjects = useDispatchSelectedProject();
+interface ProjectListProps {
+  onOpen: () => void;
+  search: string;
+}
+export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
+  const globalSelectedProjects = useSelectedProjects();
+  const dispatchGlobalSelectedProjects = useDispatchSelectedProjects();
 
   const { register, control, setValue, handleSubmit, getValues } =
     useForm<AllocatedForm>({
@@ -116,7 +123,7 @@ export const ProjectList = () => {
           </HStack>
         ),
       }),
-      columnHelper.accessor("opAllocated", {
+      columnHelper.accessor("allocated", {
         header: () => (
           <Text color="gray.60" fontSize="md" fontWeight="700" maxW="186px">
             OP Allocated
@@ -356,7 +363,21 @@ export const ProjectList = () => {
 
   return (
     <VStack rowGap="16px" width="full">
-      <ProjectSearch search={search} setSearch={setSearch} />
+      <HStack width="full" justifyContent="space-between">
+        <Text color="gray.20" fontSize="lg" fontWeight="500">
+          Description
+        </Text>
+        {globalSelectedProjects.length !== 0 && (
+          <Button
+            onClick={onOpen}
+            variant="outline"
+            size="md"
+            leftIcon={<TbBookmarkPlus fontSize="20px" />}
+          >
+            Add Projects
+          </Button>
+        )}
+      </HStack>
       <ChakraForm
         onSubmit={handleSubmit((values) => console.log({ values }))}
         width="full"

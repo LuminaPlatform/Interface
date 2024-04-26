@@ -1,6 +1,10 @@
 import Layout from "@/components/Layout";
 import { wagmiConfig } from "@/config/wagmi";
-import { IsSidebarOpenProvider, WalletConnectProvider } from "@/context";
+import {
+  IsSidebarOpenProvider,
+  SelectedProjectProvider,
+  WalletConnectProvider,
+} from "@/context";
 import GoogleAnalytics from "@/GoogleAnalytics";
 import "@/styles/globals.css";
 import { theme } from "@/theme";
@@ -9,6 +13,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { WagmiProvider } from "wagmi";
+import { QueryParamProvider } from "use-query-params";
+import NextAdapterApp from "next-query-params/app";
 
 const queryClient = new QueryClient();
 
@@ -22,19 +28,23 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>Lumina interface</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <ChakraProvider theme={theme}>
-            <IsSidebarOpenProvider>
-              <WalletConnectProvider>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
-              </WalletConnectProvider>
-            </IsSidebarOpenProvider>
-          </ChakraProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
+      <QueryParamProvider adapter={NextAdapterApp}>
+        <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
+            <ChakraProvider theme={theme}>
+              <IsSidebarOpenProvider>
+                <WalletConnectProvider>
+                  <SelectedProjectProvider>
+                    <Layout>
+                      <Component {...pageProps} />
+                    </Layout>
+                  </SelectedProjectProvider>
+                </WalletConnectProvider>
+              </IsSidebarOpenProvider>
+            </ChakraProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
+      </QueryParamProvider>
     </>
   );
 }
