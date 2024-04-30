@@ -25,3 +25,8 @@ export type ReviewStatus = {
   colorScheme: string;
   icon: IconType;
 };
+
+export type ApiErrorType = {
+  error_message: string;
+  error_detail: string;
+};
