@@ -1,3 +1,4 @@
+import { useOTPVerification } from "@/hooks/auth";
 import { ModalForm, STEP_MODAL, WalletModalBodyProps } from "@/types";
 import {
   Button,
@@ -32,9 +33,13 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
     register,
     formState: { errors },
     control,
-  } = useForm<{ otp: string[] }>();
+    handleSubmit,
+  } = useForm<{ otp: string[] }>({
+    defaultValues: {
+      otp: ["", "", "", "", "", ""],
+    },
+  });
   const otpValues = useWatch({ control });
-  console.log({ otpValues });
 
   const [isExpired, setExpired] = useState(false);
 
@@ -59,6 +64,7 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
     return () => clearInterval(countdown);
   }, [minutes, seconds]);
 
+  const { mutate } = useOTPVerification();
   return (
     <VStack
       as={motion.div}
@@ -112,7 +118,11 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
         </Text>
         <ChakraForm mt="32px" width="full">
           <HStack columnGap="10px" justifyContent="center" width="full">
-            <PinInput isInvalid={true} placeholder="-" otp>
+            <PinInput
+              isInvalid={!!otpValues.otp?.some((item) => item === "")}
+              placeholder="-"
+              otp
+            >
               {OTPFields.map((item) => (
                 <PinInputField
                   _invalid={{
@@ -155,6 +165,19 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
           width="full"
           isDisabled={!!otpValues.otp?.some((item) => item === "")}
           variant="primary"
+          onClick={handleSubmit(({ otp }) => {
+            mutate(
+              { code: otp.join(""), email },
+              {
+                onError: () => {
+                  console.log("error");
+                },
+                onSuccess: () => {
+                  console.log("success");
+                },
+              }
+            );
+          })}
         >
           Verify
         </Button>
