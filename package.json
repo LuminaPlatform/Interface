@@ -17,6 +17,7 @@
     "@tanstack/react-table": "^8.15.3",
     "@types/lodash": "^4.17.0",
     "@walletconnect/modal": "^2.6.2",
+    "axios": "^1.6.8",
     "chart.js": "^4.4.2",
     "framer-motion": "^11.0.24",
     "lodash": "^4.17.21",
