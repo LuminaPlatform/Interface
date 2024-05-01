@@ -12,6 +12,7 @@ export const apiKeys = {
       email: "/auth/signup/email/request",
       wallet: "",
     },
+    isAuthorized:"/auth/me",
     otp: "/auth/signup/email/verify",
   },
 };
