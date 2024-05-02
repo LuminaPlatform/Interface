@@ -25,20 +25,24 @@ import {
 import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useEmailLogin } from "@/hooks/auth";
+import { useCustomToast } from "@/hooks/bases";
 
 const ChakraForm = chakra("form");
 export const Login = ({ setStep }: WalletModalBodyProps) => {
+  const { mutate } = useEmailLogin();
+
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useFormContext<ModalForm>();
+  const toast = useCustomToast();
 
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <ChakraForm
-      onSubmit={handleSubmit((values) => console.log({ values }))}
       display="flex"
       flexDirection="column"
       width="full"
@@ -140,9 +144,26 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
         </FormControl>
       </VStack>
       <Button
-        type="submit"
+        type="button"
         variant="primary"
         isDisabled={!!errors.email || !!errors.password}
+        onClick={handleSubmit(({ email, password }) => {
+          mutate(
+            { username: email, password },
+            {
+              onSuccess: ({ data }) => {
+                return toast({ description: data, status: "success" });
+              },
+              onError: (error) => {
+                return toast({
+                  title: error.response.data.error_message,
+                  description: error.response.data.error_detail,
+                  status: "error",
+                });
+              },
+            }
+          );
+        })}
       >
         Log in
       </Button>

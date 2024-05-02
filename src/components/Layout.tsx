@@ -3,7 +3,9 @@ import { Sidebar } from "./sidebar/Sidebar";
 import { useIsOpenSidebar } from "@/hooks/bases";
 import { sidebarWidth } from "@/constant";
 import { PropsWithChildren } from "react";
-import Navbar from "./Navbar";
+import dynamic from "next/dynamic";
+
+const Navbar = dynamic(() => import("./Navbar"), { ssr: false });
 
 interface LayoutProps extends PropsWithChildren {}
 const Layout = ({ children }: LayoutProps) => {

@@ -27,6 +27,8 @@ import {
 import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useEmailSignUp } from "@/hooks/auth";
+import { useCustomToast } from "@/hooks/bases";
 
 const ChakraForm = chakra("form");
 
@@ -37,7 +39,9 @@ export const Register = ({ setStep }: WalletModalBodyProps) => {
     handleSubmit,
   } = useFormContext<ModalForm>();
 
+  const { mutate } = useEmailSignUp();
   const [showPassword, setShowPassword] = useState(false);
+  const toast = useCustomToast();
 
   return (
     <ChakraForm
@@ -47,7 +51,6 @@ export const Register = ({ setStep }: WalletModalBodyProps) => {
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      onSubmit={handleSubmit((values) => console.log({ values }))}
       display="flex"
       flexDirection="column"
       width="full"
@@ -175,7 +178,24 @@ export const Register = ({ setStep }: WalletModalBodyProps) => {
         type="submit"
         variant="primary"
         isDisabled={!!errors.email || !!errors.password || !!errors.isAccepted}
-        onClick={() => setStep(STEP_MODAL.otp)}
+        onClick={handleSubmit(({ email, password }) => {
+          mutate(
+            { email, password },
+            {
+              onSuccess: ({ data }) => {
+                setStep(STEP_MODAL.otp);
+                return toast({ description: data, status: "success" });
+              },
+              onError: (error) => {
+                return toast({
+                  title: error.response.data.error_message,
+                  description: error.response.data.error_detail,
+                  status: "error",
+                });
+              },
+            }
+          );
+        })}
       >
         Register
       </Button>
