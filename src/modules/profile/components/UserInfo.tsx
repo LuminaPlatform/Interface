@@ -1,3 +1,4 @@
+import { ModalBase } from "@/components/ModalBase";
 import { textTruncator } from "@/utils";
 import {
   Box,
@@ -8,18 +9,47 @@ import {
   Link,
   Stack,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
+import { UsersModal } from "./UsersModal";
+import { Avatar, AvatarText } from "@/components/AvatarText";
 
+const ModalHeader = ({ text }: { text: string }) => (
+  <Text
+    textAlign="center"
+    position="absolute"
+    top="16px"
+    left="50%"
+    transform="translateX(-50%)"
+    width="fit-content"
+    color="gray.0"
+    fontWeight="600"
+    fontFamily="lexend"
+    fontSize="xl"
+  >
+    {text}
+  </Text>
+);
 const hasBadge = true;
 const hasWallet = true;
 
 export const UserInfo = () => {
-  const { username } = useParams<{ username: string }>();
+  const params = useParams<{ username: string }>();
+  const {
+    isOpen: followersIsOpen,
+    onOpen: followersOnOpen,
+    onClose: followersOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: followingIsOpen,
+    onOpen: followingOnOpen,
+    onClose: followingOnClose,
+  } = useDisclosure();
 
   const [isFollowed, setFollowed] = useState(false);
 
@@ -31,33 +61,16 @@ export const UserInfo = () => {
       padding={{ base: "12px", md: "24px" }}
       alignItems={{ base: "center", md: "stretch" }}
     >
-      <Box
-        outline="2px solid red"
-        outlineOffset="2px"
-        rounded="full"
-        minWidth={{ base: "100px", md: "186px" }}
-        minHeight={{ base: "100px", md: "186px" }}
-        {...(hasBadge && {
-          position: "relative",
-        })}
-      >
-        <Img
-          objectFit="cover"
-          rounded="full"
-          width={{ base: "100px", md: "186px" }}
-          height={{ base: "100px", md: "186px" }}
-          src="/assets/images/default-img.png"
-          alt="profile"
-        />
-        {hasBadge && (
-          <Img
-            src="/assets/images/profile/badge.png"
-            position="absolute"
-            bottom="0"
-            left="0"
-          />
-        )}
-      </Box>
+      <Avatar
+        badgeSize="48px"
+        src="/assets/images/default-img.png"
+        hasBadge
+        imageStyle={{
+          width: { base: "100px", md: "186px" },
+          height: { base: "100px", md: "186px" },
+        }}
+      />
+
       <VStack
         width="full"
         justifyContent="space-between"
@@ -119,7 +132,7 @@ export const UserInfo = () => {
             fontSize="lg"
             textAlign={{ base: "center", md: "left" }}
           >
-            {username}
+            {params?.username}
           </Text>
           {hasWallet && (
             <Code
@@ -136,13 +149,13 @@ export const UserInfo = () => {
           )}
         </VStack>
         <HStack width="full">
-          <Button flex="1" variant="primaryDark">
+          <Button onClick={followersOnOpen} flex="1" variant="primaryDark">
             <HStack width="full" justifyContent="space-between">
               <Text>Followers</Text>
               <Text>10</Text>
             </HStack>
           </Button>
-          <Button flex="1" variant="primaryDark">
+          <Button onClick={followingOnOpen} flex="1" variant="primaryDark">
             <HStack width="full" justifyContent="space-between">
               <Text>Followings</Text>
               <Text>10</Text>
@@ -150,6 +163,18 @@ export const UserInfo = () => {
           </Button>
         </HStack>
       </VStack>
+      <ModalBase
+        modalHeader={<ModalHeader text="Followers" />}
+        onClose={followersOnClose}
+        isOpen={followersIsOpen}
+        modalBody={<UsersModal />}
+      />
+      <ModalBase
+        modalHeader={<ModalHeader text="Followings" />}
+        onClose={followingOnClose}
+        isOpen={followingIsOpen}
+        modalBody={<UsersModal />}
+      />
     </Stack>
   );
 };
