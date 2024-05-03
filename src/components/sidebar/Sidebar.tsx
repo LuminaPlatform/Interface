@@ -195,7 +195,7 @@ export const Sidebar = () => {
             backgroundColor: "primary.300",
           },
         })}
-        href="/setting"
+        href="/settings"
       >
         <HStack>
           <Icon
@@ -207,7 +207,7 @@ export const Sidebar = () => {
             }
             as={TbSettings2}
           />
-          {isOpen && <Text>Setting</Text>}
+          {isOpen && <Text>Settings</Text>}
         </HStack>
       </ChakraLink>
     </VStack>
