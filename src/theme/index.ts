@@ -89,6 +89,21 @@ export const theme = extendTheme({
             background: "transparent",
           },
         },
+        primaryDark: {
+          border: "none",
+          color: "gray.20",
+          background: "gray.700",
+          _hover: {
+            color: "gray.20",
+            background: "#00000040",
+            boxShadow: "1px 4px 16px 0px #00000040",
+          },
+          _active: {
+            color: "gray.20",
+            background: "#00000040",
+            boxShadow: "1px 4px 16px 0px #00000040",
+          },
+        },
       },
     },
     Checkbox: {
