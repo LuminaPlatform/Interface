@@ -1,5 +1,6 @@
 import { sidebarWidth } from "@/constant";
 import {
+  useAuthorization,
   useDispatchIsOpenSidebar,
   useIsOpenSidebar,
   useSelectedProjects,
@@ -108,6 +109,8 @@ export const Sidebar = () => {
     [isOpen]
   );
 
+  const authorization = useAuthorization();
+
   return (
     <VStack
       bg="rgba(38, 38, 41, 0.6)"
@@ -182,34 +185,36 @@ export const Sidebar = () => {
           </VStack>
         ))}
       </VStack>
-      <ChakraLink
-        {...("settings" === router.pathname.split("/")[1] && {
-          bg: "gray.800",
-          _before: {
-            content: "''",
-            position: "absolute",
-            left: "0",
-            top: "0",
-            height: "full",
-            width: "2px",
-            backgroundColor: "primary.300",
-          },
-        })}
-        href="/setting"
-      >
-        <HStack>
-          <Icon
-            fontSize="24px"
-            color={
-              "setting" === router.pathname.split("/")[1]
-                ? "var(--chakra-colors-primary-300)"
-                : "var(--chakra-colors-gray-10)"
-            }
-            as={TbSettings2}
-          />
-          {isOpen && <Text>Setting</Text>}
-        </HStack>
-      </ChakraLink>
+      {authorization && (
+        <ChakraLink
+          {...("settings" === router.pathname.split("/")[1] && {
+            bg: "gray.800",
+            _before: {
+              content: "''",
+              position: "absolute",
+              left: "0",
+              top: "0",
+              height: "full",
+              width: "2px",
+              backgroundColor: "primary.300",
+            },
+          })}
+          href="/setting"
+        >
+          <HStack>
+            <Icon
+              fontSize="24px"
+              color={
+                "setting" === router.pathname.split("/")[1]
+                  ? "var(--chakra-colors-primary-300)"
+                  : "var(--chakra-colors-gray-10)"
+              }
+              as={TbSettings2}
+            />
+            {isOpen && <Text>Setting</Text>}
+          </HStack>
+        </ChakraLink>
+      )}
     </VStack>
   );
 };

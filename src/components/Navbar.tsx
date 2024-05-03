@@ -14,13 +14,15 @@ import {
 import { useEffect, useState } from "react";
 import { ConnectModal } from "./modals/Connect";
 import { TbBell, TbSearch } from "react-icons/tb";
-import { useWalletModal } from "@/hooks/bases";
+import { useAuthorization, useWalletModal } from "@/hooks/bases";
 import { useAccount } from "wagmi";
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
   const { isOpen, onClose, onOpen } = useWalletModal();
   const { isConnected } = useAccount();
+
+  const authorization = useAuthorization();
 
   useEffect(() => {
     if (isConnected && onClose) {
@@ -84,7 +86,7 @@ const Navbar = () => {
             placeholder="Search"
           />
         </InputGroup>
-        {isConnected && (
+        {authorization && (
           <Box
             cursor="pointer"
             onClick={() => {
@@ -116,7 +118,7 @@ const Navbar = () => {
           </Box>
         )}
         <HStack cursor="pointer" columnGap="8px">
-          {!isConnected ? (
+          {!authorization ? (
             <Button
               onClick={onOpen}
               borderRadius="8px"
