@@ -26,7 +26,11 @@ import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useEmailLogin } from "@/hooks/auth";
-import { useCustomToast } from "@/hooks/bases";
+import {
+  useCustomToast,
+  useDispatchAuthorization,
+  useWalletModal,
+} from "@/hooks/bases";
 
 const ChakraForm = chakra("form");
 export const Login = ({ setStep }: WalletModalBodyProps) => {
@@ -40,6 +44,9 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
   const toast = useCustomToast();
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const { onClose } = useWalletModal();
+  const dispatchAuthorization = useDispatchAuthorization();
 
   return (
     <ChakraForm
@@ -151,8 +158,15 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
           mutate(
             { username: email, password },
             {
-              onSuccess: ({ data }) => {
-                return toast({ description: data, status: "success" });
+              onSuccess: ({ data: { access_token } }) => {
+                localStorage.setItem("access_token", access_token);
+                setStep(STEP_MODAL.wallet);
+                onClose();
+                dispatchAuthorization(true);
+                return toast({
+                  description: "You are logged in",
+                  status: "success",
+                });
               },
               onError: (error) => {
                 return toast({

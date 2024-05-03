@@ -1,4 +1,9 @@
-import { useOTPVerification } from "@/hooks/auth";
+import { useEmailLogin, useOTPVerification } from "@/hooks/auth";
+import {
+  useCustomToast,
+  useDispatchAuthorization,
+  useWalletModal,
+} from "@/hooks/bases";
 import { ModalForm, STEP_MODAL, WalletModalBodyProps } from "@/types";
 import {
   Button,
@@ -14,6 +19,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm, useFormContext, useWatch } from "react-hook-form";
 import { TbArrowNarrowLeft } from "react-icons/tb";
+import { cookies } from "next/headers";
 
 const OTPFields = Array(6)
   .fill("")
@@ -24,11 +30,10 @@ const ChakraForm = chakra("form");
 const otpDuration = 10;
 
 export const OTP = ({ setStep }: WalletModalBodyProps) => {
-  console.log({ OTPFields });
-
   const { getValues } = useFormContext<ModalForm>();
   const email = getValues("email");
-
+  const password = getValues("password");
+  const { onClose } = useWalletModal();
   const {
     register,
     formState: { errors },
@@ -64,7 +69,13 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
     return () => clearInterval(countdown);
   }, [minutes, seconds]);
 
+  const toast = useCustomToast();
+
   const { mutate } = useOTPVerification();
+  const { mutate: mutateLogin } = useEmailLogin();
+
+  const dispatchAuthorization = useDispatchAuthorization();
+
   return (
     <VStack
       as={motion.div}
@@ -169,11 +180,34 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
             mutate(
               { code: otp.join(""), email },
               {
-                onError: () => {
-                  console.log("error");
+                onError: (error) => {
+                  return toast({
+                    title: error.response.data.error_message,
+                    description: error.response.data.error_detail,
+                    status: "error",
+                  });
                 },
                 onSuccess: () => {
-                  console.log("success");
+                  mutateLogin(
+                    { username: email, password },
+                    {
+                      onSuccess: (loginData) => {
+                        localStorage.setItem(
+                          "access_token",
+                          loginData.data.access_token
+                        );
+                        setStep(STEP_MODAL.wallet);
+                        dispatchAuthorization(true);
+
+                        onClose();
+
+                        return toast({
+                          description: "You are logged in",
+                          status: "success",
+                        });
+                      },
+                    }
+                  );
                 },
               }
             );

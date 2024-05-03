@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ConnectModal } from "./modals/Connect";
+import { useAuthorization, useWalletModal } from "@/hooks/bases";
 import {
   TbBell,
   TbLogout,
@@ -24,7 +25,6 @@ import {
   TbSettings2,
   TbUserCircle,
 } from "react-icons/tb";
-import { useWalletModal } from "@/hooks/bases";
 import { useAccount } from "wagmi";
 import Link from "next/link";
 
@@ -127,6 +127,8 @@ const Navbar = () => {
   const { isOpen, onClose, onOpen } = useWalletModal();
   const { isConnected } = useAccount();
 
+  const authorization = useAuthorization();
+
   useEffect(() => {
     if (isConnected && onClose) {
       onClose();
@@ -189,7 +191,7 @@ const Navbar = () => {
             placeholder="Search"
           />
         </InputGroup>
-        {isConnected && (
+        {authorization && (
           <Box
             cursor="pointer"
             onClick={() => {
@@ -220,8 +222,8 @@ const Navbar = () => {
             <TbBell size={24} color="var(--chakra-colors-gray-0)" />
           </Box>
         )}
-        <HStack flexWrap="nowrap" cursor="pointer" columnGap="8px">
-          {!isConnected ? (
+        <HStack cursor="pointer" columnGap="8px">
+          {!authorization ? (
             <Button
               onClick={onOpen}
               borderRadius="8px"
