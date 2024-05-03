@@ -4,9 +4,11 @@ import {
   Dispatch,
   PropsWithChildren,
   SetStateAction,
+  useEffect,
   useState,
 } from "react";
 import { Project } from "./modules/projects/types";
+import { useAccount } from "wagmi";
 
 export const IsSidebarOpen = createContext(true);
 export const DispatchIsSidebarOpen = createContext<
@@ -54,5 +56,36 @@ export const SelectedProjectProvider = ({ children }: PropsWithChildren) => {
         {children}
       </SetSelectedProjects.Provider>
     </SelectedProjects.Provider>
+  );
+};
+
+export const Authorization = createContext(undefined);
+export const SetAuthorization = createContext(undefined);
+
+interface AuthorizationProviderProps extends PropsWithChildren {}
+export const AuthorizationProvider = ({
+  children,
+}: AuthorizationProviderProps) => {
+  const { isConnected } = useAccount();
+  const [isAuthenticate, setAuthenticate] = useState(
+    () =>
+      (typeof window !== "undefined" &&
+        localStorage?.getItem("access_token")) ||
+      isConnected
+  );
+
+  useEffect(() => {
+    if (isConnected || localStorage?.getItem("access_token")) {
+      setAuthenticate(true);
+    } else {
+      setAuthenticate(false);
+    }
+  }, [isConnected]);
+  return (
+    <Authorization.Provider value={isAuthenticate}>
+      <SetAuthorization.Provider value={setAuthenticate}>
+        {children}
+      </SetAuthorization.Provider>
+    </Authorization.Provider>
   );
 };

@@ -1,6 +1,7 @@
 import Layout from "@/components/Layout";
 import { wagmiConfig } from "@/config/wagmi";
 import {
+  AuthorizationProvider,
   IsSidebarOpenProvider,
   SelectedProjectProvider,
   WalletConnectProvider,
@@ -34,11 +35,13 @@ export default function App({ Component, pageProps }: AppProps) {
             <ChakraProvider theme={theme}>
               <IsSidebarOpenProvider>
                 <WalletConnectProvider>
-                  <SelectedProjectProvider>
-                    <Layout>
-                      <Component {...pageProps} />
-                    </Layout>
-                  </SelectedProjectProvider>
+                  <AuthorizationProvider>
+                    <SelectedProjectProvider>
+                      <Layout>
+                        <Component {...pageProps} />
+                      </Layout>
+                    </SelectedProjectProvider>
+                  </AuthorizationProvider>
                 </WalletConnectProvider>
               </IsSidebarOpenProvider>
             </ChakraProvider>
