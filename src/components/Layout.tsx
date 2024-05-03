@@ -1,10 +1,14 @@
 import { Box, Container, Grid, GridItem } from "@chakra-ui/react";
-import { Sidebar } from "./sidebar/Sidebar";
 import { useIsOpenSidebar } from "@/hooks/bases";
 import { sidebarWidth } from "@/constant";
 import { PropsWithChildren } from "react";
-import Navbar from "./Navbar";
+import dynamic from "next/dynamic";
 
+const Navbar = dynamic(() => import("./Navbar"), { ssr: false });
+const Sidebar = dynamic(
+  () => import("./sidebar/Sidebar").then((modules) => modules.Sidebar),
+  { ssr: false }
+);
 interface LayoutProps extends PropsWithChildren {}
 const Layout = ({ children }: LayoutProps) => {
   const isSidebarOpen = useIsOpenSidebar();
