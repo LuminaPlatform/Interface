@@ -2,7 +2,7 @@ import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
 import { ApiErrorType } from "@/types";
 import { useMutation } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 
 type UseEmailSignUpInputs = {
   email: string;
@@ -28,15 +28,20 @@ type UseEmailLoginInputs = {
 };
 export const useEmailLogin = () => {
   return useMutation<
-    { data: string },
+    { data: { access_token: string } },
     AxiosError<ApiErrorType>,
     UseEmailLoginInputs
   >({
-    mutationFn: ({ username, password }) =>
-      axiosClient.post<any, { data: string }, UseEmailLoginInputs>(
-        apiKeys["auth"]["login"]["email"],
-        { username, password }
-      ),
+    mutationFn: ({ username, password }) => {
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("password", password);
+
+      return axios.post<any, { data: { access_token: string } }>(
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}${apiKeys["auth"]["login"]["email"]}`,
+        formData
+      );
+    },
   });
 };
 
