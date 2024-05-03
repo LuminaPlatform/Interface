@@ -1,7 +1,9 @@
 import {
+  Authorization,
   DispatchIsSidebarOpen,
   IsSidebarOpen,
   SelectedProjects,
+  SetAuthorization,
   SetSelectedProjects,
   WalletConnectData,
 } from "@/context";
@@ -23,3 +25,6 @@ export const useCustomToast = (args?: UseToastOptions) =>
     duration: 3000,
     ...args,
   });
+
+export const useAuthorization = () => useContext(Authorization);
+export const useDispatchAuthorization = () => useContext(SetAuthorization);
