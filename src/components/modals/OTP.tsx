@@ -4,7 +4,7 @@ import {
   useDispatchAuthorization,
   useWalletModal,
 } from "@/hooks/bases";
-import { ModalForm, STEP_MODAL, WalletModalBodyProps } from "@/types";
+import { ModalForm, OTPProps, STEP_MODAL, WalletModalBodyProps } from "@/types";
 import {
   Button,
   chakra,
@@ -29,17 +29,11 @@ const ChakraForm = chakra("form");
 
 const otpDuration = 10;
 
-export const OTP = ({ setStep }: WalletModalBodyProps) => {
+export const OTP = ({ handleClick, backIconHandler }: OTPProps) => {
   const { getValues } = useFormContext<ModalForm>();
   const email = getValues("email");
-  const password = getValues("password");
-  const { onClose } = useWalletModal();
-  const {
-    register,
-    formState: { errors },
-    control,
-    handleSubmit,
-  } = useForm<{ otp: string[] }>({
+
+  const { register, control, handleSubmit } = useForm<{ otp: string[] }>({
     defaultValues: {
       otp: ["", "", "", "", "", ""],
     },
@@ -69,13 +63,6 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
     return () => clearInterval(countdown);
   }, [minutes, seconds]);
 
-  const toast = useCustomToast();
-
-  const { mutate } = useOTPVerification();
-  const { mutate: mutateLogin } = useEmailLogin();
-
-  const dispatchAuthorization = useDispatchAuthorization();
-
   return (
     <VStack
       as={motion.div}
@@ -88,18 +75,20 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
       margin="0"
       alignItems="center"
     >
-      <Icon
-        cursor="pointer"
-        as={TbArrowNarrowLeft}
-        color="gray.0"
-        fontSize="24px"
-        top="16px"
-        position="absolute"
-        left="16px"
-        onClick={() => {
-          setStep(STEP_MODAL.register);
-        }}
-      />
+      {backIconHandler && (
+        <Icon
+          cursor="pointer"
+          as={TbArrowNarrowLeft}
+          color="gray.0"
+          fontSize="24px"
+          top="16px"
+          position="absolute"
+          left="16px"
+          onClick={() => {
+            backIconHandler();
+          }}
+        />
+      )}
       <VStack width="full" maxWidth="371px">
         <Text color="gray.0" fontSize="xl" fontWeight="600">
           Verify Your Email
@@ -176,42 +165,7 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
           width="full"
           isDisabled={!!otpValues.otp?.some((item) => item === "")}
           variant="primary"
-          onClick={handleSubmit(({ otp }) => {
-            mutate(
-              { code: otp.join(""), email },
-              {
-                onError: (error) => {
-                  return toast({
-                    title: error.response.data.error_message,
-                    description: error.response.data.error_detail,
-                    status: "error",
-                  });
-                },
-                onSuccess: () => {
-                  mutateLogin(
-                    { username: email, password },
-                    {
-                      onSuccess: (loginData) => {
-                        localStorage.setItem(
-                          "access_token",
-                          loginData.data.access_token
-                        );
-                        setStep(STEP_MODAL.wallet);
-                        dispatchAuthorization(true);
-
-                        onClose();
-
-                        return toast({
-                          description: "You are logged in",
-                          status: "success",
-                        });
-                      },
-                    }
-                  );
-                },
-              }
-            );
-          })}
+          onClick={handleSubmit((values) => handleClick(values))}
         >
           Verify
         </Button>
