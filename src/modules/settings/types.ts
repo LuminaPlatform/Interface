@@ -14,6 +14,10 @@ export enum SettingsModalBody {
   changePassword = "changePassword",
   passwordOTP = "passwordOTP",
 }
+export enum InterestModalBody {
+  projects = "projects",
+  people = "people",
+}
 
 export type SettingsModalsForm = {
   email: string;

@@ -219,6 +219,14 @@ export const theme = extendTheme({
             color: "green.400",
           },
         },
+        dark: {
+          container: {
+            bg: "gray.900",
+            color: "gray.80",
+            border: "1px solid",
+            borderColor: "gray.80",
+          },
+        },
       },
     },
   },

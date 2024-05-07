@@ -18,19 +18,9 @@ import { EditEmailModal } from "./modals/EditEmailModal";
 import { SetPasswordModal } from "./modals/SetPasswordModal";
 import { ChangePasswordModal } from "./modals/ChangePasswordModal";
 import { PasswordOTPModal } from "./modals/PasswordOTPModal";
+import { SettingsModalsHeader } from "./SettingsModalHeader";
 
-const SettingsModalsHeader = ({ text }: { text: string }) => (
-  <Text
-    textAlign="center"
-    width="full"
-    mt="0px"
-    color="gray.0"
-    fontWeight="600"
-    fontFamily="lexend"
-  >
-    {text}
-  </Text>
-);
+
 
 type modalsBodyType = {
   [key in SettingsModalBody]: { component: JSX.Element; header: string };
