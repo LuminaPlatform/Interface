@@ -12,8 +12,12 @@ import { useMemo, useState } from "react";
 import { TbBrandX, TbLock, TbMail, TbPencil } from "react-icons/tb";
 import { EmailVerifyModal } from "./modals/EmailVerifyModal";
 import { SettingsModalBody, SettingsModalsForm } from "../types";
-import { EmailOTP } from "./modals/EmailOTP";
+import { EmailOTP } from "./modals/EmailOTPModal";
 import { FormProvider, useForm } from "react-hook-form";
+import { EditEmailModal } from "./modals/EditEmailModal";
+import { SetPasswordModal } from "./modals/SetPasswordModal";
+import { ChangePasswordModal } from "./modals/ChangePasswordModal";
+import { PasswordOTPModal } from "./modals/PasswordOTPModal";
 
 const SettingsModalsHeader = ({ text }: { text: string }) => (
   <Text
@@ -47,6 +51,19 @@ export const AccountSecurity = () => {
   const [modalBody, setModalBody] = useState<SettingsModalBody | undefined>(
     undefined
   );
+
+  const [email, setEmail] = useState({
+    isVerified: true,
+    isSecure: false,
+  });
+  const [twitter, setTwitter] = useState({
+    isConnect: true,
+    isSecure: false,
+  });
+  const [password, setPassword] = useState({
+    isSet: false,
+  });
+
   const modals = useMemo<modalsBodyType>(() => {
     return {
       [SettingsModalBody.emailVerify]: {
@@ -60,43 +77,27 @@ export const AccountSecurity = () => {
         header: "Verify Your Email",
       },
       [SettingsModalBody.changeEmail]: {
-        component: (
-          <EmailVerifyModal onClose={onClose} setModalBody={setModalBody} />
-        ),
-        header: "",
+        component: <EditEmailModal onClose={onClose} />,
+        header: "Edit Your Email",
       },
       [SettingsModalBody.changePassword]: {
         component: (
-          <EmailVerifyModal onClose={onClose} setModalBody={setModalBody} />
+          <ChangePasswordModal onClose={onClose} setModalBody={setModalBody} />
         ),
-        header: "",
+        header: "Change Your Password",
       },
       [SettingsModalBody.setPassword]: {
-        component: (
-          <EmailVerifyModal onClose={onClose} setModalBody={setModalBody} />
-        ),
-        header: "",
+        component: <SetPasswordModal setPassword={setPassword} onClose={onClose} />,
+        header: "Set a Password",
       },
       [SettingsModalBody.passwordOTP]: {
         component: (
-          <EmailVerifyModal onClose={onClose} setModalBody={setModalBody} />
+          <PasswordOTPModal onClose={onClose} setModalBody={setModalBody} />
         ),
-        header: "",
+        header: "Reset Password",
       },
     };
   }, []);
-
-  const [email, setEmail] = useState({
-    isVerified: false,
-    isSecure: false,
-  });
-  const [twitter, setTwitter] = useState({
-    isConnect: true,
-    isSecure: false,
-  });
-  const [password, setPassword] = useState({
-    isSet: false,
-  });
 
   const handleOpenModal = (modalType: SettingsModalBody) => {
     setModalBody(modalType);
@@ -177,7 +178,13 @@ export const AccountSecurity = () => {
               showConnect: true,
               isConnect: false,
               buttonText: password.isSet ? "Change" : "Set Pass",
-              handleClick: () => {},
+              handleClick: () => {
+                if (!password.isSet) {
+                  handleOpenModal(SettingsModalBody.setPassword);
+                } else {
+                  handleOpenModal(SettingsModalBody.changePassword);
+                }
+              },
               ...(password.isSet && {
                 buttonIcon: <TbPencil fontSize="14px" />,
               }),

@@ -18,7 +18,7 @@ export const EmailOTP = ({ onClose, setModalBody }: EmailOTPProps) => {
   const toast = useCustomToast();
 
   return (
-    <VStack rowGap="16px" as={VStack} width="full">
+    <VStack rowGap="16px" width="full">
       <OTP
         handleClick={({ otp }) => {
           mutate(

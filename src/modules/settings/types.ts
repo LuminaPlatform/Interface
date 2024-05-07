@@ -17,4 +17,7 @@ export enum SettingsModalBody {
 
 export type SettingsModalsForm = {
   email: string;
+  password: string;
+  rePassword: string;
+  currentPassword: string;
 };
