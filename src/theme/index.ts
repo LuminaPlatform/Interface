@@ -176,6 +176,59 @@ export const theme = extendTheme({
         },
       },
     },
+    Tag: {
+      baseStyle: {
+        container: {
+          fontWeight: 700,
+        },
+      },
+      sizes: {
+        md: {
+          container: {
+            height: "32px",
+            borderRadius: "17px",
+            px: "8px",
+            fontSize: "md",
+          },
+        },
+        sm: {
+          container: {
+            height: "24px",
+            borderRadius: "12px",
+            px: "8px",
+            fontSize: "xs",
+          },
+        },
+      },
+      variants: {
+        lightOrange: {
+          container: {
+            bg: "gray.40",
+            color: "primary.400",
+          },
+        },
+        darkOrange: {
+          container: {
+            bg: "gray.600",
+            color: "primary.300",
+          },
+        },
+        green: {
+          container: {
+            bg: "green.75",
+            color: "green.400",
+          },
+        },
+        dark: {
+          container: {
+            bg: "gray.900",
+            color: "gray.80",
+            border: "1px solid",
+            borderColor: "gray.80",
+          },
+        },
+      },
+    },
   },
 
   styles: {

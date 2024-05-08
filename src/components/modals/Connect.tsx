@@ -14,15 +14,85 @@ import { IconType } from "react-icons";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { ModalForm, STEP_MODAL, WalletModalBodyProps } from "@/types";
+import {
+  ModalForm,
+  OTPFormType,
+  OTPProps,
+  STEP_MODAL,
+  WalletModalBodyProps,
+} from "@/types";
 import { Login } from "./Login";
 import { MethodSeparator } from "../MethodSeparator";
 import { Register } from "./Register";
 import { AnimatePresence, motion } from "framer-motion";
 import { Connectors } from "./Connectors";
 import { OTP } from "./OTP";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import {
+  useCustomToast,
+  useDispatchAuthorization,
+  useWalletModal,
+} from "@/hooks/bases";
+import { useEmailLogin, useOTPVerification } from "@/hooks/auth";
 
+interface OTPContainerProps extends WalletModalBodyProps {}
+const OTPContainer = ({ setStep }: OTPContainerProps) => {
+  const { getValues } = useFormContext<ModalForm>();
+  const toast = useCustomToast();
+
+  const { mutate } = useOTPVerification();
+  const { mutate: mutateLogin } = useEmailLogin();
+
+  const email = getValues("email");
+  const password = getValues("password");
+
+  const { onClose } = useWalletModal();
+
+  console.log({email});
+  
+  const dispatchAuthorization = useDispatchAuthorization();
+  return (
+    <OTP
+      handleClick={({ otp }: OTPFormType) => {
+        mutate(
+          { code: otp.join(""), email },
+          {
+            onError: (error) => {
+              return toast({
+                title: error.response.data.error_message,
+                description: error.response.data.error_detail,
+                status: "error",
+              });
+            },
+            onSuccess: () => {
+              mutateLogin(
+                { username: email, password },
+                {
+                  onSuccess: (loginData) => {
+                    localStorage.setItem(
+                      "access_token",
+                      loginData.data.access_token
+                    );
+                    setStep(STEP_MODAL.wallet);
+                    dispatchAuthorization(true);
+
+                    onClose();
+
+                    return toast({
+                      description: "You are logged in",
+                      status: "success",
+                    });
+                  },
+                }
+              );
+            },
+          }
+        );
+      }}
+      backIconHandler={() => setStep(STEP_MODAL.register)}
+    />
+  );
+};
 interface IconButtonProps {
   onClick: () => void;
   icon?: IconType | string;
@@ -124,7 +194,7 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
       [STEP_MODAL.login]: <Login setStep={setStep} />,
       [STEP_MODAL.register]: <Register setStep={setStep} />,
       [STEP_MODAL.connectors]: <Connectors setStep={setStep} />,
-      [STEP_MODAL.otp]: <OTP setStep={setStep} />,
+      [STEP_MODAL.otp]: <OTPContainer setStep={setStep} />,
     }),
     []
   );

@@ -12,6 +12,14 @@ export enum STEP_MODAL {
 export interface WalletModalBodyProps {
   setStep: Dispatch<SetStateAction<STEP_MODAL>>;
 }
+export interface OTPProps {
+  handleClick: ({ ...args }?: any) => void;
+  backIconHandler?: () => void;
+}
+
+export type OTPFormType = {
+  otp: string[];
+};
 
 export interface ModalForm {
   email: string;
