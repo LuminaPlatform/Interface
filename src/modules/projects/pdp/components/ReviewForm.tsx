@@ -19,6 +19,7 @@ import {
 import { ReviewForm as ReviewFormType } from "../types";
 import { TbInfoCircleFilled, TbPhotoPlus } from "react-icons/tb";
 import { IoMdCloseCircle } from "react-icons/io";
+import { fileLimitation } from "@/config/fileLimitation";
 
 const labelProps: FormLabelProps = {
   color: "gray.60",
@@ -179,14 +180,7 @@ export const ReviewForm = ({ onClose }: ReviewFormProps) => {
               type="file"
               visibility="hidden"
               {...register("medias", {
-                validate: {
-                  lessThan10MB: (files) =>
-                    files[0]?.size <= 3000000 || "Max 3MB",
-                  acceptedFormats: (files) =>
-                    ["image/jpeg", "image/png", "image/gif"].includes(
-                      files[0]?.type
-                    ) || "Only PNG, JPEG e GIF",
-                },
+                validate: fileLimitation,
               })}
               onChange={(e) => {
                 if (
