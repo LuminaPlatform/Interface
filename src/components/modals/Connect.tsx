@@ -199,19 +199,17 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
   );
   return (
     <ModalBase
-      isOpen={true}
+      isOpen={isOpen}
       onClose={onClose}
       modalBody={
         <AnimatePresence>
-          <FormProvider {...methods}>
-            {modalBody[STEP_MODAL.setupWizard]}
-          </FormProvider>
+          <FormProvider {...methods}>{modalBody[step]}</FormProvider>
         </AnimatePresence>
       }
-      {...(true && {
+      {...(STEP_MODAL.setupWizard === step && {
         closeOnEsc: false,
         showCloseButton: false,
-        size: { base: "lg",md:'2xl', lg: "3xl" },
+        size: { base: "lg", md: "2xl", lg: "3xl" },
       })}
     />
   );
