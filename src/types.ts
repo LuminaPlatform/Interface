@@ -46,3 +46,9 @@ export type SetupWizardForm = {
   profile: FileList[0];
   interests: Array<number>;
 };
+
+export enum Badges {
+  "BASE" = "BASE",
+  "USER" = "USER",
+  "HOLDER" = "HOLDER",
+}
