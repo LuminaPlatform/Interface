@@ -17,6 +17,7 @@ import { TbCameraPlus, TbEdit, TbPencil } from "react-icons/tb";
 import { settingsFormType } from "../types";
 import { ModalBase } from "@/components/ModalBase";
 import { UserInfoModal, UserInfoModalHeader } from "./UserInfoModal";
+import { fileLimitation } from "@/config/fileLimitation";
 
 type UserInfoEditableProps = {
   isEditable: boolean;
@@ -40,7 +41,6 @@ export const UserInfoEditable = ({
   const { profile } = useWatch<settingsFormType>({ control });
 
   const { isOpen, onClose, onOpen } = useDisclosure();
-
 
   return (
     <>
@@ -100,14 +100,7 @@ export const UserInfoEditable = ({
                     type="file"
                     visibility="hidden"
                     {...register("profile", {
-                      validate: {
-                        lessThan10MB: (files) =>
-                          files[0]?.size <= 3000000 || "Max 3MB",
-                        acceptedFormats: (files) =>
-                          ["image/jpeg", "image/png", "image/gif"].includes(
-                            files[0]?.type
-                          ) || "Only PNG, JPEG e GIF",
-                      },
+                      validate: fileLimitation,
                     })}
                     onChange={(e) => {
                       setValue("profile", e.target.files[0]);

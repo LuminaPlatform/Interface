@@ -229,6 +229,26 @@ export const theme = extendTheme({
         },
       },
     },
+    FormLabel: {
+      sizes: {
+        sm: {
+          fontSize: "xs",
+          fontWeight: 500,
+        },
+      },
+      variants: {
+        primary: {
+          color: "gray.40",
+        },
+      },
+    },
+    Modal: {
+      sizes: {
+        "3xl": {
+          body: { width: "782px" },
+        },
+      },
+    },
   },
 
   styles: {

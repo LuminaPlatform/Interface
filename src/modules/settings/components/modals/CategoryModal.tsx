@@ -48,8 +48,6 @@ export const CategoryModal = ({
             cursor="pointer"
             onClick={() => {
               const index = selectors.findIndex((tag) => tag.id === item.id);
-              console.log({ index });
-
               if (index !== -1) {
                 setSelector((prev) => prev.filter((tag) => tag.id !== item.id));
               } else {
@@ -57,11 +55,7 @@ export const CategoryModal = ({
               }
             }}
             size="md"
-            variant={
-              selectors.find((tag) => tag.id === item.id)
-                ? "lightOrange"
-                : "dark"
-            }
+            variant={selectors.includes(item.id) ? "lightOrange" : "dark"}
             key={item.id}
           >
             <TagLabel>{item.title}</TagLabel>

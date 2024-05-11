@@ -7,6 +7,7 @@ export enum STEP_MODAL {
   "otp" = "otp",
   "register" = "register",
   "connectors" = "connectors",
+  "setupWizard" = "setupWizard",
 }
 
 export interface WalletModalBodyProps {
@@ -38,3 +39,16 @@ export type ApiErrorType = {
   error_message: string;
   error_detail: string;
 };
+
+export type SetupWizardForm = {
+  username: string;
+  nickname: string;
+  profile: FileList[0];
+  interests: Array<number>;
+};
+
+export enum Badges {
+  "BASE" = "BASE",
+  "USER" = "USER",
+  "HOLDER" = "HOLDER",
+}

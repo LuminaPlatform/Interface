@@ -13,6 +13,7 @@ import {
   MenuButton,
   MenuList,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -27,6 +28,8 @@ import {
 } from "react-icons/tb";
 import { useAccount } from "wagmi";
 import Link from "next/link";
+import { BadgeModal } from "./modals/badges/Badge";
+import { Badges } from "@/types";
 
 const ProfileBox = () => {
   return (
@@ -124,6 +127,13 @@ const ProfileBox = () => {
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
+
+  const {
+    isOpen: badgeIsOpen,
+    onClose: badgeOnClose,
+    onOpen: badgeOnOpen,
+  } = useDisclosure();
+
   const { isOpen, onClose, onOpen } = useWalletModal();
   const { isConnected } = useAccount();
 
@@ -239,6 +249,11 @@ const Navbar = () => {
         </HStack>
       </HStack>
       <ConnectModal isOpen={isOpen} onClose={onClose} />
+      <BadgeModal
+        badgeType={Badges["HOLDER"]}
+        isOpen={badgeIsOpen}
+        onClose={badgeOnClose}
+      />
     </>
   );
 };

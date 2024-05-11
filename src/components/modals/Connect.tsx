@@ -34,6 +34,7 @@ import {
   useWalletModal,
 } from "@/hooks/bases";
 import { useEmailLogin, useOTPVerification } from "@/hooks/auth";
+import { SetupWizard } from "./SetupWizard";
 
 interface OTPContainerProps extends WalletModalBodyProps {}
 const OTPContainer = ({ setStep }: OTPContainerProps) => {
@@ -48,8 +49,8 @@ const OTPContainer = ({ setStep }: OTPContainerProps) => {
 
   const { onClose } = useWalletModal();
 
-  console.log({email});
-  
+  console.log({ email });
+
   const dispatchAuthorization = useDispatchAuthorization();
   return (
     <OTP
@@ -73,11 +74,8 @@ const OTPContainer = ({ setStep }: OTPContainerProps) => {
                       "access_token",
                       loginData.data.access_token
                     );
-                    setStep(STEP_MODAL.wallet);
+                    setStep(STEP_MODAL.setupWizard);
                     dispatchAuthorization(true);
-
-                    onClose();
-
                     return toast({
                       description: "You are logged in",
                       status: "success",
@@ -195,6 +193,7 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
       [STEP_MODAL.register]: <Register setStep={setStep} />,
       [STEP_MODAL.connectors]: <Connectors setStep={setStep} />,
       [STEP_MODAL.otp]: <OTPContainer setStep={setStep} />,
+      [STEP_MODAL.setupWizard]: <SetupWizard setStep={setStep} />,
     }),
     []
   );
@@ -207,6 +206,11 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
           <FormProvider {...methods}>{modalBody[step]}</FormProvider>
         </AnimatePresence>
       }
+      {...(STEP_MODAL.setupWizard === step && {
+        closeOnEsc: false,
+        showCloseButton: false,
+        size: { base: "lg", md: "2xl", lg: "3xl" },
+      })}
     />
   );
 };
