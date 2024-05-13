@@ -30,98 +30,102 @@ import { useAccount } from "wagmi";
 import Link from "next/link";
 import { BadgeModal } from "./modals/badges/Badge";
 import { Badges } from "@/types";
+import { Logout } from "./modals/Logout";
 
 const ProfileBox = () => {
+  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
-    <Menu>
-      <MenuButton as={Box} display="flex">
-        <HStack width="full">
-          <Img
-            rounded="full"
-            width="32px"
-            height="32px"
-            border="1px solid"
-            borderColor="gray.0"
-            src="/assets/images/default-img.png"
-            alt="user"
-          />
-          <Text color="gray.10" fontSize="md" fontWeight="200">
-            Anonyms
-          </Text>
-        </HStack>
-      </MenuButton>
-      <MenuList
-        border="none"
-        width="290px"
-        px="16px"
-        py="24px"
-        bg="gray.900"
-        zIndex={2}
-        cursor="default"
-      >
-        <HStack columnGap="8px" mb="16px" rowGap="8px">
-          <Img
-            rounded="full"
-            width="64px"
-            height="64px"
-            src="/assets/images/default-img.png"
-            alt="profile"
-          />
-          <Text
-            fontFamily="lexend"
-            color="gray.0"
-            fontSize="xl"
-            fontWeight="600"
-          >
-            Anonyms
-          </Text>
-        </HStack>
-        <VStack rowGap="24px">
-          <Button
-            fontSize="md"
-            fontWeight="700"
-            height="48px"
-            variant="primaryDark"
-            width="full"
-            as={Link}
-            href="/profile/username"
-          >
-            <HStack width="full" justifyContent="flex-start" columnGap="8px">
-              <TbUserCircle fontSize="20px" />
-              <Text>My Profile</Text>
-            </HStack>
-          </Button>
-          <Button
-            fontSize="md"
-            fontWeight="700"
-            height="48px"
-            variant="primaryDark"
-            width="full"
-            as={Link}
-            href="/settings"
-          >
-            <HStack width="full" justifyContent="flex-start" columnGap="8px">
-              <TbSettings2 fontSize="20px" />
-              <Text>Account Setting</Text>
-            </HStack>
-          </Button>
-          <Button
-            fontSize="md"
-            fontWeight="700"
-            height="48px"
-            variant="primaryDark"
-            width="full"
-            as={Link}
-            href="/settings"
-          >
-            <HStack width="full" justifyContent="flex-start" columnGap="8px">
-              <TbLogout fontSize="20px" />
-              <Text>Log Out</Text>
-            </HStack>
-          </Button>
-        </VStack>
-      </MenuList>
-    </Menu>
+    <>
+      <Menu>
+        <MenuButton as={Box} display="flex">
+          <HStack width="full">
+            <Img
+              rounded="full"
+              width="32px"
+              height="32px"
+              border="1px solid"
+              borderColor="gray.0"
+              src="/assets/images/default-img.png"
+              alt="user"
+            />
+            <Text color="gray.10" fontSize="md" fontWeight="200">
+              Anonyms
+            </Text>
+          </HStack>
+        </MenuButton>
+        <MenuList
+          border="none"
+          width="290px"
+          px="16px"
+          py="24px"
+          bg="gray.900"
+          zIndex={2}
+          cursor="default"
+        >
+          <HStack columnGap="8px" mb="16px" rowGap="8px">
+            <Img
+              rounded="full"
+              width="64px"
+              height="64px"
+              src="/assets/images/default-img.png"
+              alt="profile"
+            />
+            <Text
+              fontFamily="lexend"
+              color="gray.0"
+              fontSize="xl"
+              fontWeight="600"
+            >
+              Anonyms
+            </Text>
+          </HStack>
+          <VStack rowGap="16px">
+            <Button
+              fontSize="md"
+              fontWeight="700"
+              height="48px"
+              variant="primaryDark"
+              width="full"
+              as={Link}
+              href="/profile/username"
+            >
+              <HStack width="full" justifyContent="flex-start" columnGap="8px">
+                <TbUserCircle fontSize="20px" />
+                <Text>My Profile</Text>
+              </HStack>
+            </Button>
+            <Button
+              fontSize="md"
+              fontWeight="700"
+              height="48px"
+              variant="primaryDark"
+              width="full"
+              as={Link}
+              href="/settings"
+            >
+              <HStack width="full" justifyContent="flex-start" columnGap="8px">
+                <TbSettings2 fontSize="20px" />
+                <Text>Account Setting</Text>
+              </HStack>
+            </Button>
+            <Button
+              fontSize="md"
+              fontWeight="700"
+              height="48px"
+              variant="primaryDark"
+              width="full"
+              onClick={onOpen}
+            >
+              <HStack width="full" justifyContent="flex-start" columnGap="8px">
+                <TbLogout fontSize="20px" />
+                <Text>Log Out</Text>
+              </HStack>
+            </Button>
+          </VStack>
+        </MenuList>
+      </Menu>
+      <Logout isOpen={isOpen} onClose={onClose} />
+    </>
   );
 };
 
