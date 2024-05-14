@@ -19,6 +19,7 @@
     "@walletconnect/modal": "^2.6.2",
     "axios": "^1.6.8",
     "chart.js": "^4.4.2",
+    "cookies-next": "^4.1.1",
     "framer-motion": "^11.0.24",
     "lodash": "^4.17.21",
     "next": "14.1.4",
