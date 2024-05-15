@@ -8,11 +8,10 @@ export enum STEP_MODAL {
   "register" = "register",
   "connectors" = "connectors",
   "setupWizard" = "setupWizard",
+  "sign" = "sign",
 }
 
-export interface WalletModalBodyProps {
-  setStep: Dispatch<SetStateAction<STEP_MODAL>>;
-}
+export interface WalletModalBodyProps {}
 export interface OTPProps {
   handleClick: ({ ...args }?: any) => void;
   backIconHandler?: () => void;
