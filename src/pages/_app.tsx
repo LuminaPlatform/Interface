@@ -16,10 +16,19 @@ import Head from "next/head";
 import { WagmiProvider } from "wagmi";
 import { QueryParamProvider } from "use-query-params";
 import NextAdapterApp from "next-query-params/app";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
 
 const queryClient = new QueryClient();
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps,
+  isAuthenticated,
+}: AppProps & {
+  isAuthenticated: boolean;
+}) {
   return (
     <>
       {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID ? (
@@ -35,7 +44,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <ChakraProvider theme={theme}>
               <IsSidebarOpenProvider>
                 <WalletConnectProvider>
-                  <AuthorizationProvider>
+                  <AuthorizationProvider isAuthenticated={isAuthenticated}>
                     <SelectedProjectProvider>
                       <Layout>
                         <Component {...pageProps} />
@@ -51,3 +60,19 @@ export default function App({ Component, pageProps }: AppProps) {
     </>
   );
 }
+App.getInitialProps = async ({ ctx }) => {
+  const cookies = ctx.req.cookies;
+  const accessToken = cookies[ACCESS_TOKEN_COOKIE_KEY];
+  if (!accessToken) {
+    return { isAuthenticated: false };
+  }
+  const response = await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (response.status === 200) {
+    return { isAuthenticated: true };
+  }
+  return { isAuthenticated: false };
+};
