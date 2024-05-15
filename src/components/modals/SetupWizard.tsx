@@ -190,7 +190,7 @@ const steps = [
 
 interface SetupWizardProps extends WalletModalBodyProps {}
 
-export const SetupWizard = ({ setStep }: SetupWizardProps) => {
+export const SetupWizard = ({}: SetupWizardProps) => {
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,

@@ -9,6 +9,9 @@ import {
 } from "react";
 import { Project } from "./modules/projects/types";
 import { useAccount } from "wagmi";
+import { ACCESS_TOKEN_COOKIE_KEY } from "./constant";
+import { getCookie } from "cookies-next";
+import { STEP_MODAL } from "./types";
 
 export const IsSidebarOpen = createContext(true);
 export const DispatchIsSidebarOpen = createContext<
@@ -62,20 +65,20 @@ export const SelectedProjectProvider = ({ children }: PropsWithChildren) => {
 export const Authorization = createContext(undefined);
 export const SetAuthorization = createContext(undefined);
 
-interface AuthorizationProviderProps extends PropsWithChildren {}
+interface AuthorizationProviderProps extends PropsWithChildren {
+  isAuthenticated: boolean;
+}
 export const AuthorizationProvider = ({
   children,
+  isAuthenticated,
 }: AuthorizationProviderProps) => {
   const { isConnected } = useAccount();
   const [isAuthenticate, setAuthenticate] = useState(
-    () =>
-      (typeof window !== "undefined" &&
-        localStorage?.getItem("access_token")) ||
-      isConnected
+    () => isAuthenticated || isConnected
   );
 
   useEffect(() => {
-    if (isConnected || localStorage?.getItem("access_token")) {
+    if (isConnected || !!getCookie(ACCESS_TOKEN_COOKIE_KEY)) {
       setAuthenticate(true);
     } else {
       setAuthenticate(false);
@@ -87,5 +90,20 @@ export const AuthorizationProvider = ({
         {children}
       </SetAuthorization.Provider>
     </Authorization.Provider>
+  );
+};
+
+export const ModalSteps = createContext<STEP_MODAL>(STEP_MODAL.wallet);
+export const SetModalSteps =
+  createContext<Dispatch<SetStateAction<STEP_MODAL>>>(undefined);
+interface ModalStepsProviderProps extends PropsWithChildren {}
+export const ModalStepsProvider = ({ children }: ModalStepsProviderProps) => {
+  const [state, setState] = useState(STEP_MODAL.wallet);
+  return (
+    <ModalSteps.Provider value={state}>
+      <SetModalSteps.Provider value={setState}>
+        {children}
+      </SetModalSteps.Provider>
+    </ModalSteps.Provider>
   );
 };

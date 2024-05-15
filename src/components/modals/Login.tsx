@@ -29,11 +29,14 @@ import { useEmailLogin } from "@/hooks/auth";
 import {
   useCustomToast,
   useDispatchAuthorization,
+  useDispatchModalSteps,
   useWalletModal,
 } from "@/hooks/bases";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { setCookie } from "cookies-next";
 
 const ChakraForm = chakra("form");
-export const Login = ({ setStep }: WalletModalBodyProps) => {
+export const Login = ({}: WalletModalBodyProps) => {
   const { mutate } = useEmailLogin();
 
   const {
@@ -47,6 +50,7 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
 
   const { onClose } = useWalletModal();
   const dispatchAuthorization = useDispatchAuthorization();
+  const dispatchSteps = useDispatchModalSteps();
 
   return (
     <ChakraForm
@@ -70,7 +74,7 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
         position="absolute"
         left="16px"
         onClick={() => {
-          setStep(STEP_MODAL.wallet);
+          dispatchSteps(STEP_MODAL.wallet);
         }}
       />
       <Text textAlign="center" color="gray.0" fontSize="xl" fontWeight="600">
@@ -159,8 +163,8 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
             { username: email, password },
             {
               onSuccess: ({ data: { access_token } }) => {
-                localStorage.setItem("access_token", access_token);
-                setStep(STEP_MODAL.wallet);
+                setCookie(ACCESS_TOKEN_COOKIE_KEY, access_token);
+                dispatchSteps(STEP_MODAL.wallet);
                 onClose();
                 dispatchAuthorization(true);
                 return toast({
@@ -185,7 +189,10 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
         <Text lineHeight="40px" color="gray.0" fontSize="md">
           New to lumina?
         </Text>
-        <Button onClick={() => setStep(STEP_MODAL.register)} variant="ghost">
+        <Button
+          onClick={() => dispatchSteps(STEP_MODAL.register)}
+          variant="ghost"
+        >
           Register Now
         </Button>
       </HStack>
