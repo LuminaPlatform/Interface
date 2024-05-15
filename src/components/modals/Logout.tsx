@@ -7,13 +7,15 @@ import {
 } from "@chakra-ui/react";
 import { ModalBase } from "../ModalBase";
 import { ModalHeader } from "../ModalHeader";
-import { useLogout } from "@/hooks/bases";
+import { useDispatchModalSteps, useLogout } from "@/hooks/bases";
+import { STEP_MODAL } from "@/types";
 
 interface LogoutBodyProps {
   onClose: UseDisclosureProps["onClose"];
 }
 const LogoutBody = ({ onClose }: LogoutBodyProps) => {
   const handleClose = useLogout();
+  const dispatchSteps = useDispatchModalSteps();
 
   return (
     <VStack width="full">
@@ -28,6 +30,7 @@ const LogoutBody = ({ onClose }: LogoutBodyProps) => {
           onClick={() => {
             handleClose();
             onClose();
+            dispatchSteps(STEP_MODAL.wallet);
           }}
           flex={1}
           variant="primary"
