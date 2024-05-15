@@ -139,15 +139,8 @@ const Navbar = () => {
   } = useDisclosure();
 
   const { isOpen, onClose, onOpen } = useWalletModal();
-  const { isConnected } = useAccount();
 
   const authorization = useAuthorization();
-
-  useEffect(() => {
-    if (isConnected && onClose) {
-      onClose();
-    }
-  }, [isConnected, onClose]);
 
   return (
     <>
