@@ -34,6 +34,13 @@ export const SignWallet = ({}: SignWalletProps) => {
       }
     })();
   }, [signMessageData, variables?.message]);
+
+  useEffect(() => {
+    if (!!signMessageData) {
+      onClose();
+      dispatchSteps(STEP_MODAL.wallet);
+    }
+  }, [signMessageData]);
   return (
     <VStack
       as={motion.div}
@@ -72,10 +79,6 @@ export const SignWallet = ({}: SignWalletProps) => {
               message: "there is a message to sign",
               account: address,
             });
-            if (!!signMessageData) {
-              onClose();
-              dispatchSteps(STEP_MODAL.wallet);
-            }
           }}
           flex={1}
           variant="primary"
