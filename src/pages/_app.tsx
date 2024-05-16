@@ -61,18 +61,21 @@ export default function App({
   );
 }
 App.getInitialProps = async ({ ctx }) => {
-  const cookies = ctx.req.cookies;
-  const accessToken = cookies[ACCESS_TOKEN_COOKIE_KEY];
-  if (!accessToken) {
+  const cookies = ctx.req?.cookies;
+  if (!!cookies) {
+    const accessToken = cookies[ACCESS_TOKEN_COOKIE_KEY];
+    if (!accessToken) {
+      return { isAuthenticated: false };
+    }
+    const response = await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (response.status === 200) {
+      return { isAuthenticated: true };
+    }
     return { isAuthenticated: false };
-  }
-  const response = await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  if (response.status === 200) {
-    return { isAuthenticated: true };
   }
   return { isAuthenticated: false };
 };
