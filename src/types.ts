@@ -9,6 +9,7 @@ export enum STEP_MODAL {
   "connectors" = "connectors",
   "setupWizard" = "setupWizard",
   "sign" = "sign",
+  "verified" = "verified",
 }
 
 export interface WalletModalBodyProps {}

@@ -41,6 +41,7 @@ import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { setCookie } from "cookies-next";
 import { SignWallet } from "./SignWallet";
 import { useAccount, useSignMessage } from "wagmi";
+import { VerifiedAccount } from "@/modules/settings/components/modals/VerifiedAccount";
 
 interface OTPContainerProps extends WalletModalBodyProps {}
 const OTPContainer = ({}: OTPContainerProps) => {
@@ -74,6 +75,7 @@ const OTPContainer = ({}: OTPContainerProps) => {
               });
             },
             onSuccess: () => {
+              dispatchSteps(STEP_MODAL.verified);
               mutateLogin(
                 { username: email, password },
                 {
@@ -82,7 +84,6 @@ const OTPContainer = ({}: OTPContainerProps) => {
                       ACCESS_TOKEN_COOKIE_KEY,
                       loginData.data.access_token
                     );
-                    dispatchSteps(STEP_MODAL.setupWizard);
                     dispatchAuthorization(true);
                     return toast({
                       description: "You are logged in",
@@ -219,6 +220,7 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
       [STEP_MODAL.otp]: <OTPContainer />,
       [STEP_MODAL.setupWizard]: <SetupWizard />,
       [STEP_MODAL.sign]: <SignWallet />,
+      [STEP_MODAL.verified]: <VerifiedAccount />,
     }),
     []
   );
@@ -231,7 +233,9 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
           <FormProvider {...methods}>{modalBody[step]}</FormProvider>
         </AnimatePresence>
       }
-      {...((STEP_MODAL.setupWizard === step || STEP_MODAL.sign === step) && {
+      {...((STEP_MODAL.setupWizard === step ||
+        STEP_MODAL.sign === step ||
+        STEP_MODAL.verified === step) && {
         closeOnEsc: false,
         showCloseButton: false,
 
