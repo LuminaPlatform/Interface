@@ -75,7 +75,6 @@ const OTPContainer = ({}: OTPContainerProps) => {
               });
             },
             onSuccess: () => {
-              dispatchSteps(STEP_MODAL.verified);
               mutateLogin(
                 { username: email, password },
                 {
@@ -85,6 +84,7 @@ const OTPContainer = ({}: OTPContainerProps) => {
                       loginData.data.access_token
                     );
                     dispatchAuthorization(true);
+                    dispatchSteps(STEP_MODAL.verified);
                     return toast({
                       description: "You are logged in",
                       status: "success",
