@@ -1,4 +1,5 @@
-import { AvatarText } from "@/components/AvatarText";
+import { Avatar, AvatarText } from "@/components/AvatarText";
+import { ModalBase } from "@/components/ModalBase";
 import {
   Button,
   Divider,
@@ -6,48 +7,108 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Text,
+  useDisclosure,
+  UseDisclosureProps,
   VStack,
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { TbSearch, TbUserCheck, TbUserPlus } from "react-icons/tb";
 
-const UserFollowBox = ({ item }) => {
-  const [isFollowed, setFollowed] = useState(false);
+interface UnFollowModalProps {
+  setFollowed: Dispatch<SetStateAction<boolean>>;
+  onClose: UseDisclosureProps["onClose"];
+}
+const UnFollowModal = ({ setFollowed, onClose }: UnFollowModalProps) => {
   return (
-    <HStack px="24px" py="12px" width="full" justifyContent="space-between">
-      <AvatarText
-        badgeSize="18px"
+    <VStack rowGap={4}>
+      <Avatar
+        badgeSize={{}}
+        imageStyle={{
+          width: 20,
+        }}
+        hasBadge={false}
         src="/assets/images/default-img.png"
-        textStyle={{ fontSize: "md", fontWeight: "500", color: "gray.0" }}
-        name={item}
-        hasBadge
-        imageStyle={{ width: "64px", height: "64px" }}
       />
-      {isFollowed ? (
+      <Text color="gray.40" fontWeight="500" fontSize="lg">
+        Nickname
+      </Text>
+      <Text
+        color="gray.0"
+        lineHeight="base"
+        fontSize="lg"
+        textAlign="center"
+        maxW="362px"
+      >
+        Unfollowing this user will revoke their voting and review privileges
+        that you granted. Are you sure you want to unfollow?{" "}
+      </Text>
+      <HStack mt={4} width="full" columnGap={4}>
+        <Button onClick={onClose} flex={1} variant="outline">
+          Cancel
+        </Button>
         <Button
-          size="sm"
-          leftIcon={<TbUserCheck />}
-          background="gray.40"
-          color="gray.500"
           onClick={() => {
             setFollowed(false);
+            onClose();
           }}
-        >
-          Following
-        </Button>
-      ) : (
-        <Button
-          size="sm"
-          onClick={() => {
-            setFollowed(true);
-          }}
-          leftIcon={<TbUserPlus />}
+          flex={1}
           variant="primary"
         >
-          Follow
+          Unfollow
         </Button>
-      )}
-    </HStack>
+      </HStack>
+    </VStack>
+  );
+};
+const UserFollowBox = ({ item }) => {
+  const [isFollowed, setFollowed] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  return (
+    <>
+      <HStack px="24px" py="12px" width="full" justifyContent="space-between">
+        <AvatarText
+          badgeSize="18px"
+          src="/assets/images/default-img.png"
+          textStyle={{ fontSize: "md", fontWeight: "500", color: "gray.0" }}
+          name={item}
+          hasBadge
+          imageStyle={{ width: "64px", height: "64px" }}
+        />
+        {isFollowed ? (
+          <Button
+            size="sm"
+            leftIcon={<TbUserCheck />}
+            background="gray.40"
+            color="gray.500"
+            onClick={() => {
+              onOpen();
+            }}
+          >
+            Following
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            onClick={() => {
+              setFollowed(true);
+            }}
+            leftIcon={<TbUserPlus />}
+            variant="primary"
+          >
+            Follow
+          </Button>
+        )}
+      </HStack>
+      <ModalBase
+        isOpen={isOpen}
+        modalBody={
+          <UnFollowModal onClose={onClose} setFollowed={setFollowed} />
+        }
+        onClose={onClose}
+        showCloseButton={false}
+      />
+    </>
   );
 };
 
@@ -60,8 +121,12 @@ export const UsersModal = () => {
   );
   return (
     <>
-      <InputGroup position="relative" mb="16px" width="full" >
-        <InputLeftElement position='absolute' top="50%" transform='translateY(-50%)' >
+      <InputGroup position="relative" mb="16px" width="full">
+        <InputLeftElement
+          position="absolute"
+          top="50%"
+          transform="translateY(-50%)"
+        >
           <TbSearch size={24} color="var(--chakra-colors-gray-100)" />
         </InputLeftElement>
         <Input
