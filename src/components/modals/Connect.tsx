@@ -13,7 +13,7 @@ import { LuWallet } from "react-icons/lu";
 import { IconType } from "react-icons";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import {
   ModalForm,
   OTPFormType,
@@ -31,13 +31,22 @@ import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import {
   useCustomToast,
   useDispatchAuthorization,
+  useDispatchModalSteps,
+  useModalSteps,
   useWalletModal,
 } from "@/hooks/bases";
 import { useEmailLogin, useOTPVerification } from "@/hooks/auth";
 import { SetupWizard } from "./SetupWizard";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { setCookie } from "cookies-next";
+import { SignWallet } from "./SignWallet";
+import { useAccount, useSignMessage } from "wagmi";
+import { VerifiedAccount } from "@/modules/settings/components/modals/VerifiedAccount";
 
 interface OTPContainerProps extends WalletModalBodyProps {}
-const OTPContainer = ({ setStep }: OTPContainerProps) => {
+const OTPContainer = ({}: OTPContainerProps) => {
+  const dispatchSteps = useDispatchModalSteps();
+
   const { getValues } = useFormContext<ModalForm>();
   const toast = useCustomToast();
 
@@ -66,15 +75,15 @@ const OTPContainer = ({ setStep }: OTPContainerProps) => {
               });
             },
             onSuccess: () => {
+              dispatchSteps(STEP_MODAL.verified);
               mutateLogin(
                 { username: email, password },
                 {
                   onSuccess: (loginData) => {
-                    localStorage.setItem(
-                      "access_token",
+                    setCookie(
+                      ACCESS_TOKEN_COOKIE_KEY,
                       loginData.data.access_token
                     );
-                    setStep(STEP_MODAL.setupWizard);
                     dispatchAuthorization(true);
                     return toast({
                       description: "You are logged in",
@@ -87,7 +96,7 @@ const OTPContainer = ({ setStep }: OTPContainerProps) => {
           }
         );
       }}
-      backIconHandler={() => setStep(STEP_MODAL.register)}
+      backIconHandler={() => dispatchSteps(STEP_MODAL.register)}
     />
   );
 };
@@ -135,7 +144,8 @@ interface ConnectProps {
   isOpen: UseDisclosureProps["isOpen"];
 }
 
-const ModalBody = ({ setStep }: WalletModalBodyProps) => {
+const ModalBody = ({}: WalletModalBodyProps) => {
+  const dispatchSteps = useDispatchModalSteps();
   return (
     <VStack
       as={motion.div}
@@ -162,7 +172,7 @@ const ModalBody = ({ setStep }: WalletModalBodyProps) => {
         <IconButton
           text="Connect Wallet"
           onClick={() => {
-            setStep(STEP_MODAL.connectors);
+            dispatchSteps(STEP_MODAL.connectors);
           }}
           icon={LuWallet}
         />
@@ -170,7 +180,7 @@ const ModalBody = ({ setStep }: WalletModalBodyProps) => {
         <IconButton
           text="Join by Email"
           onClick={() => {
-            setStep(STEP_MODAL.login);
+            dispatchSteps(STEP_MODAL.login);
           }}
           icon={MdOutlineMailOutline}
         />
@@ -180,20 +190,37 @@ const ModalBody = ({ setStep }: WalletModalBodyProps) => {
 };
 
 export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
+  const { onOpen } = useWalletModal();
   const methods = useForm<ModalForm>({
     mode: "all",
     reValidateMode: "onChange",
   });
 
-  const [step, setStep] = useState<STEP_MODAL>(STEP_MODAL.wallet);
+  const step = useModalSteps();
+  const dispatchSteps = useDispatchModalSteps();
+
+  const { isConnected } = useAccount();
+  const { data: signMessageData } = useSignMessage();
+
+  useEffect(() => {
+    if (isConnected && !signMessageData) {
+      dispatchSteps(STEP_MODAL.sign);
+      onOpen();
+    }
+  }, [isConnected, signMessageData]);
+
+  console.log({ isConnected });
+
   const modalBody = useMemo(
     () => ({
-      [STEP_MODAL.wallet]: <ModalBody setStep={setStep} />,
-      [STEP_MODAL.login]: <Login setStep={setStep} />,
-      [STEP_MODAL.register]: <Register setStep={setStep} />,
-      [STEP_MODAL.connectors]: <Connectors setStep={setStep} />,
-      [STEP_MODAL.otp]: <OTPContainer setStep={setStep} />,
-      [STEP_MODAL.setupWizard]: <SetupWizard setStep={setStep} />,
+      [STEP_MODAL.wallet]: <ModalBody />,
+      [STEP_MODAL.login]: <Login />,
+      [STEP_MODAL.register]: <Register />,
+      [STEP_MODAL.connectors]: <Connectors />,
+      [STEP_MODAL.otp]: <OTPContainer />,
+      [STEP_MODAL.setupWizard]: <SetupWizard />,
+      [STEP_MODAL.sign]: <SignWallet />,
+      [STEP_MODAL.verified]: <VerifiedAccount />,
     }),
     []
   );
@@ -206,10 +233,15 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
           <FormProvider {...methods}>{modalBody[step]}</FormProvider>
         </AnimatePresence>
       }
-      {...(STEP_MODAL.setupWizard === step && {
+      {...((STEP_MODAL.setupWizard === step ||
+        STEP_MODAL.sign === step ||
+        STEP_MODAL.verified === step) && {
         closeOnEsc: false,
         showCloseButton: false,
-        size: { base: "lg", md: "2xl", lg: "3xl" },
+
+        ...(STEP_MODAL.setupWizard === step && {
+          size: { base: "lg", md: "2xl", lg: "3xl" },
+        }),
       })}
     />
   );

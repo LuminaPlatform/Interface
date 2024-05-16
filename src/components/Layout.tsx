@@ -3,6 +3,7 @@ import { useIsOpenSidebar } from "@/hooks/bases";
 import { sidebarWidth } from "@/constant";
 import { PropsWithChildren } from "react";
 import dynamic from "next/dynamic";
+import { ModalStepsProvider } from "@/context";
 
 const Navbar = dynamic(() => import("./Navbar"), { ssr: false });
 const Sidebar = dynamic(
@@ -54,7 +55,9 @@ const Layout = ({ children }: LayoutProps) => {
       </GridItem>
       <GridItem>
         <Container pt={["12px"]} maxWidth="1280px" px={["20px", null, "24px"]}>
-          <Navbar />
+          <ModalStepsProvider>
+            <Navbar />
+          </ModalStepsProvider>
           {children}
         </Container>
       </GridItem>

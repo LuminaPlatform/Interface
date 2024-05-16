@@ -28,16 +28,17 @@ import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useEmailSignUp } from "@/hooks/auth";
-import { useCustomToast } from "@/hooks/bases";
+import { useCustomToast, useDispatchModalSteps } from "@/hooks/bases";
 
 const ChakraForm = chakra("form");
 
-export const Register = ({ setStep }: WalletModalBodyProps) => {
+export const Register = ({}: WalletModalBodyProps) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useFormContext<ModalForm>();
+  const dispatchSteps = useDispatchModalSteps();
 
   const { mutate } = useEmailSignUp();
   const [showPassword, setShowPassword] = useState(false);
@@ -65,7 +66,7 @@ export const Register = ({ setStep }: WalletModalBodyProps) => {
         position="absolute"
         left="16px"
         onClick={() => {
-          setStep(STEP_MODAL.wallet);
+          dispatchSteps(STEP_MODAL.wallet);
         }}
       />
       <Text textAlign="center" color="gray.0" fontSize="xl" fontWeight="600">
@@ -183,7 +184,7 @@ export const Register = ({ setStep }: WalletModalBodyProps) => {
             { email, password },
             {
               onSuccess: ({ data }) => {
-                setStep(STEP_MODAL.otp);
+                dispatchSteps(STEP_MODAL.otp);
                 return toast({ description: data, status: "success" });
               },
               onError: (error) => {
@@ -203,7 +204,7 @@ export const Register = ({ setStep }: WalletModalBodyProps) => {
         <Text lineHeight="40px" color="gray.0" fontSize="md">
           Already have an account?
         </Text>
-        <Button onClick={() => setStep(STEP_MODAL.login)} variant="ghost">
+        <Button onClick={() => dispatchSteps(STEP_MODAL.login)} variant="ghost">
           Login
         </Button>
       </HStack>
