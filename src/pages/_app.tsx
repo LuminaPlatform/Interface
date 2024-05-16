@@ -77,4 +77,5 @@ App.getInitialProps = async ({ ctx }) => {
     }
     return { isAuthenticated: false };
   }
+  return { isAuthenticated: false };
 };
