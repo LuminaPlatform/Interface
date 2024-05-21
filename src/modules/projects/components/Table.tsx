@@ -14,6 +14,9 @@ import {
   Img,
   Divider,
   Link as ChakraLink,
+  Tfoot,
+  Select,
+  Flex,
 } from "@chakra-ui/react";
 import {
   createColumnHelper,
@@ -23,12 +26,15 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-
+import NProgress from "nprogress";
 import { useMemo, useState } from "react";
 import { tableData } from "../constant";
 import { PiLinkThin } from "react-icons/pi";
 import Link from "next/link";
-import { Project } from "../types";
+import { useProjects } from "../hooks";
+import { currencyScale, primaryCategories } from "@/constant";
+import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
+import { useRouter } from "next/router";
 
 const CheckMarkIcon = () => (
   <svg
@@ -129,22 +135,25 @@ interface TableProps {
   search: string;
 }
 const Table = ({ search }: TableProps) => {
+  const projectsData = useProjects();
+  console.log({ projectsData });
+
   const networkThreshold = 7;
   const [sorting, setSorting] = useState<SortingState>([]);
-  const data = useMemo<Project[]>(
+  const data = useMemo(
     () =>
       search
-        ? tableData.filter((row) =>
+        ? projectsData.filter((row) =>
             row.project.name.toLowerCase().includes(search.toLowerCase())
           )
-        : tableData,
+        : projectsData,
     [search]
   );
-  const columnHelper = createColumnHelper<Project>();
+  const columnHelper = createColumnHelper<any>();
 
   const columns = [
     columnHelper.accessor("id", {
-      cell: (info) => info.getValue() + 1,
+      cell: (info) => info.getValue(),
       header: () => "#",
     }),
     columnHelper.accessor("project", {
@@ -153,8 +162,10 @@ const Table = ({ search }: TableProps) => {
           <Img
             rounded="full"
             width="36px"
+            minW="36px"
             height="36px"
-            src={info.getValue().src}
+            minH="36px"
+            src={info.row.original.logo}
           />
           <VStack rowGap="6px" margin="0px !important">
             <HStack alignItems="center">
@@ -162,8 +173,9 @@ const Table = ({ search }: TableProps) => {
                 as={Link}
                 href={`/projects/${info.row.original.id}`}
                 textAlign="left"
+                whiteSpace="nowrap"
               >
-                {info.getValue().name}
+                {info.row.original.name}
               </ChakraLink>
               <Icon
                 size={18}
@@ -177,7 +189,7 @@ const Table = ({ search }: TableProps) => {
               justifyContent="flex-start"
               columnGap="4px"
               margin="0px !important"
-              {...(info.getValue().cryptosImg.length <= 3 && {
+              {...(info.getValue()?.cryptosImg.length <= 3 && {
                 divider: (
                   <Divider
                     rounded="full"
@@ -191,7 +203,7 @@ const Table = ({ search }: TableProps) => {
             >
               {info
                 .getValue()
-                .cryptosImg.slice(0, networkThreshold)
+                ?.cryptosImg.slice(0, networkThreshold)
                 .map((img) =>
                   info.getValue().cryptosImg.length <= 3 ? (
                     <HStack
@@ -215,7 +227,7 @@ const Table = ({ search }: TableProps) => {
                     img.src
                   )
                 )}
-              {info.getValue().cryptosImg.length > networkThreshold && (
+              {info.getValue()?.cryptosImg.length > networkThreshold && (
                 <Text margin="0px !important">
                   +{info.getValue().cryptosImg.length - networkThreshold}
                 </Text>
@@ -226,13 +238,21 @@ const Table = ({ search }: TableProps) => {
       ),
       header: () => <span>Project</span>,
     }),
-    columnHelper.accessor("category", {
-      header: () => "Category",
-      cell: (info) => info.renderValue(),
-    }),
     columnHelper.accessor("allocated", {
       header: () => "Allocated",
-      cell: (info) => <Text>{info.getValue() / 1000}K OP </Text>,
+      cell: (info) => (
+        <Text>
+          {(
+            info.row.original.content.fundingSources.reduce(
+              (accumulator, currentVal) =>
+                +currentVal.amount * currencyScale[currentVal.currency] +
+                accumulator,
+              0
+            ) / 1000
+          ).toFixed(1)}
+          K $
+        </Text>
+      ),
     }),
     columnHelper.accessor("inBallots", {
       header: "In Ballots",
@@ -246,7 +266,7 @@ const Table = ({ search }: TableProps) => {
           }}
           margin="0px !important"
         >
-          <Text>{info.getValue()}</Text>
+          <Text>{info.row.original.content.includedInBallots}</Text>
           <Icon as={CheckMarkIcon} />
         </HStack>
       ),
@@ -255,51 +275,53 @@ const Table = ({ search }: TableProps) => {
       header: "In List",
       cell: (info) => (
         <HStack margin="0px !important">
-          <Text>{info.getValue()}</Text>
+          <Text>{info.row.original.content.lists.length}</Text>
           <Icon as={ListIcon} />
         </HStack>
       ),
     }),
     columnHelper.accessor("tags", {
       sortingFn: (rowA, rowB, columnId) => {
-        const columnAData: Project["tags"] = rowA.getValue(columnId);
-        const columnBData: Project["tags"] = rowB.getValue(columnId);
+        const columnAData: any = rowA.getValue(columnId);
+        const columnBData: any = rowB.getValue(columnId);
 
-        const rowAMinValue: Project["tags"][0]["value"] = columnAData.reduce(
-          (min, obj) => {
-            return obj.value < min ? obj.value : min;
-          },
-          columnAData[0].value
-        );
+        const rowAMinValue: any = columnAData.reduce((min, obj) => {
+          return obj.value < min ? obj.value : min;
+        }, columnAData[0].value);
 
-        const rowBMinValue: Project["tags"][0]["value"] = columnBData.reduce(
-          (min, obj) => {
-            return obj.value < min ? obj.value : min;
-          },
-          columnBData[0].value
-        );
+        const rowBMinValue: any = columnBData.reduce((min, obj) => {
+          return obj.value < min ? obj.value : min;
+        }, columnBData[0].value);
 
         return rowAMinValue < rowBMinValue ? 1 : -1;
       },
       header: "RetroPGF Tags",
       cell: (info) => (
         <HStack columnGap="4px" margin="0px !important">
-          {info.getValue().map((item) => (
-            <Text
-              whiteSpace="nowrap"
-              borderRadius="12px"
-              height="24px"
-              lineHeight="24px"
-              px="8px"
-              fontSize="xs"
-              fontWeight="bold"
-              key={item.id}
-              color={item.color.txt}
-              bg={item.color.bg}
-            >
-              {item.title}
-            </Text>
-          ))}
+          {info.row.original.content?.impactCategory?.map((item) => {
+            const value = primaryCategories.find(
+              (pc) => pc.title === item.split("_").join(" ")
+            );
+            if (value) {
+              return (
+                <Text
+                  whiteSpace="nowrap"
+                  borderRadius="12px"
+                  height="24px"
+                  lineHeight="24px"
+                  px="8px"
+                  fontSize="xs"
+                  fontWeight="bold"
+                  key={item.id}
+                  color={value?.color.txt}
+                  bg={value?.color.bg}
+                >
+                  {value?.shortTitle}
+                </Text>
+              );
+            }
+            return null;
+          })}
         </HStack>
       ),
     }),
@@ -315,6 +337,12 @@ const Table = ({ search }: TableProps) => {
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
   });
+
+  const router = useRouter();
+  const { query } = router;
+
+  const page = query.page || 1;
+  console.log(page);
 
   return (
     <Box pb="16px" fontFamily="satoshi" pt="16px" width="full">
@@ -387,6 +415,37 @@ const Table = ({ search }: TableProps) => {
           ))}
         </Tbody>
       </ChakraTable>
+      <HStack alignItems="center" width="full" justifyContent="center">
+        <Flex columnGap="10px" alignItems="center">
+          <Button
+            onClick={() => {
+              // if (page !== limit) {
+              NProgress.start();
+
+              router.push(`/projects?page=${+page + 1}`);
+              // }
+            }}
+            variant="ghost"
+          >
+            <TbChevronLeft />
+          </Button>
+          <Text fontSize="lg" color="gray.0">
+            {page}
+          </Text>
+          <Button
+            onClick={() => {
+              if (+page !== 1) {
+                NProgress.start();
+
+                router.push(`/projects?page=${+page - 1}`);
+              }
+            }}
+            variant="ghost"
+          >
+            <TbChevronRight />
+          </Button>
+        </Flex>
+      </HStack>
     </Box>
   );
 };

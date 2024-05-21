@@ -34,6 +34,8 @@ import {
 } from "@/hooks/bases";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { setCookie } from "cookies-next";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
 
 const ChakraForm = chakra("form");
 export const Login = ({}: WalletModalBodyProps) => {
@@ -51,6 +53,37 @@ export const Login = ({}: WalletModalBodyProps) => {
   const { onClose } = useWalletModal();
   const dispatchAuthorization = useDispatchAuthorization();
   const dispatchSteps = useDispatchModalSteps();
+
+  const handleGoogleLogin = async () => {
+    axiosClient
+      .get(apiKeys["auth"]["login"]["google"]["req"])
+      .then((response) => {
+        const openedWindow = window.open(
+          response.data.url,
+          "_blank",
+          "width=500,height=600"
+        );
+        const pollTimer = window.setInterval(function () {
+          try {
+            if (openedWindow.location.href.includes("https://lumina.credit/")) {
+              window.clearInterval(pollTimer);
+              openedWindow.close();
+
+              const urlParams = new URLSearchParams(
+                openedWindow.location.search
+              );
+              const authorizationCode = urlParams.get("code");
+
+              console.log("Authorization Code:", authorizationCode);
+
+              window.location.href = "/welcome";
+            }
+          } catch (e) {
+            console.log("Error:", e);
+          }
+        }, 1000); 
+      });
+  };
 
   return (
     <ChakraForm
@@ -231,6 +264,7 @@ export const Login = ({}: WalletModalBodyProps) => {
           height="48px"
           borderRadius="33px"
           width="full"
+          onClick={handleGoogleLogin}
         >
           <TbBrandGoogleFilled
             color="var(--chakra-colors-primary-50)"

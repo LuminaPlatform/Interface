@@ -52,3 +52,14 @@ export enum Badges {
   "USER" = "USER",
   "HOLDER" = "HOLDER",
 }
+
+export type FetchObject = {
+  model: "Project";
+  model_id: string;
+  limit: number;
+  orders: [];
+  fetch_graph: {
+    flex_fields:{}[];
+  };
+  condition: {};
+};
