@@ -19,6 +19,10 @@ import NextAdapterApp from "next-query-params/app";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
+import { usePathname, useSearchParams } from "next/navigation";
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +33,14 @@ export default function App({
 }: AppProps & {
   isAuthenticated: boolean;
 }) {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  NProgress.configure({ showSpinner: false });
+
+  useEffect(() => {
+    NProgress.done();
+  }, [pathname, searchParams]);
   return (
     <>
       {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID ? (
