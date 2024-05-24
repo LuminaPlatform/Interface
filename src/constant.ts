@@ -109,3 +109,5 @@ export const primaryCategories = [
     color: { bg: "rgba(255, 175, 175, 1)", txt: "rgba(156, 36, 36, 1)" },
   },
 ];
+
+export const pageThreshold = 5;
