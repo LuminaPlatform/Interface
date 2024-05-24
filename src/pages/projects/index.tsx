@@ -1,11 +1,11 @@
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
+import { pageThreshold } from "@/constant";
 import { ProjectsProvider } from "@/modules/projects/context";
 import Index from "@/modules/projects/pages/Index";
 import { FetchObject } from "@/types";
 
 export default function Projects({ projects }) {
-  console.log({ projects });
 
   return (
     <ProjectsProvider data={projects}>
@@ -15,12 +15,11 @@ export default function Projects({ projects }) {
 }
 
 export const getServerSideProps = async (ctx) => {
-  console.log(ctx.query);
-
+  const page = ctx.query.page || 1;
   const postData: FetchObject = {
     model: "Project",
     model_id: "None",
-    limit: 10,
+    limit: 5,
     orders: [],
     fetch_graph: {
       flex_fields: [
@@ -35,10 +34,16 @@ export const getServerSideProps = async (ctx) => {
         },
         { name: "content.fundingSources" },
         { name: "content.includedInBallots" },
-        { name: "content" },
+        { name: "content.lists" },
+        { name: "content.impactCategory" },
       ],
     },
-    condition: {},
+    condition: {
+      __type__: "SimpleSearchCondition",
+      field: "id",
+      operator: "GTE",
+      value: (page - 1) * pageThreshold,
+    },
   };
   const response = await axiosClient.post<FetchObject>(
     apiKeys["read"]["fetch"],
