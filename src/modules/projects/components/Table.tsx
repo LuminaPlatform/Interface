@@ -136,18 +136,17 @@ interface TableProps {
 }
 const Table = ({ search }: TableProps) => {
   const projectsData = useProjects();
-  console.log({ projectsData });
+  // const networkThreshold = 7;
 
-  const networkThreshold = 7;
   const [sorting, setSorting] = useState<SortingState>([]);
   const data = useMemo(
     () =>
       search
         ? projectsData.filter((row) =>
-            row.project.name.toLowerCase().includes(search.toLowerCase())
+            row.name.toLowerCase().includes(search.toLowerCase())
           )
         : projectsData,
-    [search]
+    [projectsData, search]
   );
   const columnHelper = createColumnHelper<any>();
 
@@ -184,7 +183,7 @@ const Table = ({ search }: TableProps) => {
                 marginLeft="6px"
               />
             </HStack>
-            <HStack
+            {/* <HStack
               width="full"
               justifyContent="flex-start"
               columnGap="4px"
@@ -232,11 +231,17 @@ const Table = ({ search }: TableProps) => {
                   +{info.getValue().cryptosImg.length - networkThreshold}
                 </Text>
               )}
-            </HStack>
+            </HStack> */}
           </VStack>
         </HStack>
       ),
       header: () => <span>Project</span>,
+      sortingFn: (rowA, rowB) => {
+        const columnAData: any = rowA.original.name;
+        const columnBData: any = rowB.original.name;
+
+        return columnAData < columnBData ? 1 : -1;
+      },
     }),
     columnHelper.accessor("allocated", {
       header: () => "Allocated",
@@ -253,6 +258,24 @@ const Table = ({ search }: TableProps) => {
           K $
         </Text>
       ),
+      sortingFn: (rowA, rowB) => {
+        const columnAData: any =
+          rowA.original.content.fundingSources.reduce(
+            (accumulator, currentVal) =>
+              +currentVal.amount * currencyScale[currentVal.currency] +
+              accumulator,
+            0
+          ) / 1000;
+        const columnBData: any =
+          rowB.original.content.fundingSources.reduce(
+            (accumulator, currentVal) =>
+              +currentVal.amount * currencyScale[currentVal.currency] +
+              accumulator,
+            0
+          ) / 1000;
+
+        return columnAData < columnBData ? 1 : -1;
+      },
     }),
     columnHelper.accessor("inBallots", {
       header: "In Ballots",
@@ -270,6 +293,12 @@ const Table = ({ search }: TableProps) => {
           <Icon as={CheckMarkIcon} />
         </HStack>
       ),
+      sortingFn: (rowA, rowB) => {
+        const columnAData: any = rowA.original.content.includedInBallots;
+        const columnBData: any = rowB.original.content.includedInBallots;
+
+        return columnAData < columnBData ? 1 : -1;
+      },
     }),
     columnHelper.accessor("inLists", {
       header: "In List",
@@ -279,19 +308,40 @@ const Table = ({ search }: TableProps) => {
           <Icon as={ListIcon} />
         </HStack>
       ),
+      sortingFn: (rowA, rowB) => {
+        const columnAData: any = rowA.original.content.lists;
+        const columnBData: any = rowB.original.content.lists;
+
+        return columnAData < columnBData ? 1 : -1;
+      },
     }),
     columnHelper.accessor("tags", {
       sortingFn: (rowA, rowB, columnId) => {
-        const columnAData: any = rowA.getValue(columnId);
-        const columnBData: any = rowB.getValue(columnId);
+        const columnAData: any = rowA.original.content?.impactCategory;
+        const columnBData: any = rowB.original.content?.impactCategory;
 
-        const rowAMinValue: any = columnAData.reduce((min, obj) => {
-          return obj.value < min ? obj.value : min;
-        }, columnAData[0].value);
-
-        const rowBMinValue: any = columnBData.reduce((min, obj) => {
-          return obj.value < min ? obj.value : min;
-        }, columnBData[0].value);
+        const rowAMinValue: any = columnAData.reduce(
+          (min, categoryTitle) => {
+            const foundCategory = primaryCategories.find(
+              (item) => item.title === categoryTitle.split("_").join(" ")
+            );
+            return foundCategory.value < min ? foundCategory.value : min;
+          },
+          primaryCategories.find(
+            (item) => item.title === columnAData[0].split("_").join(" ")
+          )
+        );
+        const rowBMinValue: any = columnBData.reduce(
+          (min, categoryTitle) => {
+            const foundCategory = primaryCategories.find(
+              (item) => item.title === categoryTitle.split("_").join(" ")
+            );
+            return foundCategory.value < min ? foundCategory.value : min;
+          },
+          primaryCategories.find(
+            (item) => item.title === columnBData[0].split("_").join(" ")
+          )
+        );
 
         return rowAMinValue < rowBMinValue ? 1 : -1;
       },
@@ -421,7 +471,6 @@ const Table = ({ search }: TableProps) => {
             onClick={() => {
               // if (page !== limit) {
               NProgress.start();
-
               router.push(`/projects?page=${+page + 1}`);
               // }
             }}
@@ -433,10 +482,10 @@ const Table = ({ search }: TableProps) => {
             {page}
           </Text>
           <Button
+            isDisabled={+page === 1}
             onClick={() => {
               if (+page !== 1) {
                 NProgress.start();
-
                 router.push(`/projects?page=${+page - 1}`);
               }
             }}
