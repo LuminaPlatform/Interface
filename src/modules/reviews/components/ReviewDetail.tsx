@@ -1,9 +1,19 @@
 import { Badge } from "@/components/Badge";
 import { reviewStatuses } from "@/constant";
+import { useProjectData } from "@/modules/projects/pdp/hooks";
+import { Review } from "@/modules/projects/types";
 import { Box, HStack, Img, Text, VStack } from "@chakra-ui/react";
 
-interface ReviewDetailProps {}
-export const ReviewDetail = ({}: ReviewDetailProps) => {
+interface ReviewDetailProps {
+  review: Review;
+}
+export const ReviewDetail = ({ review }: ReviewDetailProps) => {
+  const project = useProjectData();
+  const foundReviewStatus = reviewStatuses.find(
+    (item) => item.name === review.viewpoint
+  );
+console.log({project});
+
   return (
     <VStack
       maxWidth="616px"
@@ -27,16 +37,22 @@ export const ReviewDetail = ({}: ReviewDetailProps) => {
           p="8px 12px"
           justifyContent="center"
         >
-          <Img width="36px" height="36px" rounded="full" src="" alt="project" />
+          <Img
+            src={project.content.profile.profileImageUrl}
+            width="36px"
+            height="36px"
+            rounded="full"
+            alt={project.name}
+          />
           <Text color="gray.40" fontSize="md" fontWeight="500">
-            Lumina
+            {project.name}
           </Text>
         </VStack>
         <VStack alignItems="flex-start">
           <Badge
-            title={reviewStatuses[0].name}
-            colorScheme={reviewStatuses[0].colorScheme}
-            icon={reviewStatuses[0].icon}
+            title={foundReviewStatus?.name}
+            colorScheme={foundReviewStatus?.colorScheme}
+            icon={foundReviewStatus?.icon}
           />
           <HStack columnGap="8px">
             <Img
@@ -44,12 +60,12 @@ export const ReviewDetail = ({}: ReviewDetailProps) => {
               border="1px solid"
               borderColor="gray.0"
               alt="writer"
-              src="/assets/images/default-img.png"
+              src={review.user.profile_picture}
               width={{ base: "16px", md: "24px" }}
               height={{ base: "16px", md: "24px" }}
             />
             <Text color="gray.40" fontSize={{ base: "sm", md: "md" }}>
-              Writer Name
+              {review.user.display_name}
             </Text>
           </HStack>
         </VStack>
@@ -63,29 +79,23 @@ export const ReviewDetail = ({}: ReviewDetailProps) => {
       >
         My recommendation
       </Text>
-      <Text fontSize="lg" color="gray.40" lineHeight="28.8px">
-        Aliquet tellus risus sed elit aliquet venenatis ut. At non varius
-        scelerisque aliquam et diam. Amet nec tortor dictum aliquet. Enim
-        suspendisse congue aliquet tortor risus. Consectetur id parturient vel
-        lobortis. At non varius scelerisque aliquam et diam. Amet nec tortor
-        dictum aliquet. Enim suspendisse congue aliquet tortor risus.
-        Consectetur id parturient vel lobortis. Aliquet tellus risus sed elit
-        aliquet venenatis ut. At non varius scelerisque aliquam et diam. Amet
-        nec tortor dictum aliquet. Enim suspendisse congue aliquet tortor risus.
-        Consectetur id parturient vel lobortis. At non varius scelerisque
-        aliquam et diam. Amet nec tortor dictum aliquet. Enim suspendisse congue
-        aliquet tortor risus. Consectetur id parturient vel lobortis. Aliquet
-        tellus risus sed elit aliquet venenatis ut. At non varius scelerisque
-        aliquam et diam. Amet nec tortor dictum aliquet. Enim suspendisse congue
-        aliquet tortor risus.
+      <Text
+        width="full"
+        textAlign="left"
+        fontSize="lg"
+        color="gray.40"
+        lineHeight="28.8px"
+      >
+        {review.description}
       </Text>
-      <Img
+      {/* TODO should attachment added to model */}
+      {/* <Img
         width="full"
         height="full"
         maxWidth="full"
         maxHeight="312px"
         alt="review"
-      />
+      /> */}
       <HStack
         bg="gray.900"
         fontWeight="500"
@@ -95,8 +105,9 @@ export const ReviewDetail = ({}: ReviewDetailProps) => {
         width="full"
         position="sticky"
         bottom="0"
-        justifyContent='flex-end'
+        justifyContent="flex-end"
       >
+        {/* TODO should add timestamps */}
         <Text>
           {new Date().getFullYear()}-{new Date().getMonth() + 1}-
           {new Date().getDate()}

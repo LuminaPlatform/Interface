@@ -23,10 +23,11 @@ export const Header = () => {
   const dispatchSelectedProject = useDispatchSelectedProjects();
   const selectedProjects = useSelectedProjects();
   const { query } = useRouter();
+
   const project = useProjectData();
-  const {
-    project: { name },
-  } = project;
+  console.log({ project });
+
+  const { name } = project;
 
   const { isConnected } = useAccount();
 

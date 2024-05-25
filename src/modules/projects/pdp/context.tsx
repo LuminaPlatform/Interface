@@ -1,5 +1,11 @@
-import { createContext, PropsWithChildren, useState } from "react";
-import { Project } from "../types";
+import {
+  createContext,
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  useState,
+} from "react";
+import { Project, Review } from "../types";
 
 interface ProjectDetailProviderProps extends PropsWithChildren {
   project: Project;
@@ -20,5 +26,26 @@ export const ProjectDetailProvider = ({
         {children}
       </ProjectDetailDispatch.Provider>
     </ProjectDetail.Provider>
+  );
+};
+
+export const ProjectReviews = createContext<Review[]>(undefined);
+export const ProjectReviewsDispatch =
+  createContext<Dispatch<SetStateAction<Review[]>>>(undefined);
+interface ProjectReviewsProviderProps extends PropsWithChildren {
+  reviews: Review[];
+}
+
+export const ProjectReviewsProvider = ({
+  children,
+  reviews,
+}: ProjectReviewsProviderProps) => {
+  const [state, setState] = useState<Review[]>(reviews);
+  return (
+    <ProjectReviews.Provider value={state}>
+      <ProjectReviewsDispatch.Provider value={setState}>
+        {children}
+      </ProjectReviewsDispatch.Provider>
+    </ProjectReviews.Provider>
   );
 };
