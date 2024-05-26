@@ -18,6 +18,7 @@ import {
 } from "@/hooks/bases";
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
+import Link from "next/link";
 
 export const Header = () => {
   const dispatchSelectedProject = useDispatchSelectedProjects();
@@ -47,6 +48,7 @@ export const Header = () => {
       >
         <BreadcrumbItem>
           <BreadcrumbLink
+            as={Link}
             fontWeight="600"
             fontSize="28px"
             color="gray.20"
@@ -58,6 +60,7 @@ export const Header = () => {
 
         <BreadcrumbItem>
           <BreadcrumbLink
+            as={Link}
             fontWeight="600"
             fontSize="28px"
             color="gray.20"
