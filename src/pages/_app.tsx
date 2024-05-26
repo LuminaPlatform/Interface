@@ -20,9 +20,10 @@ import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { usePathname, useSearchParams } from "next/navigation";
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 const queryClient = new QueryClient();
 
@@ -33,13 +34,22 @@ export default function App({
 }: AppProps & {
   isAuthenticated: boolean;
 }) {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   NProgress.configure({ showSpinner: false });
 
   useEffect(() => {
+    router.events.on("routeChangeStart", () => {
+      NProgress.start();
+    });
     NProgress.done();
+    return () => {
+      router.events.off("routeChangeStart", () => {
+        NProgress.start();
+      });
+    };
   }, [pathname, searchParams]);
   return (
     <>
