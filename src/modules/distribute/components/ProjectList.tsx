@@ -52,8 +52,9 @@ import {
   useSelectedProjects,
 } from "@/hooks/bases";
 import { Project } from "@/modules/projects/types";
+// TODO should fix any type
 
-const columnHelper = createColumnHelper<Project>();
+const columnHelper = createColumnHelper<any>();
 
 const ChakraForm = chakra("form");
 type AllocatedForm = {
@@ -65,7 +66,7 @@ interface ProjectListProps {
   search: string;
 }
 export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
-  const globalSelectedProjects = useSelectedProjects();
+  const globalSelectedProjects = useSelectedProjects() as any;
   const dispatchGlobalSelectedProjects = useDispatchSelectedProjects();
 
   const { register, control, setValue, handleSubmit, getValues } =
@@ -77,7 +78,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
 
   const values = useWatch({ control });
 
-  const data = useMemo<Project[]>(() => {
+  const data = useMemo<any>(() => {
     if (search) {
       return globalSelectedProjects.filter((row) =>
         row.project.name.toLowerCase().includes(search.toLowerCase())
@@ -350,7 +351,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
     ]
   );
 
-  const table = useReactTable<Project>({
+  const table = useReactTable<any>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),

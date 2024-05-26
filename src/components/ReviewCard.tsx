@@ -16,7 +16,7 @@ import { useProjectData } from "@/modules/projects/pdp/hooks";
 
 interface ReviewCardProps {
   // TODO should fix review type
-  review: Review;
+  review: Review | any;
   showProjectName: boolean;
 }
 export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
