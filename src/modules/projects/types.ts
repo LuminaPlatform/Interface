@@ -57,4 +57,5 @@ export type Review = {
     display_name: string | null;
     profile_picture: string | null;
   };
+  project?: Project;
 };
