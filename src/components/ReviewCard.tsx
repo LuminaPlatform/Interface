@@ -11,18 +11,20 @@ import { Badge } from "./Badge";
 import { reviewStatuses } from "@/constant";
 import { ModalBase } from "./ModalBase";
 import { ReviewDetail } from "@/modules/reviews/components/ReviewDetail";
-import { Review } from "@/modules/projects/types";
+import { Project, Review } from "@/modules/projects/types";
 import { useProjectData } from "@/modules/projects/pdp/hooks";
 
 interface ReviewCardProps {
-  // TODO should fix review type
-  review: Review | any;
+  review: Review;
   showProjectName: boolean;
+  project: Project;
 }
-export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
+export const ReviewCard = ({
+  review,
+  showProjectName,
+  project,
+}: ReviewCardProps) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const project = useProjectData();
 
   const foundReviewStatus = reviewStatuses.find(
     (item) => item.name === review.viewpoint
@@ -156,7 +158,7 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
       <ModalBase
         isOpen={isOpen}
         onClose={onClose}
-        modalBody={<ReviewDetail review={review} />}
+        modalBody={<ReviewDetail project={project} review={review} />}
       />
     </>
   );
