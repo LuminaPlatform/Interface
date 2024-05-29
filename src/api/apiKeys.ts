@@ -18,8 +18,6 @@ export const apiKeys = {
     isAuthorized: "/auth/me",
     otp: "/auth/signup/email/verify",
   },
-  read: {
-    fetch: "/read/fetch",
-    create: "/read/create",
-  },
+  fetch: "/read/fetch",
+  create: "/create",
 };
