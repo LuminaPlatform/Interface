@@ -77,13 +77,14 @@ export const AuthorizationProvider = ({
     () => isAuthenticated || isConnected
   );
 
-  useEffect(() => {
-    if (isConnected || !!getCookie(ACCESS_TOKEN_COOKIE_KEY)) {
-      setAuthenticate(true);
-    } else {
-      setAuthenticate(false);
-    }
-  }, [isConnected]);
+  // useEffect(() => {
+  //   if (!isConnected || !isAuthenticated) {
+  //     setAuthenticate(false);
+  //   } else {
+  //     setAuthenticate(true);
+  //   }
+  // }, [isConnected]);
+
   return (
     <Authorization.Provider value={isAuthenticate}>
       <SetAuthorization.Provider value={setAuthenticate}>
