@@ -34,6 +34,8 @@ export default function App({
 }: AppProps & {
   isAuthenticated: boolean;
 }) {
+  console.log({isAuthenticated});
+  
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -89,15 +91,18 @@ App.getInitialProps = async ({ ctx }) => {
     if (!accessToken) {
       return { isAuthenticated: false };
     }
-    const response = await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    if (response.status === 200) {
-      return { isAuthenticated: true };
+    try {
+      const response = await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (response.status === 200) {
+        return { isAuthenticated: true };
+      }
+    } catch (error) {
+      return { isAuthenticated: false };
     }
-    return { isAuthenticated: false };
   }
   return { isAuthenticated: false };
 };

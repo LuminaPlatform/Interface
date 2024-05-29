@@ -1,18 +1,18 @@
 import { Badge } from "@/components/Badge";
 import { reviewStatuses } from "@/constant";
 import { useProjectData } from "@/modules/projects/pdp/hooks";
-import { Review } from "@/modules/projects/types";
+import { Project, Review } from "@/modules/projects/types";
 import { Box, HStack, Img, Text, VStack } from "@chakra-ui/react";
 
 interface ReviewDetailProps {
   review: Review;
+  project: Project;
 }
-export const ReviewDetail = ({ review }: ReviewDetailProps) => {
-  const project = useProjectData();
+export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
   const foundReviewStatus = reviewStatuses.find(
     (item) => item.name === review.viewpoint
   );
-console.log({project});
+  console.log({ project });
 
   return (
     <VStack
