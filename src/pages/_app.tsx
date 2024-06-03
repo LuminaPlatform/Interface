@@ -2,6 +2,7 @@ import Layout from "@/components/Layout";
 import { wagmiConfig } from "@/config/wagmi";
 import {
   AuthorizationProvider,
+  GlobalUserProvider,
   IsSidebarOpenProvider,
   SelectedProjectProvider,
   WalletConnectProvider,
@@ -24,21 +25,24 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { AuthenticationData } from "@/types";
 
 const queryClient = new QueryClient();
 
 export default function App({
   Component,
   pageProps,
-  isAuthenticated,
+  baseUserData,
+  userAllData,
 }: AppProps & {
-  isAuthenticated: boolean;
+  baseUserData: AuthenticationData;
+  userAllData: any;
 }) {
-  console.log({isAuthenticated});
-  
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  console.log({ baseUserData });
 
   NProgress.configure({ showSpinner: false });
 
@@ -68,11 +72,13 @@ export default function App({
             <ChakraProvider theme={theme}>
               <IsSidebarOpenProvider>
                 <WalletConnectProvider>
-                  <AuthorizationProvider isAuthenticated={isAuthenticated}>
+                  <AuthorizationProvider data={baseUserData}>
                     <SelectedProjectProvider>
-                      <Layout>
-                        <Component {...pageProps} />
-                      </Layout>
+                      <GlobalUserProvider userData={userAllData}>
+                        <Layout>
+                          <Component {...pageProps} />
+                        </Layout>
+                      </GlobalUserProvider>
                     </SelectedProjectProvider>
                   </AuthorizationProvider>
                 </WalletConnectProvider>
@@ -89,7 +95,7 @@ App.getInitialProps = async ({ ctx }) => {
   if (!!cookies) {
     const accessToken = cookies[ACCESS_TOKEN_COOKIE_KEY];
     if (!accessToken) {
-      return { isAuthenticated: false };
+      return { baseUserData: undefined };
     }
     try {
       const response = await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
@@ -97,12 +103,58 @@ App.getInitialProps = async ({ ctx }) => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      const userAllDataResponse = await axiosClient.post(apiKeys.fetch, {
+        0: {
+          model: "User",
+          model_id: "None",
+          limit: 1,
+          orders: [],
+          fetch_graph: {
+            flex_fields: [
+              {
+                name: "*",
+              },
+            ],
+          },
+          condition: {
+            field: "email",
+            operator: "EQ",
+            value: response.data.email,
+            __type__: "SimpleSearchCondition",
+          },
+        },
+        1: {
+          model: "Wallet",
+          model_id: "None",
+          limit: 1,
+          orders: [],
+          fetch_graph: {
+            flex_fields: [
+              {
+                name: "*",
+              },
+            ],
+          },
+          condition: {
+            field: "user_id",
+            operator: "EQ",
+            value: response.data.id,
+            __type__: "SimpleSearchCondition",
+          },
+        },
+      });
       if (response.status === 200) {
-        return { isAuthenticated: true };
+        return {
+          baseUserData: response.data,
+          userAllData: {
+            user: userAllDataResponse.data[0][0],
+            wallet: userAllDataResponse.data[1],
+          },
+        };
       }
     } catch (error) {
-      return { isAuthenticated: false };
+      return { baseUserData: undefined };
     }
   }
-  return { isAuthenticated: false };
+  return { baseUserData: undefined };
 };

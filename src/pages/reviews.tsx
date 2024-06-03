@@ -5,11 +5,12 @@ import { useDispatchAuthorization } from "@/hooks/bases";
 import { Review } from "@/modules/projects/types";
 import { ReviewsProvider } from "@/modules/reviews/context";
 import Index from "@/modules/reviews/page/Index";
+import { AuthenticationData } from "@/types";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 interface ReviewsProps {
-  isAuthorized?: boolean;
+  userData: AuthenticationData;
   reviews: Review[];
 }
 const Reviews = (props: ReviewsProps) => {
@@ -18,8 +19,8 @@ const Reviews = (props: ReviewsProps) => {
   const dispatchAuthorization = useDispatchAuthorization();
   useEffect(() => {
     if (!query?.tab || query.tab === "for_you") {
-      const { isAuthorized } = props;
-      dispatchAuthorization(isAuthorized);
+      const { userData } = props;
+      dispatchAuthorization(userData);
     }
   }, []);
   console.log({ props });
@@ -90,7 +91,7 @@ export const getServerSideProps = async (ctx) => {
             });
             return {
               props: {
-                isAuthorized: true,
+                userData: response.data,
                 reviews: await response.data["0"],
               },
             };
@@ -99,7 +100,7 @@ export const getServerSideProps = async (ctx) => {
         .catch((error) => {
           return {
             props: {
-              isAuthorized: false,
+              userData: undefined,
               reviews: [],
             },
           };
@@ -108,7 +109,7 @@ export const getServerSideProps = async (ctx) => {
 
     return {
       props: {
-        isAuthorized: false,
+        userData: undefined,
         reviews: [],
       },
     };

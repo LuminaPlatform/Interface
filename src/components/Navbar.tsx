@@ -18,7 +18,11 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ConnectModal } from "./modals/Connect";
-import { useAuthorization, useWalletModal } from "@/hooks/bases";
+import {
+  useAuthorization,
+  useGlobalUserData,
+  useWalletModal,
+} from "@/hooks/bases";
 import {
   TbBell,
   TbLogout,
@@ -31,9 +35,22 @@ import Link from "next/link";
 import { BadgeModal } from "./modals/badges/Badge";
 import { Badges } from "@/types";
 import { Logout } from "./modals/Logout";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
 
 const ProfileBox = () => {
+  const userData = useGlobalUserData();
+  const user = userData?.user;
+  console.log({user});
+  
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const baseUserData = useAuthorization();
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <>
       <Menu>
@@ -43,13 +60,11 @@ const ProfileBox = () => {
               rounded="full"
               width="32px"
               height="32px"
-              border="1px solid"
-              borderColor="gray.0"
-              src="/assets/images/default-img.png"
+              src={user?.profile_picture ?? "/assets/images/default-avatar.png"}
               alt="user"
             />
             <Text color="gray.10" fontSize="md" fontWeight="200">
-              Anonyms
+              {user.display_name ?? user.email}
             </Text>
           </HStack>
         </MenuButton>
@@ -67,7 +82,7 @@ const ProfileBox = () => {
               rounded="full"
               width="64px"
               height="64px"
-              src="/assets/images/default-img.png"
+              src={user.profile_picture ?? "/assets/images/default-avatar.png"}
               alt="profile"
             />
             <Text
@@ -76,7 +91,7 @@ const ProfileBox = () => {
               fontSize="xl"
               fontWeight="600"
             >
-              Anonyms
+              {user.display_name ?? user.email}
             </Text>
           </HStack>
           <VStack rowGap="16px">
@@ -87,7 +102,7 @@ const ProfileBox = () => {
               variant="primaryDark"
               width="full"
               as={Link}
-              href="/profile/username"
+              href={`/profile/${user?.email}`}
             >
               <HStack width="full" justifyContent="flex-start" columnGap="8px">
                 <TbUserCircle fontSize="20px" />
@@ -198,7 +213,7 @@ const Navbar = () => {
             placeholder="Search"
           />
         </InputGroup>
-        {authorization && (
+        {!!authorization && (
           <Box
             cursor="pointer"
             onClick={() => {

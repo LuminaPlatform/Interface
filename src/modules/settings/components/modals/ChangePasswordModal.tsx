@@ -9,6 +9,7 @@ import {
   Text,
   useBoolean,
   UseDisclosureProps,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
@@ -16,7 +17,11 @@ import { SettingsModalBody, SettingsModalsForm } from "../../types";
 import { TbEye, TbEyeOff, TbMail } from "react-icons/tb";
 import { InputError } from "@/components/InputError";
 import { SettingsModalFooter } from "../EmailFooter";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import { useGlobalUserData } from "@/hooks/bases";
+import { AxiosError } from "axios";
 
 interface ChangePasswordModalProps extends UseDisclosureProps {
   setModalBody: Dispatch<SetStateAction<SettingsModalBody>>;
@@ -33,9 +38,43 @@ export const ChangePasswordModal = ({
     control,
   } = useFormContext<SettingsModalsForm>();
 
+  const [isLoading, setLoading] = useState(false);
   const [isShow, setShow] = useBoolean(false);
 
+  const userInfo = useGlobalUserData();
+
   const { password } = useWatch({ control });
+  const toast = useToast();
+  const handleChangePassword = (values) => {
+    setLoading(true);
+    axiosClient
+      .post(apiKeys.update, {
+        "0": {
+          model_name: "User",
+          params: {
+            password: values.password,
+          },
+          id: userInfo?.user.id,
+        },
+      })
+      .then(() => {
+        return toast({
+          status: "success",
+          description: "Your password is changed.",
+        });
+      })
+      .catch((error: AxiosError<{ error_message: string }>) => {
+        console.log({ error });
+
+        return toast({
+          status: "error",
+          description: error.response.data?.error_message,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <VStack rowGap="16px" width="full">
@@ -198,12 +237,16 @@ export const ChangePasswordModal = ({
       </HStack>
       <SettingsModalFooter
         cancelHandler={onClose}
+        isLoading={isLoading}
         isDisabled={
-          !!errors.password || !!errors.rePassword || !!errors.currentPassword
+          !!errors.password ||
+          !!errors.rePassword ||
+          !!errors.currentPassword ||
+          isLoading
         }
         mainButtonText="Submit Password"
         submitHandler={handleSubmit((values) => {
-          console.log({ values });
+          handleChangePassword(values);
         })}
       />
     </VStack>
