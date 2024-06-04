@@ -60,7 +60,10 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
               border="1px solid"
               borderColor="gray.0"
               alt="writer"
-              src={review.user.profile_picture}
+              src={
+                review.user.profile_picture ||
+                "/assets/images/default-avatar.png"
+              }
               width={{ base: "16px", md: "24px" }}
               height={{ base: "16px", md: "24px" }}
             />

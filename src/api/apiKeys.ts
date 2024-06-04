@@ -20,4 +20,5 @@ export const apiKeys = {
   },
   fetch: "/read/fetch",
   create: "/create",
+  update:'/update'
 };

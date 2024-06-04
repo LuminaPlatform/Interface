@@ -54,9 +54,10 @@ export const ReviewCard = ({
             py={{ base: "10px", md: "17px" }}
           >
             <Img
-              alt={review.title}
+              alt={project.name}
               // TODO should add review img
-              src="/assets/images/default-img.png"
+              rounded="full"
+              src={project.content.profile.profileImageUrl}
               width={{ base: "24px", md: "36px" }}
               height={{ base: "24px", md: "36px" }}
             />
@@ -136,7 +137,7 @@ export const ReviewCard = ({
                 border="1px solid"
                 borderColor="gray.0"
                 alt="writer"
-                src="/assets/images/default-img.png"
+                src="/assets/images/default-avatar.png"
                 width={{ base: "16px", md: "24px" }}
                 height={{ base: "16px", md: "24px" }}
               />

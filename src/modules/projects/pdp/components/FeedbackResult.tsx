@@ -1,32 +1,32 @@
 import { Box, HStack, Text, VStack } from "@chakra-ui/react";
-import { TbHeart, TbMoodAngry, TbThumbDown, TbThumbUp } from "react-icons/tb";
+import { TbHeart, TbHeartFilled, TbMoodAngry, TbThumbDown, TbThumbDownFilled, TbThumbUp, TbThumbUpFilled } from "react-icons/tb";
 
 export const FeedbackResult = () => {
   const resultData = [
     {
       id: 0,
-      icon: <TbHeart color="var(--chakra-colors-gray-0)" fontSize={14} />,
+      icon: <TbHeartFilled color="var(--chakra-colors-green-300)" fontSize={14} />,
       percent: 10,
       title: "Advocate",
       colorScheme: "green",
     },
     {
       id: 1,
-      icon: <TbThumbUp color="var(--chakra-colors-gray-0)" fontSize={14} />,
+      icon: <TbThumbUpFilled color="var(--chakra-colors-blue-300)" fontSize={14} />,
       percent: 20,
       title: "User",
       colorScheme: "blue",
     },
     {
       id: 2,
-      icon: <TbThumbDown color="var(--chakra-colors-gray-0)" fontSize={14} />,
+      icon: <TbThumbDownFilled color="var(--chakra-colors-orange-300)" fontSize={14} />,
       percent: 5,
       title: "Abstainer",
       colorScheme: "orange",
     },
     {
       id: 3,
-      icon: <TbMoodAngry color="var(--chakra-colors-gray-0)" fontSize={14} />,
+      icon: <TbMoodAngry color="var(--chakra-colors-red-300)" fontSize={14} />,
       percent: 80,
       title: "Opposer",
       colorScheme: "red",

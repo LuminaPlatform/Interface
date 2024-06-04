@@ -109,7 +109,7 @@ export const getServerSideProps = async (ctx: any) => {
       },
     };
   }
-  return {
-    notFound: true,
-  };
+  // return {
+  //   notFound: true,
+  // };
 };

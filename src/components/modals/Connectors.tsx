@@ -49,7 +49,6 @@ export const Connectors = ({}: WalletModalBodyProps) => {
           icon={
             connector.icon ||
             dataConnectors.find((data) => {
-              console.log(data, data.type === connector.type);
               return data.type === connector.type;
             })?.icon
           }

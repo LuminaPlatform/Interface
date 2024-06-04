@@ -8,6 +8,7 @@ import {
   TagLabel,
   Button,
   ButtonProps,
+  Spinner,
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -31,7 +32,8 @@ interface ActionCardProps {
   secure?: {
     isPublic: boolean;
     showPublic: boolean;
-    setPublic: (args: any) => void;
+    setPublic: (args?: any) => void;
+    isLoading: boolean;
   };
   connect?: {
     showConnect: boolean;
@@ -50,6 +52,8 @@ export const ActionCard = ({
   connect,
 }: ActionCardProps) => {
   const [isHover, setHover] = useState(false);
+
+  const [isLoading, setLoading] = useState(false);
 
   return (
     <HStack
@@ -116,17 +120,32 @@ export const ActionCard = ({
             minWidth="75px"
             size="sm"
             variant={secure?.isPublic ? "lightOrange" : "darkOrange"}
-            onClick={secure?.setPublic}
+            onClick={() => {
+              if (!secure.isLoading) {
+                secure?.setPublic();
+              }
+            }}
             columnGap="8px"
           >
-            <Box display="flex" alignItems="center" width="16px" height="16px">
-              {secure?.isPublic ? (
-                <TbEye fontSize="16px" />
-              ) : (
-                <TbEyeOff fontSize="16px" />
-              )}
-            </Box>
-            <TagLabel>{secure?.isPublic ? "Public" : "Private"}</TagLabel>
+            {secure?.isLoading ? (
+              <Spinner boxSize={3} mx="auto" my="auto" />
+            ) : (
+              <>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  width="16px"
+                  height="16px"
+                >
+                  {secure?.isPublic ? (
+                    <TbEye fontSize="16px" />
+                  ) : (
+                    <TbEyeOff fontSize="16px" />
+                  )}
+                </Box>
+                <TagLabel>{secure?.isPublic ? "Public" : "Private"}</TagLabel>
+              </>
+            )}
           </Tag>
         )}
         {connect?.showConnect &&

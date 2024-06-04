@@ -12,6 +12,15 @@ import { SettingsModalsForm } from "../../types";
 import { TbMail } from "react-icons/tb";
 import { InputError } from "@/components/InputError";
 import { SettingsModalFooter } from "../EmailFooter";
+import { useState } from "react";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import {
+  useCustomToast,
+  useDispatchGlobalUserData,
+  useGlobalUserData,
+} from "@/hooks/bases";
+import { AxiosError } from "axios";
 
 interface EditEmailModalProps extends UseDisclosureProps {}
 export const EditEmailModal = ({ onClose }: EditEmailModalProps) => {
@@ -20,6 +29,11 @@ export const EditEmailModal = ({ onClose }: EditEmailModalProps) => {
     formState: { errors },
     handleSubmit,
   } = useFormContext<SettingsModalsForm>();
+  const [isLoading, setLoading] = useState(false);
+  const { wallet } = useGlobalUserData();
+
+  const dispatchGlobalUser = useDispatchGlobalUserData();
+  const toast = useCustomToast();
   return (
     <VStack rowGap="16px" width="full">
       <FormControl pb="32px">
@@ -51,11 +65,39 @@ export const EditEmailModal = ({ onClose }: EditEmailModalProps) => {
         {!!errors.email && <InputError errorMessage={errors.email.message} />}
       </FormControl>
       <SettingsModalFooter
+        isLoading={isLoading}
         cancelHandler={onClose}
         isDisabled={!!errors.email}
         mainButtonText="Submit Email"
         submitHandler={handleSubmit((values) => {
-          console.log({ values });
+          setLoading(true);
+          axiosClient
+            .post(apiKeys.update, {
+              "0": {
+                model_name: "User",
+                params: {
+                  email: values.email,
+                },
+                id: 1,
+              },
+            })
+            .then((response) => {
+              dispatchGlobalUser({ user: response.data[0], wallet });
+              onClose();
+              return toast({
+                status: "success",
+                description: `Your email is updated`,
+              });
+            })
+            .catch((errors: AxiosError<{ error_message: string }>) => {
+              return toast({
+                status: "error",
+                description: errors.response.data?.error_message,
+              });
+            })
+            .finally(() => {
+              setLoading(false);
+            });
         })}
       />
     </VStack>

@@ -63,3 +63,10 @@ export type FetchObject = {
   };
   condition: {};
 };
+
+export type AuthenticationData = {
+  username: string | null;
+  email: string;
+  id: number;
+  createTimestamp: string;
+};

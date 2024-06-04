@@ -81,7 +81,7 @@ export const Login = ({}: WalletModalBodyProps) => {
           } catch (e) {
             console.log("Error:", e);
           }
-        }, 1000); 
+        }, 1000);
       });
   };
 
@@ -198,12 +198,22 @@ export const Login = ({}: WalletModalBodyProps) => {
               onSuccess: ({ data: { access_token } }) => {
                 setCookie(ACCESS_TOKEN_COOKIE_KEY, access_token);
                 dispatchSteps(STEP_MODAL.wallet);
-                onClose();
-                dispatchAuthorization(true);
-                return toast({
-                  description: "You are logged in",
-                  status: "success",
-                });
+                return axiosClient
+                  .get(apiKeys.auth.isAuthorized, {
+                    headers: {
+                      Authorization: `Bearer ${access_token}`,
+                    },
+                  })
+                  .then((userDataResponse) => userDataResponse.data)
+                  .then((user) => {
+                    dispatchAuthorization(user);
+                    dispatchSteps(STEP_MODAL.verified);
+                    onClose();
+                    return toast({
+                      description: "You are logged in",
+                      status: "success",
+                    });
+                  });
               },
               onError: (error) => {
                 return toast({

@@ -14,7 +14,7 @@ import { SettingsModalsForm } from "../../types";
 import { TbEye, TbEyeOff, TbMail } from "react-icons/tb";
 import { InputError } from "@/components/InputError";
 import { SettingsModalFooter } from "../EmailFooter";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface SetPasswordModalProps extends UseDisclosureProps {
   setPassword: Dispatch<
@@ -38,6 +38,7 @@ export const SetPasswordModal = ({
   const [isShow, setShow] = useBoolean(false);
 
   const { password } = useWatch({ control });
+  const [isLoading, setLoading] = useState(false);
 
   return (
     <VStack rowGap="16px" width="full">
@@ -139,6 +140,7 @@ export const SetPasswordModal = ({
         )}
       </FormControl>
       <SettingsModalFooter
+        isLoading={isLoading}
         cancelHandler={onClose}
         isDisabled={!!errors.password || !!errors.rePassword}
         mainButtonText="Submit Password"
