@@ -11,18 +11,20 @@ import { Badge } from "./Badge";
 import { reviewStatuses } from "@/constant";
 import { ModalBase } from "./ModalBase";
 import { ReviewDetail } from "@/modules/reviews/components/ReviewDetail";
-import { Review } from "@/modules/projects/types";
+import { Project, Review } from "@/modules/projects/types";
 import { useProjectData } from "@/modules/projects/pdp/hooks";
 
 interface ReviewCardProps {
-  // TODO should fix review type
-  review: Review | any;
+  review: Review;
   showProjectName: boolean;
+  project: Project;
 }
-export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
+export const ReviewCard = ({
+  review,
+  showProjectName,
+  project,
+}: ReviewCardProps) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const project = useProjectData();
 
   const foundReviewStatus = reviewStatuses.find(
     (item) => item.name === review.viewpoint
@@ -52,9 +54,10 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
             py={{ base: "10px", md: "17px" }}
           >
             <Img
-              alt={review.title}
+              alt={project.name}
               // TODO should add review img
-              src="/assets/images/default-img.png"
+              rounded="full"
+              src={project.content.profile.profileImageUrl}
               width={{ base: "24px", md: "36px" }}
               height={{ base: "24px", md: "36px" }}
             />
@@ -134,7 +137,7 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
                 border="1px solid"
                 borderColor="gray.0"
                 alt="writer"
-                src="/assets/images/default-img.png"
+                src="/assets/images/default-avatar.png"
                 width={{ base: "16px", md: "24px" }}
                 height={{ base: "16px", md: "24px" }}
               />
@@ -156,7 +159,7 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
       <ModalBase
         isOpen={isOpen}
         onClose={onClose}
-        modalBody={<ReviewDetail review={review} />}
+        modalBody={<ReviewDetail project={project} review={review} />}
       />
     </>
   );

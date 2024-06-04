@@ -18,6 +18,9 @@ import { useState } from "react";
 import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
 import { UsersModal } from "./UsersModal";
 import { Avatar, AvatarText } from "@/components/AvatarText";
+import { useGlobalUserData } from "@/hooks/bases";
+import { useUserProfile } from "../hooks";
+import { xDomain } from "@/constant";
 
 const ModalHeader = ({ text }: { text: string }) => (
   <Text
@@ -36,7 +39,6 @@ const ModalHeader = ({ text }: { text: string }) => (
   </Text>
 );
 const hasBadge = true;
-const hasWallet = true;
 
 export const UserInfo = () => {
   const params = useParams<{ username: string }>();
@@ -51,7 +53,11 @@ export const UserInfo = () => {
     onClose: followingOnClose,
   } = useDisclosure();
 
+  const userInfo = useUserProfile();
   const [isFollowed, setFollowed] = useState(false);
+
+  const hasWallet = !!userInfo.wallet;
+  console.log({ userInfo });
 
   return (
     <Stack
@@ -63,7 +69,9 @@ export const UserInfo = () => {
     >
       <Avatar
         badgeSize="48px"
-        src="/assets/images/default-img.png"
+        src={
+          userInfo.user.profile_picture ?? "/assets/images/default-avatar.png"
+        }
         hasBadge
         imageStyle={{
           width: { base: "100px", md: "186px" },
@@ -85,46 +93,56 @@ export const UserInfo = () => {
                 fontFamily="lexend"
                 color="gray.10"
               >
-                Nickname
+                {userInfo.user.display_name}
               </Text>
-              <Link href="#" target="_blank">
-                <TbMail
-                  cursor="pointer"
-                  fontSize="24px"
-                  color="var(--chakra-colors-gray-10)"
-                />
-              </Link>
-              <Link href="#" target="_blank">
-                <TbBrandX
-                  cursor="pointer"
-                  fontSize="24px"
-                  color="var(--chakra-colors-gray-10)"
-                />
-              </Link>
+              {userInfo.user.email && (
+                <Link href={`mailto:${userInfo.user.email}`}>
+                  <TbMail
+                    cursor="pointer"
+                    fontSize="24px"
+                    color="var(--chakra-colors-gray-10)"
+                  />
+                </Link>
+              )}
+              {userInfo.user.x_username && (
+                <Link
+                  title={`${xDomain}/${userInfo.user.x_username}`}
+                  rel="noreferrer noopener"
+                  href={`${xDomain}/${userInfo.user.x_username}`}
+                  target="_blank"
+                >
+                  <TbBrandX
+                    cursor="pointer"
+                    fontSize="24px"
+                    color="var(--chakra-colors-gray-10)"
+                  />
+                </Link>
+              )}
             </HStack>
-            {!isFollowed ? (
-              <Button
-                onClick={() => {
-                  setFollowed(true);
-                }}
-                leftIcon={<TbUserPlus />}
-                variant="primary"
-              >
-                Follow
-              </Button>
-            ) : (
-              <Button
-                leftIcon={<TbUserCheck />}
-                size="md"
-                background="gray.40"
-                color="gray.500"
-                onClick={() => {
-                  setFollowed(false);
-                }}
-              >
-                Following
-              </Button>
-            )}
+            {!userInfo.isSelfUser &&
+              (!isFollowed ? (
+                <Button
+                  onClick={() => {
+                    setFollowed(true);
+                  }}
+                  leftIcon={<TbUserPlus />}
+                  variant="primary"
+                >
+                  Follow
+                </Button>
+              ) : (
+                <Button
+                  leftIcon={<TbUserCheck />}
+                  size="md"
+                  background="gray.40"
+                  color="gray.500"
+                  onClick={() => {
+                    setFollowed(false);
+                  }}
+                >
+                  Following
+                </Button>
+              ))}
           </HStack>
           <Text
             color="gray.60"
@@ -132,7 +150,7 @@ export const UserInfo = () => {
             fontSize="lg"
             textAlign={{ base: "center", md: "left" }}
           >
-            {params?.username}
+            {userInfo.user.username}
           </Text>
           {hasWallet && (
             <Code
@@ -144,7 +162,7 @@ export const UserInfo = () => {
               textAlign={{ base: "center", md: "left" }}
               color="gray.80"
             >
-              {textTruncator("9de258cae570fb9736dd40c205194e2c")}
+              {textTruncator(userInfo.wallet.address)}
             </Code>
           )}
         </VStack>

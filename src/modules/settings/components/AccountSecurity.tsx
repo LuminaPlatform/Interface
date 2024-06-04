@@ -19,21 +19,23 @@ import { SetPasswordModal } from "./modals/SetPasswordModal";
 import { ChangePasswordModal } from "./modals/ChangePasswordModal";
 import { PasswordOTPModal } from "./modals/PasswordOTPModal";
 import { SettingsModalsHeader } from "./SettingsModalHeader";
-
-
+import { useGlobalUserData } from "@/hooks/bases";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
 
 type modalsBodyType = {
   [key in SettingsModalBody]: { component: JSX.Element; header: string };
 };
 
 export const AccountSecurity = () => {
+  const userInfo = useGlobalUserData();
   const methods = useForm<SettingsModalsForm>({
     mode: "all",
     reValidateMode: "onChange",
   });
 
   const handleSetPublic = (dispatch) => {
-    dispatch((prev) => ({ ...prev, isSecure: !prev.isSecure }));
+    dispatch((prev) => ({ ...prev, isPublic: !prev.isPublic }));
   };
 
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -43,16 +45,21 @@ export const AccountSecurity = () => {
   );
 
   const [email, setEmail] = useState({
-    isVerified: true,
-    isSecure: false,
+    // TODO should give the status enum from back
+    isVerified: userInfo?.user?.status === "ACTIVE",
+    isPublic: !!userInfo?.user?.email_public,
+    isLoading: false,
   });
   const [twitter, setTwitter] = useState({
     isConnect: true,
     isSecure: false,
+    isLoading: false,
   });
   const [password, setPassword] = useState({
-    isSet: false,
+    isSet: !!userInfo?.user?.password,
   });
+
+  console.log({ password });
 
   const modals = useMemo<modalsBodyType>(() => {
     return {
@@ -77,7 +84,9 @@ export const AccountSecurity = () => {
         header: "Change Your Password",
       },
       [SettingsModalBody.setPassword]: {
-        component: <SetPasswordModal setPassword={setPassword} onClose={onClose} />,
+        component: (
+          <SetPasswordModal setPassword={setPassword} onClose={onClose} />
+        ),
         header: "Set a Password",
       },
       [SettingsModalBody.passwordOTP]: {
@@ -120,6 +129,7 @@ export const AccountSecurity = () => {
             actionCardId={0}
             text="Connect to X"
             secure={{
+              isLoading: twitter.isLoading,
               isPublic: !twitter.isSecure,
               setPublic: () => handleSetPublic(setTwitter),
               showPublic: twitter.isConnect,
@@ -138,10 +148,29 @@ export const AccountSecurity = () => {
           <ActionCard
             logo={TbMail}
             actionCardId={1}
-            text="Verify Your Email"
+            text={email.isVerified ? "Change Your Email" : "Verify Your Email"}
             secure={{
-              isPublic: !email.isSecure,
-              setPublic: () => handleSetPublic(setEmail),
+              isLoading: email.isLoading,
+              isPublic: email.isPublic,
+              setPublic: () => {
+                setEmail((prev) => ({ ...prev, isLoading: true }));
+                axiosClient
+                  .post(apiKeys.update, {
+                    "0": {
+                      model_name: "User",
+                      params: {
+                        email_public: !email.isPublic,
+                      },
+                      id: userInfo.user.id,
+                    },
+                  })
+                  .then(() => {
+                    handleSetPublic(setEmail);
+                  })
+                  .finally(() =>
+                    setEmail((prev) => ({ ...prev, isLoading: false }))
+                  );
+              },
               showPublic: email.isVerified,
             }}
             connect={{

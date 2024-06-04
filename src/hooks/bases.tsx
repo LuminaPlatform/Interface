@@ -1,10 +1,12 @@
 import {
   Authorization,
   DispatchIsSidebarOpen,
+  GlobalUser,
   IsSidebarOpen,
   ModalSteps,
   SelectedProjects,
   SetAuthorization,
+  SetGlobalUser,
   SetModalSteps,
   SetSelectedProjects,
   WalletConnectData,
@@ -46,9 +48,12 @@ export const useLogout = () => {
     disconnect();
     reset();
     deleteCookie(ACCESS_TOKEN_COOKIE_KEY);
-    dispatchAuthorization(false);
+    dispatchAuthorization(undefined);
   };
 };
 
-export const useModalSteps=()=>useContext(ModalSteps)
-export const useDispatchModalSteps=()=>useContext(SetModalSteps)
+export const useModalSteps = () => useContext(ModalSteps);
+export const useDispatchModalSteps = () => useContext(SetModalSteps);
+
+export const useGlobalUserData = () => useContext(GlobalUser);
+export const useDispatchGlobalUserData = () => useContext(SetGlobalUser);

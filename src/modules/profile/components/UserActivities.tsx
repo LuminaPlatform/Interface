@@ -17,9 +17,10 @@ export const UserActivities = () => {
       >
         Activities
       </Text>
-      {reviews.map((item) => (
+      {/* TODO should fix type */}
+      {/* {reviews.map((item) => (
         <ReviewCard key={item} review={item} showProjectName />
-      ))}
+      ))} */}
     </VStack>
   );
 };

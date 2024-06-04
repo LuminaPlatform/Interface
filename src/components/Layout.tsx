@@ -57,8 +57,8 @@ const Layout = ({ children }: LayoutProps) => {
         <Container pt={["12px"]} maxWidth="1280px" px={["20px", null, "24px"]}>
           <ModalStepsProvider>
             <Navbar />
+            {children}
           </ModalStepsProvider>
-          {children}
         </Container>
       </GridItem>
     </Grid>

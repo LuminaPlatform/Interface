@@ -11,7 +11,9 @@ import { Project } from "./modules/projects/types";
 import { useAccount } from "wagmi";
 import { ACCESS_TOKEN_COOKIE_KEY } from "./constant";
 import { getCookie } from "cookies-next";
-import { STEP_MODAL } from "./types";
+import { AuthenticationData, STEP_MODAL } from "./types";
+import { getUserInformation } from "./api";
+import { useAuthorization } from "./hooks/bases";
 
 export const IsSidebarOpen = createContext(true);
 export const DispatchIsSidebarOpen = createContext<
@@ -62,31 +64,22 @@ export const SelectedProjectProvider = ({ children }: PropsWithChildren) => {
   );
 };
 
-export const Authorization = createContext(undefined);
-export const SetAuthorization = createContext(undefined);
+export const Authorization = createContext<AuthenticationData>(undefined);
+export const SetAuthorization =
+  createContext<Dispatch<SetStateAction<AuthenticationData>>>(undefined);
 
 interface AuthorizationProviderProps extends PropsWithChildren {
-  isAuthenticated: boolean;
+  data: AuthenticationData;
 }
 export const AuthorizationProvider = ({
   children,
-  isAuthenticated,
+  data,
 }: AuthorizationProviderProps) => {
-  const { isConnected } = useAccount();
-  const [isAuthenticate, setAuthenticate] = useState(
-    () => isAuthenticated || isConnected
-  );
+  const [user, setUser] = useState(() => data);
 
-  useEffect(() => {
-    if (isConnected || !!getCookie(ACCESS_TOKEN_COOKIE_KEY)) {
-      setAuthenticate(true);
-    } else {
-      setAuthenticate(false);
-    }
-  }, [isConnected]);
   return (
-    <Authorization.Provider value={isAuthenticate}>
-      <SetAuthorization.Provider value={setAuthenticate}>
+    <Authorization.Provider value={user}>
+      <SetAuthorization.Provider value={setUser}>
         {children}
       </SetAuthorization.Provider>
     </Authorization.Provider>
@@ -105,5 +98,47 @@ export const ModalStepsProvider = ({ children }: ModalStepsProviderProps) => {
         {children}
       </SetModalSteps.Provider>
     </ModalSteps.Provider>
+  );
+};
+
+export const GlobalUser = createContext<{ user: any; wallet: any }>(undefined);
+export const SetGlobalUser =
+  createContext<Dispatch<SetStateAction<{ user: any; wallet: any }>>>(
+    undefined
+  );
+
+interface GlobalUserProviderProps extends PropsWithChildren {
+  userData: any;
+}
+
+export const GlobalUserProvider = ({
+  children,
+  userData,
+}: GlobalUserProviderProps) => {
+  const [state, setState] = useState<{ user: any; wallet: any }>(
+    userData ?? undefined
+  );
+
+  const userBaseData = useAuthorization();
+
+  useEffect(() => {
+    if (!userData && !!userBaseData) {
+      getUserInformation(userBaseData.email).then((data) => {
+        if (!!data) {
+          setState({
+            user: data[0][0],
+            wallet: data[1],
+          });
+        }
+      });
+    }
+  }, [userBaseData]);
+
+  return (
+    <GlobalUser.Provider value={state}>
+      <SetGlobalUser.Provider value={setState}>
+        {children}
+      </SetGlobalUser.Provider>
+    </GlobalUser.Provider>
   );
 };

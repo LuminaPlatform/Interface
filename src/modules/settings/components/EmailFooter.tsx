@@ -1,10 +1,12 @@
 import { Button, HStack } from "@chakra-ui/react";
 
+// TODO should set type
 export const SettingsModalFooter = ({
   cancelHandler,
   submitHandler,
   mainButtonText,
   isDisabled,
+  isLoading,
 }) => {
   return (
     <HStack width="full">
@@ -18,6 +20,7 @@ export const SettingsModalFooter = ({
         Cancel
       </Button>
       <Button
+        isLoading={isLoading}
         size="md"
         width="full"
         isDisabled={isDisabled}

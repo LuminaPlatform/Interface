@@ -42,6 +42,8 @@ import { setCookie } from "cookies-next";
 import { SignWallet } from "./SignWallet";
 import { useAccount, useSignMessage } from "wagmi";
 import { VerifiedAccount } from "@/modules/settings/components/modals/VerifiedAccount";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
 
 interface OTPContainerProps extends WalletModalBodyProps {}
 const OTPContainer = ({}: OTPContainerProps) => {
@@ -57,8 +59,6 @@ const OTPContainer = ({}: OTPContainerProps) => {
   const password = getValues("password");
 
   const { onClose } = useWalletModal();
-
-  console.log({ email });
 
   const dispatchAuthorization = useDispatchAuthorization();
   return (
@@ -83,12 +83,21 @@ const OTPContainer = ({}: OTPContainerProps) => {
                       ACCESS_TOKEN_COOKIE_KEY,
                       loginData.data.access_token
                     );
-                    dispatchAuthorization(true);
-                    dispatchSteps(STEP_MODAL.verified);
-                    return toast({
-                      description: "You are logged in",
-                      status: "success",
-                    });
+                    return axiosClient
+                      .get(apiKeys.auth.isAuthorized, {
+                        headers: {
+                          Authorization: `Bearer ${loginData.data.access_token}`,
+                        },
+                      })
+                      .then((userDataResponse) => userDataResponse.data)
+                      .then((user) => {
+                        dispatchAuthorization(user);
+                        dispatchSteps(STEP_MODAL.verified);
+                        return toast({
+                          description: "You are logged in",
+                          status: "success",
+                        });
+                      });
                   },
                 }
               );
@@ -208,8 +217,6 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
       onOpen();
     }
   }, [isConnected, signMessageData]);
-
-  console.log({ isConnected });
 
   const modalBody = useMemo(
     () => ({

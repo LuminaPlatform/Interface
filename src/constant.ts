@@ -112,3 +112,5 @@ export const primaryCategories = [
 ];
 
 export const pageThreshold = 5;
+
+export const xDomain = "https://x.com";

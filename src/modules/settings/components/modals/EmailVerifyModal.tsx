@@ -14,7 +14,7 @@ import { SettingsModalFooter } from "../EmailFooter";
 import { useForm, useFormContext } from "react-hook-form";
 import { InputError } from "@/components/InputError";
 import { SettingsModalBody, SettingsModalsForm } from "../../types";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 interface EmailVerifyModalProps extends UseDisclosureProps {
   setModalBody: Dispatch<SetStateAction<SettingsModalBody>>;
@@ -30,6 +30,8 @@ export const EmailVerifyModal = ({
     handleSubmit,
     register,
   } = useFormContext<SettingsModalsForm>();
+
+  const [isLoading, setLoading] = useState(false);
 
   return (
     <ChakraForm rowGap="16px" as={VStack} width="full">
@@ -62,6 +64,7 @@ export const EmailVerifyModal = ({
         {!!errors.email && <InputError errorMessage={errors.email.message} />}
       </FormControl>
       <SettingsModalFooter
+        isLoading={isLoading}
         cancelHandler={onClose}
         isDisabled={!!errors.email}
         mainButtonText="Submit Email"

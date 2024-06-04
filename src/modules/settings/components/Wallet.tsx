@@ -1,8 +1,17 @@
+import { apiKeys } from "@/api/apiKeys";
+import { axiosClient } from "@/config/axios";
+import {
+  useDispatchModalSteps,
+  useGlobalUserData,
+  useWalletModal,
+} from "@/hooks/bases";
+import { STEP_MODAL } from "@/types";
 import { textTruncator } from "@/utils";
 import {
   Box,
   Button,
   HStack,
+  Spinner,
   Tag,
   TagLabel,
   TagLeftIcon,
@@ -20,46 +29,39 @@ import {
   TbPlus,
 } from "react-icons/tb";
 
-const walletData = [
-  {
-    id: 0,
-    wallet: "0x4a5dbc1F68F0E415c20b174cf09D1b4E1539CBD9",
-    status: "pr" as WalletItemProps["status"],
-  },
-  {
-    id: 1,
-    wallet: "0x4a5dbc1F68F0E415c20b174cf09D1b4E1539CBD9",
-    status: "pr" as WalletItemProps["status"],
-  },
-  {
-    id: 2,
-    wallet: "0x4a5dbc1F68F0E415c20b174cf09D1b4E1539CBD9",
-    status: "pu" as WalletItemProps["status"],
-  },
-  {
-    id: 3,
-    wallet: "0x4a5dbc1F68F0E415c20b174cf09D1b4E1539CBD9",
-    status: "pr" as WalletItemProps["status"],
-  },
-];
 interface WalletItemProps {
   pinnedWalletId: number;
-  wallet: string;
-  status: "pu" | "pr";
-  id: number;
+  wallet: any;
   setPinnedWalletId: Dispatch<SetStateAction<number>>;
 }
 const WalletItem = ({
   pinnedWalletId,
-  status,
-  wallet,
-  id,
   setPinnedWalletId,
+  wallet,
 }: WalletItemProps) => {
-  const [isPublic, setPublic] = useState(() =>
-    status === "pr" ? false : true
-  );
+  const [isPublic, setPublic] = useState(wallet.public);
   const [isHover, setHover] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+
+  const handleStatusChange = () => {
+    setLoading(true);
+    axiosClient
+      .post(apiKeys.update, {
+        0: {
+          model_name: "Wallet",
+          params: {
+            public: !isPublic,
+          },
+          id: 1,
+        },
+      })
+      .then(() => {
+        setPublic((prev) => !prev);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <HStack
@@ -86,7 +88,7 @@ const WalletItem = ({
       >
         <Box width="24px">
           <AnimatePresence>
-            {(isHover || pinnedWalletId === id) && (
+            {(isHover || pinnedWalletId === wallet.id) && (
               <Box
                 initial={{ opacity: 0 }}
                 exit={{ opacity: 0 }}
@@ -96,7 +98,7 @@ const WalletItem = ({
                 <TbPinnedFilled
                   fontSize="24px"
                   onClick={() => {
-                    setPinnedWalletId(id);
+                    setPinnedWalletId(wallet.id);
                   }}
                 />
               </Box>
@@ -104,7 +106,7 @@ const WalletItem = ({
           </AnimatePresence>
         </Box>
         <Text fontSize="md" fontWeight="700">
-          {textTruncator(wallet)}
+          {textTruncator(wallet.address)}
         </Text>
       </HStack>
       <Tag
@@ -112,21 +114,37 @@ const WalletItem = ({
         size="sm"
         variant={isPublic ? "lightOrange" : "darkOrange"}
         onClick={() => {
-          setPublic((prev) => !prev);
+          if (!isLoading) {
+            handleStatusChange();
+          }
         }}
         columnGap="8px"
       >
-        <Box display="flex" alignItems="center" width="16px" height="16px">
-          {isPublic ? <TbEye fontSize="16px" /> : <TbEyeOff fontSize="16px" />}
-        </Box>
-        <TagLabel>{isPublic ? "Public" : "Private"}</TagLabel>
+        {isLoading ? (
+          <Spinner boxSize={3} mx="auto" my="auto" />
+        ) : (
+          <>
+            <Box display="flex" alignItems="center" width="16px" height="16px">
+              {isPublic ? (
+                <TbEye fontSize="16px" />
+              ) : (
+                <TbEyeOff fontSize="16px" />
+              )}
+            </Box>
+            <TagLabel>{isPublic ? "Public" : "Private"}</TagLabel>
+          </>
+        )}
       </Tag>
     </HStack>
   );
 };
 
 export const Wallet = () => {
-  const [pinnedWalletId, setPinnedWalletId] = useState(1);
+  const [pinnedWalletId, setPinnedWalletId] = useState(undefined);
+  const { wallet } = useGlobalUserData();
+  const { onOpen } = useWalletModal();
+  const dispatch = useDispatchModalSteps();
+  console.log({ wallet });
 
   return (
     <VStack zIndex={1} borderRadius="12px" width="full" p="24px" bg="gray.800">
@@ -143,20 +161,21 @@ export const Wallet = () => {
           height="24px"
           leftIcon={<TbPlus />}
           variant="outline"
-          onClick={() => {}}
+          onClick={() => {
+            dispatch(STEP_MODAL.connectors);
+            onOpen();
+          }}
         >
           Add Wallet
         </Button>
       </HStack>
       <VStack width="full" rowGap="16px">
-        {walletData.map((item) => (
+        {wallet.map((item, index) => (
           <WalletItem
             setPinnedWalletId={setPinnedWalletId}
-            key={item.id}
-            id={item.id}
             pinnedWalletId={pinnedWalletId}
-            status={item.status}
-            wallet={item.wallet}
+            key={item.id}
+            wallet={item}
           />
         ))}
       </VStack>

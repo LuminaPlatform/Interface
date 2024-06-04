@@ -68,7 +68,7 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
       },
     };
     axiosClient
-      .post(apiKeys["read"]["create"], modelData)
+      .post(apiKeys["create"], modelData)
       .then((response) => {
         if (response.status === 200) {
           reset();

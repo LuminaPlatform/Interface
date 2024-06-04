@@ -3,7 +3,7 @@ import { Button, chakra, HStack, Stack, Text, VStack } from "@chakra-ui/react";
 import { TbPencil } from "react-icons/tb";
 import { UserInfoEditable } from "../components/UserInfoEditable";
 import { useEffect, useState } from "react";
-import { useAuthorization } from "@/hooks/bases";
+import { useAuthorization, useGlobalUserData } from "@/hooks/bases";
 import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
 import { Wallet } from "../components/Wallet";
@@ -14,18 +14,15 @@ import { settingsFormType } from "../types";
 const ChakraForm = chakra("form");
 export const Index = () => {
   const [isEditable, setEditable] = useState(false);
-  const isAuthenticate = useAuthorization();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (!isAuthenticate) router.replace("/404");
-  }, [isAuthenticate]);
+  const {user} = useGlobalUserData();
+  console.log({ user });
 
   // TODO should add default value
   const { ...methods } = useForm<settingsFormType>({
     mode: "onChange",
     defaultValues: {
-      profile: null,
+      profile: user.profile_picture,
     },
   });
 
