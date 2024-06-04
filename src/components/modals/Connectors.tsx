@@ -6,11 +6,13 @@ import { Dispatch, SetStateAction } from "react";
 import { TbArrowNarrowLeft } from "react-icons/tb";
 import { useConnect } from "wagmi";
 import { IconButton } from "./Connect";
-import { useWalletModal } from "@/hooks/bases";
+import { useDispatchModalSteps, useWalletModal } from "@/hooks/bases";
 
-export const Connectors = ({ setStep }: WalletModalBodyProps) => {
+export const Connectors = ({}: WalletModalBodyProps) => {
   const { connectors, connect } = useConnect();
   const { onClose } = useWalletModal();
+  const dispatchSteps = useDispatchModalSteps();
+
   return (
     <VStack
       as={motion.div}
@@ -32,7 +34,7 @@ export const Connectors = ({ setStep }: WalletModalBodyProps) => {
         position="absolute"
         left="16px"
         onClick={() => {
-          setStep(STEP_MODAL.wallet);
+          dispatchSteps(STEP_MODAL.wallet);
         }}
       />
       {connectors.slice(0, connectors.length - 2)?.map((connector) => (
@@ -47,7 +49,6 @@ export const Connectors = ({ setStep }: WalletModalBodyProps) => {
           icon={
             connector.icon ||
             dataConnectors.find((data) => {
-              console.log(data, data.type === connector.type);
               return data.type === connector.type;
             })?.icon
           }

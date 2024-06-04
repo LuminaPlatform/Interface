@@ -1,3 +1,4 @@
+"use client";
 import {
   Alert,
   AlertIcon,
@@ -8,25 +9,153 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Menu,
+  MenuButton,
+  MenuList,
   Text,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ConnectModal } from "./modals/Connect";
-import { TbBell, TbSearch } from "react-icons/tb";
-import { useWalletModal } from "@/hooks/bases";
+import {
+  useAuthorization,
+  useGlobalUserData,
+  useWalletModal,
+} from "@/hooks/bases";
+import {
+  TbBell,
+  TbLogout,
+  TbSearch,
+  TbSettings2,
+  TbUserCircle,
+} from "react-icons/tb";
 import { useAccount } from "wagmi";
+import Link from "next/link";
+import { BadgeModal } from "./modals/badges/Badge";
+import { Badges } from "@/types";
+import { Logout } from "./modals/Logout";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+
+const ProfileBox = () => {
+  const userData = useGlobalUserData();
+  const user = userData?.user;
+  console.log({user});
+  
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const baseUserData = useAuthorization();
+
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <>
+      <Menu>
+        <MenuButton as={Box} display="flex">
+          <HStack width="full">
+            <Img
+              rounded="full"
+              width="32px"
+              height="32px"
+              src={user?.profile_picture ?? "/assets/images/default-avatar.png"}
+              alt="user"
+            />
+            <Text color="gray.10" fontSize="md" fontWeight="200">
+              {user.display_name ?? user.email}
+            </Text>
+          </HStack>
+        </MenuButton>
+        <MenuList
+          border="none"
+          width="290px"
+          px="16px"
+          py="24px"
+          bg="gray.900"
+          zIndex={2}
+          cursor="default"
+        >
+          <HStack columnGap="8px" mb="16px" rowGap="8px">
+            <Img
+              rounded="full"
+              width="64px"
+              height="64px"
+              src={user.profile_picture ?? "/assets/images/default-avatar.png"}
+              alt="profile"
+            />
+            <Text
+              fontFamily="lexend"
+              color="gray.0"
+              fontSize="xl"
+              fontWeight="600"
+            >
+              {user.display_name ?? user.email}
+            </Text>
+          </HStack>
+          <VStack rowGap="16px">
+            <Button
+              fontSize="md"
+              fontWeight="700"
+              height="48px"
+              variant="primaryDark"
+              width="full"
+              as={Link}
+              href={`/profile/${user?.email}`}
+            >
+              <HStack width="full" justifyContent="flex-start" columnGap="8px">
+                <TbUserCircle fontSize="20px" />
+                <Text>My Profile</Text>
+              </HStack>
+            </Button>
+            <Button
+              fontSize="md"
+              fontWeight="700"
+              height="48px"
+              variant="primaryDark"
+              width="full"
+              as={Link}
+              href="/settings"
+            >
+              <HStack width="full" justifyContent="flex-start" columnGap="8px">
+                <TbSettings2 fontSize="20px" />
+                <Text>Account Setting</Text>
+              </HStack>
+            </Button>
+            <Button
+              fontSize="md"
+              fontWeight="700"
+              height="48px"
+              variant="primaryDark"
+              width="full"
+              onClick={onOpen}
+            >
+              <HStack width="full" justifyContent="flex-start" columnGap="8px">
+                <TbLogout fontSize="20px" />
+                <Text>Log Out</Text>
+              </HStack>
+            </Button>
+          </VStack>
+        </MenuList>
+      </Menu>
+      <Logout isOpen={isOpen} onClose={onClose} />
+    </>
+  );
+};
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
-  const { isOpen, onClose, onOpen } = useWalletModal();
-  const { isConnected } = useAccount();
 
-  useEffect(() => {
-    if (isConnected && onClose) {
-      onClose();
-    }
-  }, [isConnected, onClose]);
+  const {
+    isOpen: badgeIsOpen,
+    onClose: badgeOnClose,
+    onOpen: badgeOnOpen,
+  } = useDisclosure();
+
+  const { isOpen, onClose, onOpen } = useWalletModal();
+
+  const authorization = useAuthorization();
 
   return (
     <>
@@ -84,7 +213,7 @@ const Navbar = () => {
             placeholder="Search"
           />
         </InputGroup>
-        {isConnected && (
+        {!!authorization && (
           <Box
             cursor="pointer"
             onClick={() => {
@@ -116,7 +245,7 @@ const Navbar = () => {
           </Box>
         )}
         <HStack cursor="pointer" columnGap="8px">
-          {!isConnected ? (
+          {!authorization ? (
             <Button
               onClick={onOpen}
               borderRadius="8px"
@@ -127,24 +256,16 @@ const Navbar = () => {
               Connect
             </Button>
           ) : (
-            <>
-              <Img
-                rounded="full"
-                width="32px"
-                height="32px"
-                border="1px solid"
-                borderColor="gray.0"
-                src="/assets/images/default-img.png"
-                alt="user"
-              />
-              <Text color="gray.10" fontSize="md" fontWeight="200">
-                Anonyms
-              </Text>
-            </>
+            <ProfileBox />
           )}
         </HStack>
       </HStack>
       <ConnectModal isOpen={isOpen} onClose={onClose} />
+      <BadgeModal
+        badgeType={Badges["HOLDER"]}
+        isOpen={badgeIsOpen}
+        onClose={badgeOnClose}
+      />
     </>
   );
 };

@@ -3,13 +3,17 @@ import { useProjectData } from "../hooks";
 import { textTruncator } from "@/utils";
 import Link from "next/link";
 import { TbLink } from "react-icons/tb";
+import { primaryCategories } from "@/constant";
 
 const Tags = () => {
+  const { content } = useProjectData();
   const {
-    tags,
-    project: {},
-  } = useProjectData();
-  console.log(textTruncator("1234567890"));
+    applicantType,
+    impactCategory,
+    applicant: {
+      address: { address },
+    },
+  } = content;
 
   return (
     <Stack
@@ -19,21 +23,26 @@ const Tags = () => {
       alignItems={{ base: "flex-start" }}
     >
       <HStack width="full" justifyContent="flex-start" alignItems="flex-start">
-        {tags.map((tag) => (
-          <Text
-            borderRadius="12px"
-            height="24px"
-            px="8px"
-            display="inline-block"
-            lineHeight="24px"
-            key={tag.id}
-            color={tag.color.txt}
-            bg={tag.color.bg}
-            fontWeight="700"
-          >
-            {tag.title}
-          </Text>
-        ))}
+        {impactCategory.map((tag) => {
+          const foundCategory = primaryCategories.find(
+            (item) => item.title === tag.split("_").join(" ")
+          );
+          return (
+            <Text
+              borderRadius="12px"
+              height="24px"
+              px="8px"
+              display="inline-block"
+              lineHeight="24px"
+              key={foundCategory.value}
+              color={foundCategory.color.txt}
+              bg={foundCategory.color.bg}
+              fontWeight="700"
+            >
+              {foundCategory.shortTitle}
+            </Text>
+          );
+        })}
       </HStack>
       <HStack
         width="full"
@@ -50,7 +59,7 @@ const Tags = () => {
           px="8px"
           color="gray.80"
         >
-          Project
+          {applicantType}
         </Text>
         <Text
           bg="gray.600"
@@ -62,22 +71,30 @@ const Tags = () => {
           px="8px"
           color="gray.80"
         >
-          {textTruncator("1234567890")}
+          {textTruncator(address)}
         </Text>
       </HStack>
     </Stack>
   );
 };
 export const Hero = () => {
+  const { name, content } = useProjectData();
   const {
-    project: { name },
-  } = useProjectData();
+    profile: { bannerImageUrl, profileImageUrl },
+    websiteUrl,
+    includedInBallots,
+    bio
+  } = content;
+
   return (
     <VStack pb="24px" rowGap="0px" width="full">
       <VStack
         borderRadius="12px"
         p="12px"
-        bg="gray.500"
+        backgroundImage={bannerImageUrl}
+        backgroundPosition="center"
+        backgroundRepeat='no-repeat'
+        backgroundSize='100% 100%'
         height={{ base: "200px", md: "329px" }}
         width="full"
       >
@@ -96,8 +113,9 @@ export const Hero = () => {
           top={{ base: "-40px", md: "-60px" }}
           left={{ base: "8px", md: "24px" }}
           borderRadius="16px"
+          overflow="hidden"
         >
-          <Img src="" />
+          <Img width="full" height="full" src={profileImageUrl} />
         </Box>
         <VStack pl={{ base: "104px", md: "168px" }} width="full">
           <Stack
@@ -113,7 +131,9 @@ export const Hero = () => {
                 color="gray.20"
                 fontFamily="lexend"
                 as={Link}
-                href="#"
+                href={websiteUrl}
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 {name}
               </Text>
@@ -130,7 +150,7 @@ export const Hero = () => {
               height={{ base: "16px", md: "24px" }}
               width="fit-content"
             >
-              Appears in 95 ballots
+              Appears in {includedInBallots} ballots
             </Text>
           </Stack>
           <Text
@@ -140,7 +160,7 @@ export const Hero = () => {
             fontWeight="500"
             color="gray.20"
           >
-            A collective of Ethereum&apos;s active core protocol contributors
+            {bio}
           </Text>
         </VStack>
       </Stack>

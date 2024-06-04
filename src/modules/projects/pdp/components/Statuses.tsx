@@ -13,10 +13,10 @@ export const Statuses = ({ status, setStatus }: StatusesProps) => {
           cursor="pointer"
           onClick={() =>
             setStatus((prev) => {
-              if (prev === item.id) {
+              if (prev === item.name) {
                 return undefined;
               }
-              return item.id;
+              return item.name;
             })
           }
           key={item.id}
@@ -24,7 +24,7 @@ export const Statuses = ({ status, setStatus }: StatusesProps) => {
           colorScheme={reviewStatuses[item.id].colorScheme}
           icon={reviewStatuses[item.id].icon}
           fontSize="md"
-          {...(item.id !== status && {
+          {...(item.name !== status && {
             color: "gray.80",
             border: "1px solid",
             borderColor: "gray.80",

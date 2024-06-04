@@ -31,6 +31,7 @@ import {
 } from "react-icons/tb";
 import { Project } from "@/modules/projects/types";
 import { tableData } from "@/modules/projects/constant";
+// TODO should fix any type
 
 interface AddProjectTableProps {
   selectedProjects: Array<Project>;
@@ -43,7 +44,7 @@ export const AddProjectTable = ({
   setSelectedProjects,
   search,
 }: AddProjectTableProps) => {
-  const data = useMemo<Project[]>(() => {
+  const data = useMemo<any>(() => {
     if (search) {
       return tableData.filter((row) =>
         row.project.name.toLowerCase().includes(search.toLowerCase())
@@ -54,7 +55,7 @@ export const AddProjectTable = ({
 
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columnHelper = createColumnHelper<Project>();
+  const columnHelper = createColumnHelper<any>();
 
   const columns = [
     columnHelper.accessor("id", {

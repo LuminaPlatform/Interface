@@ -25,20 +25,68 @@ import {
 import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useEmailLogin } from "@/hooks/auth";
+import {
+  useCustomToast,
+  useDispatchAuthorization,
+  useDispatchModalSteps,
+  useWalletModal,
+} from "@/hooks/bases";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { setCookie } from "cookies-next";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
 
 const ChakraForm = chakra("form");
-export const Login = ({ setStep }: WalletModalBodyProps) => {
+export const Login = ({}: WalletModalBodyProps) => {
+  const { mutate } = useEmailLogin();
+
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useFormContext<ModalForm>();
+  const toast = useCustomToast();
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const { onClose } = useWalletModal();
+  const dispatchAuthorization = useDispatchAuthorization();
+  const dispatchSteps = useDispatchModalSteps();
+
+  const handleGoogleLogin = async () => {
+    axiosClient
+      .get(apiKeys["auth"]["login"]["google"]["req"])
+      .then((response) => {
+        const openedWindow = window.open(
+          response.data.url,
+          "_blank",
+          "width=500,height=600"
+        );
+        const pollTimer = window.setInterval(function () {
+          try {
+            if (openedWindow.location.href.includes("https://lumina.credit/")) {
+              window.clearInterval(pollTimer);
+              openedWindow.close();
+
+              const urlParams = new URLSearchParams(
+                openedWindow.location.search
+              );
+              const authorizationCode = urlParams.get("code");
+
+              console.log("Authorization Code:", authorizationCode);
+
+              window.location.href = "/welcome";
+            }
+          } catch (e) {
+            console.log("Error:", e);
+          }
+        }, 1000);
+      });
+  };
+
   return (
     <ChakraForm
-      onSubmit={handleSubmit((values) => console.log({ values }))}
       display="flex"
       flexDirection="column"
       width="full"
@@ -59,7 +107,7 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
         position="absolute"
         left="16px"
         onClick={() => {
-          setStep(STEP_MODAL.wallet);
+          dispatchSteps(STEP_MODAL.wallet);
         }}
       />
       <Text textAlign="center" color="gray.0" fontSize="xl" fontWeight="600">
@@ -140,9 +188,43 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
         </FormControl>
       </VStack>
       <Button
-        type="submit"
+        type="button"
         variant="primary"
         isDisabled={!!errors.email || !!errors.password}
+        onClick={handleSubmit(({ email, password }) => {
+          mutate(
+            { username: email, password },
+            {
+              onSuccess: ({ data: { access_token } }) => {
+                setCookie(ACCESS_TOKEN_COOKIE_KEY, access_token);
+                dispatchSteps(STEP_MODAL.wallet);
+                return axiosClient
+                  .get(apiKeys.auth.isAuthorized, {
+                    headers: {
+                      Authorization: `Bearer ${access_token}`,
+                    },
+                  })
+                  .then((userDataResponse) => userDataResponse.data)
+                  .then((user) => {
+                    dispatchAuthorization(user);
+                    dispatchSteps(STEP_MODAL.verified);
+                    onClose();
+                    return toast({
+                      description: "You are logged in",
+                      status: "success",
+                    });
+                  });
+              },
+              onError: (error) => {
+                return toast({
+                  title: error.response.data.error_message,
+                  description: error.response.data.error_detail,
+                  status: "error",
+                });
+              },
+            }
+          );
+        })}
       >
         Log in
       </Button>
@@ -150,7 +232,10 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
         <Text lineHeight="40px" color="gray.0" fontSize="md">
           New to lumina?
         </Text>
-        <Button onClick={() => setStep(STEP_MODAL.register)} variant="ghost">
+        <Button
+          onClick={() => dispatchSteps(STEP_MODAL.register)}
+          variant="ghost"
+        >
           Register Now
         </Button>
       </HStack>
@@ -189,6 +274,7 @@ export const Login = ({ setStep }: WalletModalBodyProps) => {
           height="48px"
           borderRadius="33px"
           width="full"
+          onClick={handleGoogleLogin}
         >
           <TbBrandGoogleFilled
             color="var(--chakra-colors-primary-50)"

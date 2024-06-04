@@ -89,6 +89,21 @@ export const theme = extendTheme({
             background: "transparent",
           },
         },
+        primaryDark: {
+          border: "none",
+          color: "gray.20",
+          background: "gray.700",
+          _hover: {
+            color: "gray.20",
+            background: "#00000040",
+            boxShadow: "1px 4px 16px 0px #00000040",
+          },
+          _active: {
+            color: "gray.20",
+            background: "#00000040",
+            boxShadow: "1px 4px 16px 0px #00000040",
+          },
+        },
       },
     },
     Checkbox: {
@@ -158,6 +173,79 @@ export const theme = extendTheme({
               color: "gray.100",
             },
           },
+        },
+      },
+    },
+    Tag: {
+      baseStyle: {
+        container: {
+          fontWeight: 700,
+        },
+      },
+      sizes: {
+        md: {
+          container: {
+            height: "32px",
+            borderRadius: "17px",
+            px: "8px",
+            fontSize: "md",
+          },
+        },
+        sm: {
+          container: {
+            height: "24px",
+            borderRadius: "12px",
+            px: "8px",
+            fontSize: "xs",
+          },
+        },
+      },
+      variants: {
+        lightOrange: {
+          container: {
+            bg: "gray.40",
+            color: "primary.400",
+          },
+        },
+        darkOrange: {
+          container: {
+            bg: "gray.600",
+            color: "primary.300",
+          },
+        },
+        green: {
+          container: {
+            bg: "green.75",
+            color: "green.400",
+          },
+        },
+        dark: {
+          container: {
+            bg: "gray.900",
+            color: "gray.80",
+            border: "1px solid",
+            borderColor: "gray.80",
+          },
+        },
+      },
+    },
+    FormLabel: {
+      sizes: {
+        sm: {
+          fontSize: "xs",
+          fontWeight: 500,
+        },
+      },
+      variants: {
+        primary: {
+          color: "gray.40",
+        },
+      },
+    },
+    Modal: {
+      sizes: {
+        "3xl": {
+          body: { width: "782px" },
         },
       },
     },

@@ -18,15 +18,18 @@ import {
 } from "@/hooks/bases";
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
+import Link from "next/link";
+import { BreadCrumb } from "./BreadCrumb";
 
 export const Header = () => {
   const dispatchSelectedProject = useDispatchSelectedProjects();
   const selectedProjects = useSelectedProjects();
   const { query } = useRouter();
+
   const project = useProjectData();
-  const {
-    project: { name },
-  } = project;
+  console.log({ project });
+
+  const { name } = project;
 
   const { isConnected } = useAccount();
 
@@ -39,33 +42,7 @@ export const Header = () => {
       justifyContent={{ md: "space-between" }}
       flexDirection={{ base: "column", md: "row" }}
     >
-      <Breadcrumb
-        separator={
-          <TbChevronRight size={28} color="var(--chakra-colors-gray-20)" />
-        }
-      >
-        <BreadcrumbItem>
-          <BreadcrumbLink
-            fontWeight="600"
-            fontSize="28px"
-            color="gray.20"
-            href="/projects"
-          >
-            RetroPGF3 Projects
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-
-        <BreadcrumbItem>
-          <BreadcrumbLink
-            fontWeight="600"
-            fontSize="28px"
-            color="gray.20"
-            href={`/project${query.projectId}`}
-          >
-            {name}
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-      </Breadcrumb>
+      <BreadCrumb />
       {isConnected && (
         <Button
           onClick={() => {

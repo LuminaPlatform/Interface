@@ -11,14 +11,24 @@ import { Badge } from "./Badge";
 import { reviewStatuses } from "@/constant";
 import { ModalBase } from "./ModalBase";
 import { ReviewDetail } from "@/modules/reviews/components/ReviewDetail";
+import { Project, Review } from "@/modules/projects/types";
+import { useProjectData } from "@/modules/projects/pdp/hooks";
 
 interface ReviewCardProps {
-  review: number;
+  review: Review;
   showProjectName: boolean;
+  project: Project;
 }
-export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
+export const ReviewCard = ({
+  review,
+  showProjectName,
+  project,
+}: ReviewCardProps) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  const foundReviewStatus = reviewStatuses.find(
+    (item) => item.name === review.viewpoint
+  );
   return (
     // TODO should use dynamic alt
     <>
@@ -44,8 +54,10 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
             py={{ base: "10px", md: "17px" }}
           >
             <Img
-              alt="project"
-              src="/assets/images/default-img.png"
+              alt={project.name}
+              // TODO should add review img
+              rounded="full"
+              src={project.content.profile.profileImageUrl}
               width={{ base: "24px", md: "36px" }}
               height={{ base: "24px", md: "36px" }}
             />
@@ -58,7 +70,7 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
               fontSize={{ base: "sm", md: "md" }}
               fontWeight="500"
             >
-              Project Name
+              {project.name}
             </Text>
           </VStack>
         )}
@@ -66,6 +78,7 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
           rowGap="12px"
           alignItems="flex-start"
           justifyContent="space-between"
+          width="full"
         >
           <Stack
             flexDirection={{ base: "column", md: "row" }}
@@ -77,19 +90,20 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
               fontWeight="600"
               fontSize={{ base: "lg", md: "xl" }}
             >
-              Review Title
+              {review.title}
             </Text>
             <Badge
-              title={reviewStatuses[review].name}
-              colorScheme={reviewStatuses[review].colorScheme}
-              icon={reviewStatuses[review].icon}
+              title={foundReviewStatus?.name}
+              colorScheme={foundReviewStatus?.colorScheme}
+              icon={foundReviewStatus?.icon}
             />
           </Stack>
           <Stack
             flexDirection={{ base: "column", md: "row" }}
             position="relative"
           >
-            {false && (
+            {/* TODO should attachment added to model */}
+            {/* {false && (
               <AspectRatio
                 order={{ base: "0", md: "1" }}
                 ratio={1.14}
@@ -102,7 +116,7 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
                   alt="banner"
                 />
               </AspectRatio>
-            )}
+            )} */}
             <Text
               width="full"
               display="flex"
@@ -113,16 +127,7 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
               background="linear-gradient(to bottom,var(--chakra-colors-gray-20),var(--chakra-colors-gray-20) ,rgba(0,0,0,0))"
               backgroundClip="text"
             >
-              Lorem ipsum dolor sit amet consectetur. At quis viverra sit urna
-              odio consectetur elementum nunc viverra. Aliquet tellus risus sed
-              elit aliquet venenatis ut. Lorem ipsum dolor sit amet consectetur.
-              At quis viverra sit urna odio consectetur elementum nunc viverra.
-              Aliquet tellus risus sed elit aliquet venenatis ut. Lorem ipsum
-              dolor sit amet consectetur. At quis viverra sit urna odio
-              consectetur elementum nunc viverra. Aliquet tellus risus sed elit
-              aliquet venenatis ut. Lorem ipsum dolor sit amet consectetur. At
-              quis viverra sit urna odio consectetur elementum nunc viverra.
-              Aliquet tellus risus sed elit aliquet venenatis ut.
+              {review.description}
             </Text>
           </Stack>
           <HStack width="full" justifyContent="space-between">
@@ -132,12 +137,12 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
                 border="1px solid"
                 borderColor="gray.0"
                 alt="writer"
-                src="/assets/images/default-img.png"
+                src="/assets/images/default-avatar.png"
                 width={{ base: "16px", md: "24px" }}
                 height={{ base: "16px", md: "24px" }}
               />
               <Text color="gray.40" fontSize={{ base: "sm", md: "md" }}>
-                Writer Name
+                {review.user.display_name}
               </Text>
             </HStack>
             <HStack fontWeight="500" fontSize="xs" color="gray.80">
@@ -145,6 +150,7 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
                 {new Date().getFullYear()}-{new Date().getMonth() + 1}-
                 {new Date().getDate()}
               </Text>
+              {/* TODO should add timestamps */}
               <Text>17:05</Text>
             </HStack>
           </HStack>
@@ -153,7 +159,7 @@ export const ReviewCard = ({ review, showProjectName }: ReviewCardProps) => {
       <ModalBase
         isOpen={isOpen}
         onClose={onClose}
-        modalBody={<ReviewDetail />}
+        modalBody={<ReviewDetail project={project} review={review} />}
       />
     </>
   );

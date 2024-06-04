@@ -27,17 +27,22 @@ import {
 import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useEmailSignUp } from "@/hooks/auth";
+import { useCustomToast, useDispatchModalSteps } from "@/hooks/bases";
 
 const ChakraForm = chakra("form");
 
-export const Register = ({ setStep }: WalletModalBodyProps) => {
+export const Register = ({}: WalletModalBodyProps) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useFormContext<ModalForm>();
+  const dispatchSteps = useDispatchModalSteps();
 
+  const { mutate } = useEmailSignUp();
   const [showPassword, setShowPassword] = useState(false);
+  const toast = useCustomToast();
 
   return (
     <ChakraForm
@@ -47,7 +52,6 @@ export const Register = ({ setStep }: WalletModalBodyProps) => {
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      onSubmit={handleSubmit((values) => console.log({ values }))}
       display="flex"
       flexDirection="column"
       width="full"
@@ -62,7 +66,7 @@ export const Register = ({ setStep }: WalletModalBodyProps) => {
         position="absolute"
         left="16px"
         onClick={() => {
-          setStep(STEP_MODAL.wallet);
+          dispatchSteps(STEP_MODAL.wallet);
         }}
       />
       <Text textAlign="center" color="gray.0" fontSize="xl" fontWeight="600">
@@ -175,7 +179,24 @@ export const Register = ({ setStep }: WalletModalBodyProps) => {
         type="submit"
         variant="primary"
         isDisabled={!!errors.email || !!errors.password || !!errors.isAccepted}
-        onClick={() => setStep(STEP_MODAL.otp)}
+        onClick={handleSubmit(({ email, password }) => {
+          mutate(
+            { email, password },
+            {
+              onSuccess: ({ data }) => {
+                dispatchSteps(STEP_MODAL.otp);
+                return toast({ description: data, status: "success" });
+              },
+              onError: (error) => {
+                return toast({
+                  title: error.response.data.error_message,
+                  description: error.response.data.error_detail,
+                  status: "error",
+                });
+              },
+            }
+          );
+        })}
       >
         Register
       </Button>
@@ -183,7 +204,7 @@ export const Register = ({ setStep }: WalletModalBodyProps) => {
         <Text lineHeight="40px" color="gray.0" fontSize="md">
           Already have an account?
         </Text>
-        <Button onClick={() => setStep(STEP_MODAL.login)} variant="ghost">
+        <Button onClick={() => dispatchSteps(STEP_MODAL.login)} variant="ghost">
           Login
         </Button>
       </HStack>

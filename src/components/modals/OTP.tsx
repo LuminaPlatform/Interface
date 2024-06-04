@@ -1,4 +1,10 @@
-import { ModalForm, STEP_MODAL, WalletModalBodyProps } from "@/types";
+import { useEmailLogin, useOTPVerification } from "@/hooks/auth";
+import {
+  useCustomToast,
+  useDispatchAuthorization,
+  useWalletModal,
+} from "@/hooks/bases";
+import { ModalForm, OTPProps, STEP_MODAL, WalletModalBodyProps } from "@/types";
 import {
   Button,
   chakra,
@@ -13,6 +19,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm, useFormContext, useWatch } from "react-hook-form";
 import { TbArrowNarrowLeft } from "react-icons/tb";
+import { cookies } from "next/headers";
 
 const OTPFields = Array(6)
   .fill("")
@@ -22,19 +29,16 @@ const ChakraForm = chakra("form");
 
 const otpDuration = 10;
 
-export const OTP = ({ setStep }: WalletModalBodyProps) => {
-  console.log({ OTPFields });
-
+export const OTP = ({ handleClick, backIconHandler }: OTPProps) => {
   const { getValues } = useFormContext<ModalForm>();
   const email = getValues("email");
 
-  const {
-    register,
-    formState: { errors },
-    control,
-  } = useForm<{ otp: string[] }>();
+  const { register, control, handleSubmit } = useForm<{ otp: string[] }>({
+    defaultValues: {
+      otp: ["", "", "", "", "", ""],
+    },
+  });
   const otpValues = useWatch({ control });
-  console.log({ otpValues });
 
   const [isExpired, setExpired] = useState(false);
 
@@ -71,18 +75,20 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
       margin="0"
       alignItems="center"
     >
-      <Icon
-        cursor="pointer"
-        as={TbArrowNarrowLeft}
-        color="gray.0"
-        fontSize="24px"
-        top="16px"
-        position="absolute"
-        left="16px"
-        onClick={() => {
-          setStep(STEP_MODAL.register);
-        }}
-      />
+      {backIconHandler && (
+        <Icon
+          cursor="pointer"
+          as={TbArrowNarrowLeft}
+          color="gray.0"
+          fontSize="24px"
+          top="16px"
+          position="absolute"
+          left="16px"
+          onClick={() => {
+            backIconHandler();
+          }}
+        />
+      )}
       <VStack width="full" maxWidth="371px">
         <Text color="gray.0" fontSize="xl" fontWeight="600">
           Verify Your Email
@@ -112,7 +118,11 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
         </Text>
         <ChakraForm mt="32px" width="full">
           <HStack columnGap="10px" justifyContent="center" width="full">
-            <PinInput isInvalid={true} placeholder="-" otp>
+            <PinInput
+              isInvalid={!!otpValues.otp?.some((item) => item === "")}
+              placeholder="-"
+              otp
+            >
               {OTPFields.map((item) => (
                 <PinInputField
                   _invalid={{
@@ -155,6 +165,7 @@ export const OTP = ({ setStep }: WalletModalBodyProps) => {
           width="full"
           isDisabled={!!otpValues.otp?.some((item) => item === "")}
           variant="primary"
+          onClick={handleSubmit((values) => handleClick(values))}
         >
           Verify
         </Button>

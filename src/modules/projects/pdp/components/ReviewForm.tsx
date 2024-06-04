@@ -19,6 +19,13 @@ import {
 import { ReviewForm as ReviewFormType } from "../types";
 import { TbInfoCircleFilled, TbPhotoPlus } from "react-icons/tb";
 import { IoMdCloseCircle } from "react-icons/io";
+import { fileLimitation } from "@/config/fileLimitation";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import { useRouter } from "next/router";
+import { ReviewStatus } from "@/types";
+import { useCustomToast } from "@/hooks/bases";
+import { AxiosError } from "axios";
 
 const labelProps: FormLabelProps = {
   color: "gray.60",
@@ -30,14 +37,17 @@ const ChakraForm = chakra("form");
 
 interface ReviewFormProps {
   onClose: UseDisclosureProps["onClose"];
+  status: ReviewStatus["name"];
 }
-export const ReviewForm = ({ onClose }: ReviewFormProps) => {
+export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
+  const { query } = useRouter();
   const {
     register,
-    formState: { errors },
+    formState: { errors, isLoading, isSubmitting },
     handleSubmit,
     control,
     setValue,
+    reset,
   } = useForm<ReviewFormType>({
     defaultValues: {
       description: "",
@@ -45,6 +55,37 @@ export const ReviewForm = ({ onClose }: ReviewFormProps) => {
     },
     mode: "all",
   });
+  const toast = useCustomToast();
+
+  const onSubmit = (data: ReviewFormType) => {
+    const modelData = {
+      model_name: "Review",
+      params: {
+        title: data.title,
+        description: data.description,
+        project_id: +query.projectId,
+        viewpoint: status,
+      },
+    };
+    axiosClient
+      .post(apiKeys["create"], modelData)
+      .then((response) => {
+        if (response.status === 200) {
+          reset();
+          onClose();
+          return toast({
+            description: "Your review is submitted.",
+            status: "success",
+          });
+        }
+      })
+      .catch((err: AxiosError) => {
+        toast({
+          description: err.message,
+          status: "error",
+        });
+      });
+  };
   const { description, medias } = useWatch<ReviewFormType>({ control });
   console.log({ errors });
 
@@ -53,10 +94,7 @@ export const ReviewForm = ({ onClose }: ReviewFormProps) => {
       display="flex"
       flexDirection="column"
       rowGap="16px"
-      onSubmit={handleSubmit((values) => {
-        console.log({ values, errors });
-        console.log(!!errors.title);
-      })}
+      onSubmit={handleSubmit(onSubmit)}
       width="full"
     >
       <FormControl isInvalid={!!errors.title}>
@@ -179,14 +217,8 @@ export const ReviewForm = ({ onClose }: ReviewFormProps) => {
               type="file"
               visibility="hidden"
               {...register("medias", {
-                validate: {
-                  lessThan10MB: (files) =>
-                    files[0]?.size <= 3000000 || "Max 3MB",
-                  acceptedFormats: (files) =>
-                    ["image/jpeg", "image/png", "image/gif"].includes(
-                      files[0]?.type
-                    ) || "Only PNG, JPEG e GIF",
-                },
+                validate: fileLimitation,
+                required: false,
               })}
               onChange={(e) => {
                 if (
@@ -244,10 +276,20 @@ export const ReviewForm = ({ onClose }: ReviewFormProps) => {
         </HStack>
       </VStack>
       <HStack width="full" justifyContent="flex-end">
-        <Button onClick={onClose} type="button" variant="outline">
+        <Button
+          isDisabled={isLoading || isSubmitting}
+          onClick={onClose}
+          type="button"
+          variant="outline"
+        >
           Cancel
         </Button>
-        <Button type="submit" variant="primary">
+        <Button
+          isLoading={isLoading || isSubmitting}
+          isDisabled={isLoading || isSubmitting}
+          type="submit"
+          variant="primary"
+        >
           Submit
         </Button>
       </HStack>

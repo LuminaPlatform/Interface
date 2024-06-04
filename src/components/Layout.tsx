@@ -1,10 +1,15 @@
 import { Box, Container, Grid, GridItem } from "@chakra-ui/react";
-import { Sidebar } from "./sidebar/Sidebar";
 import { useIsOpenSidebar } from "@/hooks/bases";
 import { sidebarWidth } from "@/constant";
 import { PropsWithChildren } from "react";
-import Navbar from "./Navbar";
+import dynamic from "next/dynamic";
+import { ModalStepsProvider } from "@/context";
 
+const Navbar = dynamic(() => import("./Navbar"), { ssr: false });
+const Sidebar = dynamic(
+  () => import("./sidebar/Sidebar").then((modules) => modules.Sidebar),
+  { ssr: false }
+);
 interface LayoutProps extends PropsWithChildren {}
 const Layout = ({ children }: LayoutProps) => {
   const isSidebarOpen = useIsOpenSidebar();
@@ -50,8 +55,10 @@ const Layout = ({ children }: LayoutProps) => {
       </GridItem>
       <GridItem>
         <Container pt={["12px"]} maxWidth="1280px" px={["20px", null, "24px"]}>
-          <Navbar />
-          {children}
+          <ModalStepsProvider>
+            <Navbar />
+            {children}
+          </ModalStepsProvider>
         </Container>
       </GridItem>
     </Grid>
