@@ -23,7 +23,7 @@ const WriteFeedback = ({ setStatus, status, onClose }: WriteFeedbackProps) => {
     name,
     content: {
       bio,
-      profile: { profileImageUrl },
+      profile
     },
   } = useProjectData();
 
@@ -39,7 +39,7 @@ const WriteFeedback = ({ setStatus, status, onClose }: WriteFeedbackProps) => {
           borderRadius="16px"
           overflow="hidden"
         >
-          <Img src={profileImageUrl} alt="project" />
+          <Img src={profile?.profileImageUrl} alt="project" />
         </Box>
         <VStack justifyContent="center" alignItems="flex-start">
           <HStack>

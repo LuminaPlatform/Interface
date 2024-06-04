@@ -57,7 +57,7 @@ export const ReviewCard = ({
               alt={project.name}
               // TODO should add review img
               rounded="full"
-              src={project.content.profile.profileImageUrl}
+              src={project.content.profile?.profileImageUrl}
               width={{ base: "24px", md: "36px" }}
               height={{ base: "24px", md: "36px" }}
             />

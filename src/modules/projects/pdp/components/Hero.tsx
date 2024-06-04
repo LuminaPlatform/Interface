@@ -79,22 +79,17 @@ const Tags = () => {
 };
 export const Hero = () => {
   const { name, content } = useProjectData();
-  const {
-    profile: { bannerImageUrl, profileImageUrl },
-    websiteUrl,
-    includedInBallots,
-    bio
-  } = content;
+  const { profile, websiteUrl, includedInBallots, bio } = content;
 
   return (
     <VStack pb="24px" rowGap="0px" width="full">
       <VStack
         borderRadius="12px"
         p="12px"
-        backgroundImage={bannerImageUrl}
+        backgroundImage={profile?.bannerImageUrl}
         backgroundPosition="center"
-        backgroundRepeat='no-repeat'
-        backgroundSize='100% 100%'
+        backgroundRepeat="no-repeat"
+        backgroundSize="100% 100%"
         height={{ base: "200px", md: "329px" }}
         width="full"
       >
@@ -115,7 +110,7 @@ export const Hero = () => {
           borderRadius="16px"
           overflow="hidden"
         >
-          <Img width="full" height="full" src={profileImageUrl} />
+          <Img width="full" height="full" src={profile?.profileImageUrl} />
         </Box>
         <VStack pl={{ base: "104px", md: "168px" }} width="full">
           <Stack

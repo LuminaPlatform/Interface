@@ -38,7 +38,7 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
           justifyContent="center"
         >
           <Img
-            src={project.content.profile.profileImageUrl}
+            src={project.content.profile?.profileImageUrl}
             width="36px"
             height="36px"
             rounded="full"

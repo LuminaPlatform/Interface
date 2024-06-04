@@ -164,7 +164,10 @@ const Table = ({ search }: TableProps) => {
             minW="36px"
             height="36px"
             minH="36px"
-            src={info.row.original.logo}
+            src={
+              info.row.original.content.profile?.profileImageUrl ??
+              "/assets/images/default-img.png"
+            }
           />
           <VStack rowGap="6px" margin="0px !important">
             <HStack alignItems="center">
