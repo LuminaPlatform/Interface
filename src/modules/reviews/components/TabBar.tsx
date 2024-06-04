@@ -1,13 +1,12 @@
 "use client";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { tabs } from "../constants";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
-import Link from "next/link";
+import { useMemo } from "react";
 import { StringParam, useQueryParams } from "use-query-params";
 import TabBody from "./TabBody";
 import { UnAuthorized } from "./UnAuthorized";
-import { useAccount } from "wagmi";
+import { useAuthorization } from "@/hooks/bases";
+import { useRouter } from "next/router";
 
 const TabBar = () => {
   const [query, setQuery] = useQueryParams({
@@ -20,7 +19,10 @@ const TabBar = () => {
         : 0,
     [query.tab]
   );
-  const { isConnected } = useAccount();
+
+  const isAuthorized = useAuthorization();
+
+  console.log({ query });
 
   return (
     <Tabs index={activeTab} width="full">
@@ -42,12 +44,13 @@ const TabBar = () => {
       </TabList>
 
       <TabPanels>
-        {tabs.map((item, index) => (
+        {tabs.map((item) => (
           <TabPanel key={item.id}>
-            {index === 0 && !isConnected ? (
+            {(typeof query.tab === "undefined" || query.tab === "for_you") &&
+            !isAuthorized ? (
               <UnAuthorized />
             ) : (
-              <TabBody reviews={item.title} />
+              <TabBody />
             )}
           </TabPanel>
         ))}

@@ -54,12 +54,19 @@ export enum Badges {
 }
 
 export type FetchObject = {
-  model: "Project";
+  model: "Project" | "Project.reviews" | "Project.user";
   model_id: string;
   limit: number;
   orders: [];
   fetch_graph: {
-    flex_fields:{}[];
+    flex_fields: {}[];
   };
   condition: {};
+};
+
+export type AuthenticationData = {
+  username: string | null;
+  email: string;
+  id: number;
+  createTimestamp: string;
 };

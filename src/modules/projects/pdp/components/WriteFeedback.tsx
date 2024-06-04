@@ -20,7 +20,11 @@ interface WriteFeedbackProps {
 }
 const WriteFeedback = ({ setStatus, status, onClose }: WriteFeedbackProps) => {
   const {
-    project: { name },
+    name,
+    content: {
+      bio,
+      profile: { profileImageUrl },
+    },
   } = useProjectData();
 
   return (
@@ -35,7 +39,7 @@ const WriteFeedback = ({ setStatus, status, onClose }: WriteFeedbackProps) => {
           borderRadius="16px"
           overflow="hidden"
         >
-          <Img src="" alt="project" />
+          <Img src={profileImageUrl} alt="project" />
         </Box>
         <VStack justifyContent="center" alignItems="flex-start">
           <HStack>
@@ -58,7 +62,7 @@ const WriteFeedback = ({ setStatus, status, onClose }: WriteFeedbackProps) => {
             fontWeight="500"
             color="gray.20"
           >
-            A collective of Ethereum&apos;s active core protocol contributors
+            {bio}
           </Text>
         </VStack>
       </HStack>
@@ -75,7 +79,7 @@ const WriteFeedback = ({ setStatus, status, onClose }: WriteFeedbackProps) => {
       <Box width="full">
         <Statuses setStatus={setStatus} status={status} />
       </Box>
-      <ReviewForm onClose={onClose} />
+      <ReviewForm status={status} onClose={onClose} />
     </VStack>
   );
 };

@@ -6,7 +6,6 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { FeedbackChart } from "./FeedbackChart";
 import { useState } from "react";
 import { ReviewStatus } from "@/types";
 import { reviewStatuses } from "@/constant";
@@ -15,32 +14,35 @@ import { TbEdit } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
 import WriteFeedback from "./WriteFeedback";
 import { Statuses } from "./Statuses";
+import { FeedbackResult } from "./FeedbackResult";
 
 export const Feedback = () => {
-  const [status, setStatus] = useState<ReviewStatus["id"]>();
+  const [status, setStatus] = useState<ReviewStatus["name"]>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <VStack
       rowGap="24px"
-      p="22px 32px"
-      height="full"
+      p="16px"
+      height="auto"
       width="full"
       bg="gray.700"
       borderRadius="10px"
     >
-      <FeedbackChart />
-      <Divider my="0" borderColor="gray.600" width="full" />
       <VStack width="full" rowGap="16px">
         <Text
           fontSize="lg"
           color="gray.20"
           fontWeight="500"
           lineHeight="28.8px"
-          textAlign="center"
+          textAlign="left"
         >
           Which status best describes your view of the project?
         </Text>
-        <Statuses setStatus={setStatus} status={status} />
+        <FeedbackResult />
+        <Text mr="auto" color="gray.60" fontSize="xs" fontWeight="500">
+          Based on 604 rating
+        </Text>
+
         <Button
           onClick={onOpen}
           size="md"
@@ -52,7 +54,13 @@ export const Feedback = () => {
         </Button>
       </VStack>
       <ModalBase
-        modalBody={<WriteFeedback onClose={onClose} setStatus={setStatus} status={status} />}
+        modalBody={
+          <WriteFeedback
+            onClose={onClose}
+            setStatus={setStatus}
+            status={status}
+          />
+        }
         isOpen={isOpen}
         onClose={onClose}
       />

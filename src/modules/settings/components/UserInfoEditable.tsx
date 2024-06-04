@@ -18,6 +18,7 @@ import { settingsFormType } from "../types";
 import { ModalBase } from "@/components/ModalBase";
 import { UserInfoModal, UserInfoModalHeader } from "./UserInfoModal";
 import { fileLimitation } from "@/config/fileLimitation";
+import { useGlobalUserData } from "@/hooks/bases";
 
 type UserInfoEditableProps = {
   isEditable: boolean;
@@ -42,6 +43,8 @@ export const UserInfoEditable = ({
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  const userInfo = useGlobalUserData();
+
   return (
     <>
       <Stack
@@ -64,8 +67,9 @@ export const UserInfoEditable = ({
               <Avatar
                 badgeSize="48px"
                 src={
-                  (profile && URL.createObjectURL(profile)) ||
-                  "/assets/images/default-img.png"
+                  typeof profile !== "string" && profile !== null
+                    ? profile && URL.createObjectURL(profile)
+                    : "/assets/images/default-avatar.png"
                 }
                 hasBadge={false}
                 imageStyle={{
@@ -100,7 +104,7 @@ export const UserInfoEditable = ({
                     type="file"
                     visibility="hidden"
                     {...register("profile", {
-                      validate: fileLimitation,
+                      // validate: fileLimitation,
                     })}
                     onChange={(e) => {
                       setValue("profile", e.target.files[0]);
@@ -118,7 +122,7 @@ export const UserInfoEditable = ({
                 fontWeight="600"
                 fontFamily="lexend"
               >
-                Nickname
+                {userInfo.user.display_name}
               </Text>
               {isEditable && (
                 <TbEdit
@@ -129,7 +133,7 @@ export const UserInfoEditable = ({
               )}
             </HStack>
             <Text color="gray.60" fontSize="lg" fontWeight="500">
-              Username
+              {userInfo.user.username}
             </Text>
           </VStack>
         </HStack>

@@ -3,8 +3,8 @@ import { Dispatch, SetStateAction } from "react";
 import { File } from "buffer";
 
 export interface StatusesProps {
-  status: ReviewStatus["id"];
-  setStatus: Dispatch<SetStateAction<number>>;
+  status: ReviewStatus["name"];
+  setStatus: Dispatch<SetStateAction<ReviewStatus["name"]>>;
 }
 
 export interface ReviewForm {

@@ -4,6 +4,7 @@ import {
   TbMoodSadFilled,
   TbMoodSmileFilled,
 } from "react-icons/tb";
+import { VIEW_POINT } from "./modules/projects/types";
 
 export const sidebarWidth = {
   open: "167px",
@@ -26,25 +27,25 @@ export const dataConnectors = [
 export const reviewStatuses = [
   {
     id: 0,
-    name: "Advocate",
+    name: VIEW_POINT.ADVOCATE,
     colorScheme: "green",
     icon: TbMoodHappyFilled,
   },
   {
     id: 1,
-    name: "Neutral",
+    name: VIEW_POINT.USER,
     colorScheme: "blue",
     icon: TbMoodSmileFilled,
   },
   {
     id: 2,
-    name: "Intrigued",
+    name: VIEW_POINT.ABSTAINER,
     colorScheme: "yellow",
     icon: TbMoodConfuzedFilled,
   },
   {
     id: 3,
-    name: "Discourage",
+    name: VIEW_POINT.OPPOSER,
     colorScheme: "red",
     icon: TbMoodSadFilled,
   },
@@ -111,3 +112,5 @@ export const primaryCategories = [
 ];
 
 export const pageThreshold = 5;
+
+export const xDomain = "https://x.com";

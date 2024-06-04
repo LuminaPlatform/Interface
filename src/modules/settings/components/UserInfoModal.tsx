@@ -8,8 +8,16 @@ import {
   UseDisclosureProps,
   VStack,
 } from "@chakra-ui/react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { settingsFormType } from "../types";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import {
+  useCustomToast,
+  useDispatchGlobalUserData,
+  useGlobalUserData,
+} from "@/hooks/bases";
+import { useState } from "react";
 
 type UserInfoModalProps = {
   onClose: UseDisclosureProps["onClose"];
@@ -33,7 +41,15 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useFormContext<settingsFormType>();
+
+  const [isLoading, setLoading] = useState(false);
+
+  const userInfo = useGlobalUserData();
+  const dispatchGlobalUser = useDispatchGlobalUserData();
+
+  const toast = useCustomToast();
 
   return (
     <VStack mx="auto" maxWidth="371px" rowGap="8px" width="full">
@@ -50,6 +66,7 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
         <Input
           placeholder="Username"
           variant="outline"
+          defaultValue={userInfo.user?.username}
           {...register("username", {
             required: {
               value: true,
@@ -76,6 +93,7 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
         <Input
           placeholder="Nickname"
           variant="outline"
+          defaultValue={userInfo.user?.display_name}
           {...register("nickname", {
             required: {
               value: true,
@@ -102,9 +120,43 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
           Cancel
         </Button>
         <Button
-          isDisabled={!!errors.nickname || !!errors.username}
+          isDisabled={isLoading}
+          isLoading={isLoading}
           onClick={handleSubmit((values) => {
-            console.log({ values });
+            setLoading(true);
+            axiosClient
+              .post(apiKeys.update, {
+                "0": {
+                  model_name: "User",
+                  params: {
+                    username: values.username,
+                    display_name: values.nickname,
+                  },
+                  id: userInfo.user.id,
+                },
+              })
+              .then((response) => {
+                dispatchGlobalUser({
+                  user: response.data[0],
+                  wallet: userInfo.wallet,
+                });
+                return toast({
+                  status: "success",
+                  description: "Your information is updated",
+                });
+              })
+              .catch((error) => {
+                toast({
+                  status: "error",
+                  // TODO should fix error message
+                  description: "error occurred",
+                });
+              })
+              .finally(() => {
+                reset();
+                setLoading(false);
+                onClose();
+              });
           })}
           width="full"
           size="md"

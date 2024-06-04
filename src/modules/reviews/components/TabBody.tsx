@@ -2,14 +2,16 @@ import { VStack } from "@chakra-ui/react";
 
 import EmptyPage from "@/components/EmptyPage";
 import { ReviewCard } from "@/components/ReviewCard";
+import { useReviewsData } from "../hooks";
 
-interface TabBodyProps {
-  reviews: string | null | undefined;
-}
-const TabBody = ({ reviews }: TabBodyProps) => {
+const TabBody = () => {
+  const reviews = useReviewsData();
+
+  console.log({ reviews });
+
   return (
     <VStack rowGap="16px" py="16px">
-      {reviews === "Popular" ? (
+      {reviews.length === 0 ? (
         <EmptyPage
           description="Looks like you haven't followed anyone yet! To see reviews, explore
         in other categories. Expand your network and discover insightful reviews
@@ -18,8 +20,13 @@ const TabBody = ({ reviews }: TabBodyProps) => {
           imgSrc="/assets/images/empty_reviews.png"
         />
       ) : (
-        [0, 1, 2, 3].map((item) => (
-          <ReviewCard showProjectName review={item} key={item} />
+        reviews.map((item) => (
+          <ReviewCard
+            project={item.project}
+            showProjectName
+            review={item}
+            key={item.id}
+          />
         ))
       )}
     </VStack>

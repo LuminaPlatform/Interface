@@ -392,7 +392,6 @@ const Table = ({ search }: TableProps) => {
   const { query } = router;
 
   const page = query.page || 1;
-  console.log(page);
 
   return (
     <Box pb="16px" fontFamily="satoshi" pt="16px" width="full">
@@ -470,7 +469,6 @@ const Table = ({ search }: TableProps) => {
           <Button
             onClick={() => {
               // if (page !== limit) {
-              NProgress.start();
               router.push(`/projects?page=${+page + 1}`);
               // }
             }}
@@ -485,7 +483,6 @@ const Table = ({ search }: TableProps) => {
             isDisabled={+page === 1}
             onClick={() => {
               if (+page !== 1) {
-                NProgress.start();
                 router.push(`/projects?page=${+page - 1}`);
               }
             }}

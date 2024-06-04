@@ -17,8 +17,15 @@ import { ProjectLink } from "../components/ProjectLink";
 
 export const Index = () => {
   const project = useProjectData();
-
-  console.log(project);
+  const {
+    id,
+    content: {
+      contributionLinks,
+      contributionDescription,
+      impactDescription,
+      impactMetrics,
+    },
+  } = project;
 
   return (
     <VStack
@@ -66,7 +73,7 @@ export const Index = () => {
                 fontSize="md"
                 fontWeight="700"
                 as={Link}
-                href="#"
+                href={`/projects/${id}/reviews`}
               >
                 Show All Reviews
               </Text>
@@ -79,7 +86,7 @@ export const Index = () => {
           <SimpleGrid width="full" gap="24px" columns={{ base: 1, lg: 3 }}>
             <GridItem
               overflow="auto"
-              maxH="575px"
+              maxH="384px"
               order={{ base: "1", lg: "0" }}
               colSpan={{ base: 1, lg: 2 }}
             >
@@ -110,23 +117,9 @@ export const Index = () => {
                 >
                   Contribution
                 </Text>
-                <Box
-                  color="gray.20"
-                  fontSize="md"
-                  lineHeight="24px"
-                  dangerouslySetInnerHTML={{
-                    __html: `<p>As a rollup, Optimism leverages Ethereum for settlement & security assurances. It also uses
-                    several core infrastructure components (client implementations, specifications, test suites, etc)
-                    developed and maintained by Protocol Guild contributors over the years. Optimism also directly
-                    benefits from protocol upgrades such as proto-danksharding (ElP-4844), which will reduce the
-                    fees its users need to pay.</p>
-</br>
-<p>All of this work supports a mutual relationship;
-- Ethereum provides an infrastructural foundation with particular characteristics (eg social, political, technical, economic) that only it can provide
-- Optimism produces lower-cost blockspace, while still inheriting some of Ethereum's
-characteristics, but at the same time allowing for more experimentation</p>`,
-                  }}
-                />
+                <Text color="gray.20" fontSize="md" lineHeight="24px">
+                  {contributionDescription}
+                </Text>
               </VStack>
             </GridItem>
             <GridItem rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
@@ -140,8 +133,13 @@ characteristics, but at the same time allowing for more experimentation</p>`,
                 Contribution links
               </Text>
               <VStack width="full" rowGap="12px">
-                {[1, 2, 3, 4].map((item) => (
-                  <ProjectLink key={item} showCount={false} />
+                {contributionLinks.map((item) => (
+                  <ProjectLink
+                    description={item.description}
+                    url={item.url}
+                    key={item.url}
+                    showCount={false}
+                  />
                 ))}
               </VStack>
             </GridItem>
@@ -165,24 +163,9 @@ characteristics, but at the same time allowing for more experimentation</p>`,
                 >
                   Impact
                 </Text>
-                <Box
-                  color="gray.20"
-                  fontSize="md"
-                  lineHeight="24px"
-                  dangerouslySetInnerHTML={{
-                    __html: `<p>As a rollup, Optimism leverages Ethereum for settlement & security assurances. It also uses
-                    several core infrastructure components (client implementations, specifications, test suites, etc)
-                    developed and maintained by Protocol Guild contributors over the years. Optimism also directly
-                    benefits from protocol upgrades such as proto-danksharding (ElP-4844), which will reduce the
-                    fees its users need to pay.
-                    </p>
-</br>
-<p>All of this work supports a mutual relationship;
-- Ethereum provides an infrastructural foundation with particular characteristics (eg social, political, technical, economic) that only it can provide
-- Optimism produces lower-cost blockspace, while still inheriting some of Ethereum's
-characteristics, but at the same time allowing for more experimentation</p>`,
-                  }}
-                />
+                <Text color="gray.20" fontSize="md" lineHeight="24px">
+                  {impactDescription}
+                </Text>
               </VStack>
             </GridItem>
             <GridItem rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
@@ -196,8 +179,14 @@ characteristics, but at the same time allowing for more experimentation</p>`,
                 Impact Metrics
               </Text>
               <VStack width="full" rowGap="12px">
-                {[1, 2, 3, 4].map((item) => (
-                  <ProjectLink key={item} showCount />
+                {impactMetrics.map((item) => (
+                  <ProjectLink
+                    key={item.url}
+                    description={item.description}
+                    showCount
+                    url={item.url}
+                    count={item.number}
+                  />
                 ))}
               </VStack>
             </GridItem>

@@ -185,7 +185,7 @@ export const Sidebar = () => {
           </VStack>
         ))}
       </VStack>
-      {authorization && (
+      {!!authorization && (
         <ChakraLink
           {...("settings" === router.pathname.split("/")[1] && {
             bg: "gray.800",

@@ -29,12 +29,15 @@ export const Badge = ({
     alignItems="center"
     {...cssProps}
   >
-    <Icon
-      as={icon}
-      fontSize="16px"
-      color={`${colorScheme}.500`}
-      {...iconsProps}
-    />
+    {icon && (
+      <Icon
+        as={icon}
+        fontSize="16px"
+        color={`${colorScheme}.500`}
+        {...iconsProps}
+      />
+    )}
+
     {title}
   </Text>
 );
