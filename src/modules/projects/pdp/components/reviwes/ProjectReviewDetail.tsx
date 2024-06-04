@@ -34,7 +34,7 @@ export const ProjectReviewDetail = () => {
         <Img
           borderRadius="16px"
           boxSize={{ base: "80px", lg: "120px" }}
-          src={project.content.profile.profileImageUrl}
+          src={project.content.profile?.profileImageUrl}
           alt={project.name}
         />
         <VStack width="full">

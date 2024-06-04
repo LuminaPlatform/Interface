@@ -165,7 +165,7 @@ const Table = ({ search }: TableProps) => {
             height="36px"
             minH="36px"
             src={
-              info.row.original.content.profile.profileImageUrl ??
+              info.row.original.content.profile?.profileImageUrl ??
               "/assets/images/default-img.png"
             }
           />

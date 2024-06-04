@@ -35,6 +35,7 @@ export const getServerSideProps = async (ctx) => {
           { name: "content.fundingSources" },
           { name: "content.includedInBallots" },
           { name: "content.lists" },
+          { name: "content.profile" },
           { name: "content.impactCategory" },
         ],
       },
