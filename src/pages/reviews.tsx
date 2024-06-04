@@ -100,7 +100,7 @@ export const getServerSideProps = async (ctx) => {
         .catch((error) => {
           return {
             props: {
-              userData: undefined,
+              userData: null,
               reviews: [],
             },
           };
@@ -109,7 +109,7 @@ export const getServerSideProps = async (ctx) => {
 
     return {
       props: {
-        userData: undefined,
+        userData: null,
         reviews: [],
       },
     };
@@ -144,6 +144,7 @@ export const getServerSideProps = async (ctx) => {
   });
   return {
     props: {
+      userData: null,
       reviews: response.data["0"],
     },
   };
