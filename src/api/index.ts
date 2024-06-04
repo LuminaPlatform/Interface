@@ -2,6 +2,8 @@ import { axiosClient } from "@/config/axios";
 import { apiKeys } from "./apiKeys";
 
 export const getUserInformation = async (email: string) => {
+  console.log({email});
+  
   return await axiosClient
     .post(apiKeys.fetch, {
       0: {
