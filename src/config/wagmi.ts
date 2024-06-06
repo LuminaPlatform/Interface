@@ -2,12 +2,12 @@ import { http, createConfig } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { metaMask, walletConnect } from "wagmi/connectors";
 
-// const walletConnectProjectId = process.env.WALLET_CONNECT_PROJECT_ID || "";
+const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || "";
 
 export const wagmiConfig = createConfig({
   chains: [mainnet],
   connectors: [
-    // walletConnect({ projectId: walletConnectProjectId }),
+    walletConnect({ projectId: walletConnectProjectId }),
     metaMask(),
   ],
   transports: {
