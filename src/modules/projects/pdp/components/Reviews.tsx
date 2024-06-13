@@ -4,7 +4,6 @@ import { useProjectData, useProjectReviews } from "../hooks";
 
 export const Reviews = () => {
   const reviews = useProjectReviews();
-  console.log({ reviews });
   const project = useProjectData();
   return (
     <VStack rowGap="16px" width="full">

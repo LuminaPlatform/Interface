@@ -49,16 +49,12 @@ const Stepper = ({ activeStep, setActiveStep }) => {
 
   const handleSubmit = {
     0: () => {
-      console.log("0");
       setActiveStep((prev) => prev + 1);
     },
     1: () => {
-      console.log("1");
       setActiveStep((prev) => prev + 1);
     },
-    2: () => {
-      console.log("2");
-    },
+    2: () => {},
   };
 
   const stepsComponent = useMemo(() => {
@@ -68,7 +64,6 @@ const Stepper = ({ activeStep, setActiveStep }) => {
       2: <Interests />,
     };
   }, [editMode, isConnect]);
-  console.log(steps.length);
 
   return (
     <Stack mt="4px" rowGap="16px" width="full">

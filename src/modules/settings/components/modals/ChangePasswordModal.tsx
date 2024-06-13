@@ -63,7 +63,6 @@ export const ChangePasswordModal = ({
         });
       })
       .catch((error: AxiosError<{ error_message: string }>) => {
-        console.log({ error });
 
         return toast({
           status: "error",

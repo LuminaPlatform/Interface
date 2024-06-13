@@ -145,7 +145,6 @@ export const SetPasswordModal = ({
         isDisabled={!!errors.password || !!errors.rePassword}
         mainButtonText="Submit Password"
         submitHandler={handleSubmit((values) => {
-          console.log({ values });
           setPassword({
             isSet: true,
           });

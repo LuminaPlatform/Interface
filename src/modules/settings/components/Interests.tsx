@@ -116,7 +116,6 @@ export const Interests = () => {
     },
   };
 
-  console.log(projects);
 
   return (
     <>

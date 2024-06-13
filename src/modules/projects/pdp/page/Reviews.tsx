@@ -7,7 +7,6 @@ import { ProjectReviewDetail } from "../components/reviwes/ProjectReviewDetail";
 export const Reviews = () => {
   const reviews = useProjectReviews();
   const project = useProjectData();
-  console.log({ reviews });
 
   return (
     <VStack

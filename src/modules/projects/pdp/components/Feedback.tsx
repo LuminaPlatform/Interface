@@ -40,7 +40,6 @@ export const Feedback = ({ headerTitle }: FeedbackProps) => {
   const isWhiteList = true;
   const hasAccessWriteReview = userData?.user?.x_username && isWhiteList;
 
-  console.log({ userViewpoint });
 
   useEffect(() => {
     if (typeof status !== "undefined") {

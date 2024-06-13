@@ -13,7 +13,6 @@ interface ProfileProps {
   activities: any;
 }
 const Profile = ({ user, isSelfUser, wallet, activities }: ProfileProps) => {
-  console.log({ user, wallet });
 
   return (
     <UserProfileProvider data={{ isSelfUser, user, wallet, activities }}>
@@ -87,7 +86,6 @@ export const getServerSideProps = async (ctx) => {
     });
     const selfUserData = response.data;
 
-    console.log(selfUserData?.id, +userId);
 
     return {
       props: {

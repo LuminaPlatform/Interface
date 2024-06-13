@@ -23,7 +23,6 @@ const Reviews = (props: ReviewsProps) => {
       dispatchAuthorization(userData);
     }
   }, []);
-  console.log({ props });
 
   return (
     <ReviewsProvider reviews={props.reviews}>

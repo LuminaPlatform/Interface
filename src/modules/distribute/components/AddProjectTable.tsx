@@ -45,7 +45,6 @@ export const AddProjectTable = ({
   search,
 }: AddProjectTableProps) => {
   const tableData = useProjects();
-  console.log({ tableData });
 
   const data = useMemo<any>(() => {
     if (search) {

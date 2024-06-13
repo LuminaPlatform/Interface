@@ -42,7 +42,6 @@ export default function App({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  console.log({ baseUserData });
 
   NProgress.configure({ showSpinner: false });
 

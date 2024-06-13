@@ -14,7 +14,6 @@ import { Feedback } from "../Feedback";
 
 export const ProjectReviewDetail = () => {
   const project = useProjectData();
-  console.log({ project });
 
   return (
     <Stack

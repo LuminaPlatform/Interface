@@ -23,7 +23,6 @@ const Settings = ({ user }: SettingsProps) => {
     0: [userData],
     1: wallet,
   } = user;
-  console.log({ userData, wallet });
 
   const router = useRouter();
 

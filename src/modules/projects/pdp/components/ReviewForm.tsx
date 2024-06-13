@@ -149,7 +149,6 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
       });
   };
   const { description, medias } = useWatch<ReviewFormType>({ control });
-  console.log({ errors });
 
   return (
     <ChakraForm

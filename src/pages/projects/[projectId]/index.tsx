@@ -21,7 +21,6 @@ const ProjectDetail = ({
   viewpoints: any;
   userViewpoint: any;
 }) => {
-  console.log({ userViewpoint });
 
   return (
     <ProjectDetailProvider project={{ ...project, viewpoints, userViewpoint }}>
@@ -97,7 +96,6 @@ export const getServerSideProps = async (ctx: any) => {
     .get(`${apiKeys.viewpoint}/${projectId}`)
     .then((response) => response.data.viewpoints);
 
-  console.log(userViewpoint);
 
   const postData: { 0: FetchObject; 1: FetchObject } = {
     0: {
@@ -174,7 +172,6 @@ export const getServerSideProps = async (ctx: any) => {
   const project = projectResponse.data["0"];
   const reviews = projectResponse.data["1"];
 
-  console.log({ userViewpoint });
 
   if (project) {
     return {

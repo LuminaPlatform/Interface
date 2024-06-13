@@ -31,7 +31,6 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
     setValue,
     control,
   } = useFormContext<SetupWizardForm>();
-  console.log({ editMode });
 
   const { profile } = useWatch({ control });
   return (

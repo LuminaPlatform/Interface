@@ -132,8 +132,6 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
     setValue("totalAllocated", calculateTotalAllocated());
   }, [globalSelectedProjects]);
 
-  console.log({ values });
-
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
@@ -362,8 +360,6 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                             </Text>
                             <Button
                               onClick={() => {
-                                console.log(values);
-
                                 dispatchGlobalSelectedProjects((prev) => [
                                   ...prev,
                                   {
@@ -447,10 +443,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
           </Button>
         )}
       </HStack>
-      <ChakraForm
-        onSubmit={handleSubmit((values) => console.log({ values }))}
-        width="full"
-      >
+      <ChakraForm width="full">
         <ChakraTable
           bg="gray.800"
           borderRadius="16px"

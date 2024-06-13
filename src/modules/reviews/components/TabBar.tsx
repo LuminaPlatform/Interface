@@ -22,7 +22,6 @@ const TabBar = () => {
 
   const isAuthorized = useAuthorization();
 
-  console.log({ query });
 
   return (
     <Tabs index={activeTab} width="full">

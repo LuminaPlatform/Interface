@@ -40,7 +40,6 @@ export const SignWallet = ({}: SignWalletProps) => {
           message: variables?.message,
           signature: signMessageData,
         });
-        console.log({ recoveredAddress, variables, submittedAt });
       }
     })();
   }, [signMessageData, variables?.message]);
@@ -63,7 +62,6 @@ export const SignWallet = ({}: SignWalletProps) => {
           timestamp: submittedAt,
         })
         .then((response) => {
-          console.log(response.data);
         })
         .catch((error: AxiosError<{ error_message: string }>) => {
           return toast({

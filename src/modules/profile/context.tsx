@@ -12,7 +12,6 @@ export const UserProfileProvider = ({
   data,
 }: UserProfileProvider) => {
   const [state, setState] = useState(data);
-  console.log({ data });
 
   return (
     <UserProfile.Provider value={state}>
