@@ -4,18 +4,18 @@ export type Project = {
   name: string;
   content: {
     contributionLinks: {
-      description: string;
-      type: string;
-      url: string;
-    }[];
+      data: { description: string; type: string; url: string }[];
+    };
     contributionDescription: string;
     impactDescription: string;
     impactMetrics: {
-      description: string;
-      number: string;
-      url: string;
-    }[];
-    impactCategory: string[];
+      data: {
+        description: string;
+        number: string;
+        url: string;
+      }[];
+    };
+    impactCategory: { data: string[] };
     applicant: {
       address: {
         address: string;

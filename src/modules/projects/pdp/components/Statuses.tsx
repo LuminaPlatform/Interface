@@ -11,18 +11,11 @@ export const Statuses = ({ status, setStatus }: StatusesProps) => {
       {reviewStatuses.map((item) => (
         <Badge
           cursor="pointer"
-          onClick={() =>
-            setStatus((prev) => {
-              if (prev === item.name) {
-                return undefined;
-              }
-              return item.name;
-            })
-          }
+          onClick={() => setStatus(item.name)}
           key={item.id}
-          title={reviewStatuses[item.id].name}
-          colorScheme={reviewStatuses[item.id].colorScheme}
-          icon={reviewStatuses[item.id].icon}
+          title={item.name}
+          colorScheme={item.colorScheme}
+          icon={item.icon}
           fontSize="md"
           {...(item.name !== status && {
             color: "gray.80",

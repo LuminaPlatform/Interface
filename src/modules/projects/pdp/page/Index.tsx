@@ -95,8 +95,11 @@ export const Index = () => {
             <GridItem
               order={{ base: "0", lg: "1" }}
               colSpan={{ base: 1, lg: 1 }}
+              bg="gray.700"
+              borderRadius="10px"
+              p="16px"
             >
-              <Feedback />
+              <Feedback headerTitle="Which status best describes your view of the project?" />
             </GridItem>
           </SimpleGrid>
           <SimpleGrid
@@ -133,12 +136,13 @@ export const Index = () => {
                 Contribution links
               </Text>
               <VStack width="full" rowGap="12px">
-                {contributionLinks.map((item) => (
+                {contributionLinks.data.map((item) => (
                   <ProjectLink
                     description={item.description}
                     url={item.url}
                     key={item.url}
                     showCount={false}
+                    type={item.type}
                   />
                 ))}
               </VStack>
@@ -179,7 +183,7 @@ export const Index = () => {
                 Impact Metrics
               </Text>
               <VStack width="full" rowGap="12px">
-                {impactMetrics.map((item) => (
+                {impactMetrics.data.map((item) => (
                   <ProjectLink
                     key={item.url}
                     description={item.description}

@@ -55,7 +55,7 @@ export const getServerSideProps = async (ctx) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    const userInformation = await getUserInformation(userBaseData.data.email);
+    const userInformation = await getUserInformation(userBaseData.data.id);
 
     if (!userInformation) {
       return {

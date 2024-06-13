@@ -1,43 +1,65 @@
+import { reviewStatuses } from "@/constant";
+import { ReviewStatus } from "@/types";
 import { Box, HStack, Text, VStack } from "@chakra-ui/react";
-import { TbHeart, TbHeartFilled, TbMoodAngry, TbThumbDown, TbThumbDownFilled, TbThumbUp, TbThumbUpFilled } from "react-icons/tb";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import {
+  TbHeart,
+  TbHeartFilled,
+  TbMoodAngry,
+  TbThumbDown,
+  TbThumbDownFilled,
+  TbThumbUp,
+  TbThumbUpFilled,
+} from "react-icons/tb";
+import { useProjectData } from "../hooks";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
 
-export const FeedbackResult = () => {
-  const resultData = [
-    {
-      id: 0,
-      icon: <TbHeartFilled color="var(--chakra-colors-green-300)" fontSize={14} />,
-      percent: 10,
-      title: "Advocate",
-      colorScheme: "green",
-    },
-    {
-      id: 1,
-      icon: <TbThumbUpFilled color="var(--chakra-colors-blue-300)" fontSize={14} />,
-      percent: 20,
-      title: "User",
-      colorScheme: "blue",
-    },
-    {
-      id: 2,
-      icon: <TbThumbDownFilled color="var(--chakra-colors-orange-300)" fontSize={14} />,
-      percent: 5,
-      title: "Abstainer",
-      colorScheme: "orange",
-    },
-    {
-      id: 3,
-      icon: <TbMoodAngry color="var(--chakra-colors-red-300)" fontSize={14} />,
-      percent: 80,
-      title: "Opposer",
-      colorScheme: "red",
-    },
-  ];
+export const FeedbackResult = ({
+  hasAccessWriteReview,
+  setStatus,
+  status,
+}: {
+  status: string;
+  hasAccessWriteReview: boolean;
+  setStatus: Dispatch<SetStateAction<string>>;
+}) => {
+  const project = useProjectData();
+
+  const { viewpoints } = project;
+
+  const totalLength = Object.values(viewpoints).reduce<number>(
+    (accumulator, currentValue) => Number(accumulator) + Number(currentValue),
+    0
+  );
+  const percentageCalculator = (count: number) => {
+    if (totalLength !== 0) {
+      return (count * 100) / totalLength;
+    }
+    return 0;
+  };
+
   return (
     <VStack width="full">
-      {resultData.map((result) => (
-        <HStack width="full" key={result.id}>
-          <Box>{result.icon}</Box>
+      {reviewStatuses.map((result) => (
+        <HStack
+          width="full"
+          key={result.id}
+          {...(hasAccessWriteReview && {
+            cursor: "pointer",
+            onClick: () => {
+              setStatus(result.name);
+            },
+          })}
+        >
           <Box
+            color={
+              !hasAccessWriteReview ? `${result.colorScheme}.300` : "gray.0"
+            }
+            as={result.icon}
+          />
+          <Box
+            transition="outline 0.2s"
             outline="1px solid"
             outlineColor="gray.0"
             borderRadius="6px"
@@ -50,11 +72,19 @@ export const FeedbackResult = () => {
               position: "absolute",
               left: 0,
               bottom: 0,
-              width: `${result.percent}%`,
+              width: `${percentageCalculator(+viewpoints[result.name])}%`,
               height: "full",
               bg: `${result.colorScheme}.300`,
               zIndex: 0,
             }}
+            {...((!hasAccessWriteReview || status === result.name) && {
+              outlineColor: `${result.colorScheme}.300`,
+            })}
+            {...(hasAccessWriteReview && {
+              _hover: {
+                outlineColor: `${result.colorScheme}.300`,
+              },
+            })}
           >
             <Text
               color="gray.0"
@@ -66,11 +96,11 @@ export const FeedbackResult = () => {
               pos="relative"
               zIndex={1}
             >
-              {result.title}
+              {result.name}
             </Text>
           </Box>
           <Text fontSize="xs" fontWeight="700" color="gray.0" width="30px">
-            {result.percent}%
+            {viewpoints[result.name]}
           </Text>
         </HStack>
       ))}

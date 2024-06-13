@@ -26,6 +26,14 @@ import { useRouter } from "next/router";
 import { ReviewStatus } from "@/types";
 import { useCustomToast } from "@/hooks/bases";
 import { AxiosError } from "axios";
+import { getCookie } from "cookies-next";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { useState } from "react";
+import {
+  useProjectData,
+  useProjectDataDispatch,
+  useProjectReviewsDispatch,
+} from "../hooks";
 
 const labelProps: FormLabelProps = {
   color: "gray.60",
@@ -40,10 +48,11 @@ interface ReviewFormProps {
   status: ReviewStatus["name"];
 }
 export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
+  const [isLoading, setLoading] = useState(false);
   const { query } = useRouter();
   const {
     register,
-    formState: { errors, isLoading, isSubmitting },
+    formState: { errors },
     handleSubmit,
     control,
     setValue,
@@ -56,34 +65,87 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
     mode: "all",
   });
   const toast = useCustomToast();
-
+  const dispatchProject = useProjectDataDispatch();
+  const project = useProjectData();
+  const projectReviewDispatch = useProjectReviewsDispatch();
   const onSubmit = (data: ReviewFormType) => {
+    setLoading(true);
     const modelData = {
-      model_name: "Review",
-      params: {
-        title: data.title,
-        description: data.description,
-        project_id: +query.projectId,
-        viewpoint: status,
+      0: {
+        model_name: "Review",
+        params: {
+          title: data.title,
+          description: data.description,
+          project_id: +query.projectId,
+          viewpoint: status,
+        },
       },
     };
     axiosClient
-      .post(apiKeys["create"], modelData)
-      .then((response) => {
-        if (response.status === 200) {
+      .post(apiKeys["create"], modelData, {
+        headers: {
+          Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`,
+        },
+      })
+      .then(async (response) => {
+        if (response.status === 201) {
           reset();
           onClose();
+          await axiosClient
+            .get(`${apiKeys.viewpoint}/${+query.projectId}`)
+            .then((response) => {
+              dispatchProject({
+                ...project,
+                viewpoints: response.data.viewpoints,
+              });
+            });
+          await axiosClient
+            .post(apiKeys.fetch, {
+              "0": {
+                model: "Project.reviews",
+                model_id: +query.projectId,
+                orders: [],
+                fetch_graph: {
+                  flex_fields: [
+                    {
+                      name: "*",
+                    },
+                    {
+                      name: "user",
+                      fetch_graph: {
+                        flex_fields: [
+                          {
+                            name: "display_name",
+                          },
+                          {
+                            name: "id",
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+                condition: {},
+              },
+            })
+            .then((response) => {
+              projectReviewDispatch(response.data[0]);
+            });
+
           return toast({
             description: "Your review is submitted.",
             status: "success",
           });
         }
       })
-      .catch((err: AxiosError) => {
+      .catch((err: AxiosError<{ error_message }>) => {
         toast({
-          description: err.message,
+          description: err.response.data.error_message,
           status: "error",
         });
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
   const { description, medias } = useWatch<ReviewFormType>({ control });
@@ -277,7 +339,7 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
       </VStack>
       <HStack width="full" justifyContent="flex-end">
         <Button
-          isDisabled={isLoading || isSubmitting}
+          isDisabled={isLoading}
           onClick={onClose}
           type="button"
           variant="outline"
@@ -285,8 +347,8 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
           Cancel
         </Button>
         <Button
-          isLoading={isLoading || isSubmitting}
-          isDisabled={isLoading || isSubmitting}
+          isLoading={isLoading}
+          isDisabled={isLoading}
           type="submit"
           variant="primary"
         >

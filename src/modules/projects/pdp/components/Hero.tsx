@@ -38,7 +38,7 @@ const Tags = () => {
       alignItems={{ base: "flex-start" }}
     >
       <HStack width="full" justifyContent="flex-start" alignItems="flex-start">
-        {impactCategory.map((tag) => {
+        {impactCategory.data.map((tag) => {
           const foundCategory = primaryCategories.find(
             (item) => item.title === tag.split("_").join(" ")
           );

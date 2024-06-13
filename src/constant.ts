@@ -1,14 +1,18 @@
 import {
+  TbHeartFilled,
+  TbMoodAngry,
   TbMoodConfuzedFilled,
   TbMoodHappyFilled,
   TbMoodSadFilled,
   TbMoodSmileFilled,
+  TbThumbDownFilled,
+  TbThumbUpFilled,
 } from "react-icons/tb";
 import { VIEW_POINT } from "./modules/projects/types";
 
 export const sidebarWidth = {
-  open: "167px",
-  close: "83px",
+  open: "209px",
+  close: "105px",
 };
 
 export const dataConnectors = [
@@ -29,25 +33,25 @@ export const reviewStatuses = [
     id: 0,
     name: VIEW_POINT.ADVOCATE,
     colorScheme: "green",
-    icon: TbMoodHappyFilled,
+    icon: TbHeartFilled,
   },
   {
     id: 1,
     name: VIEW_POINT.USER,
     colorScheme: "blue",
-    icon: TbMoodSmileFilled,
+    icon: TbThumbUpFilled,
   },
   {
     id: 2,
     name: VIEW_POINT.ABSTAINER,
     colorScheme: "yellow",
-    icon: TbMoodConfuzedFilled,
+    icon: TbThumbDownFilled,
   },
   {
     id: 3,
     name: VIEW_POINT.OPPOSER,
     colorScheme: "red",
-    icon: TbMoodSadFilled,
+    icon: TbMoodAngry,
   },
 ];
 
@@ -111,6 +115,8 @@ export const primaryCategories = [
   },
 ];
 
-export const pageThreshold = 5;
+export const pageThreshold = 10;
 
 export const xDomain = "https://x.com";
+
+export const distributionRoundId = { 0: ["retropgf3", 1] };

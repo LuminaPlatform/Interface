@@ -251,7 +251,7 @@ const Table = ({ search }: TableProps) => {
       cell: (info) => (
         <Text>
           {(
-            info.row.original.content.fundingSources.reduce(
+            info.row.original.content.fundingSources.data.reduce(
               (accumulator, currentVal) =>
                 +currentVal.amount * currencyScale[currentVal.currency] +
                 accumulator,
@@ -263,14 +263,14 @@ const Table = ({ search }: TableProps) => {
       ),
       sortingFn: (rowA, rowB) => {
         const columnAData: any =
-          rowA.original.content.fundingSources.reduce(
+          rowA.original.content.fundingSources.data.reduce(
             (accumulator, currentVal) =>
               +currentVal.amount * currencyScale[currentVal.currency] +
               accumulator,
             0
           ) / 1000;
         const columnBData: any =
-          rowB.original.content.fundingSources.reduce(
+          rowB.original.content.fundingSources.data.reduce(
             (accumulator, currentVal) =>
               +currentVal.amount * currencyScale[currentVal.currency] +
               accumulator,
@@ -307,7 +307,7 @@ const Table = ({ search }: TableProps) => {
       header: "In List",
       cell: (info) => (
         <HStack margin="0px !important">
-          <Text>{info.row.original.content.lists.length}</Text>
+          <Text>{info.row.original.content.lists.count}</Text>
           <Icon as={ListIcon} />
         </HStack>
       ),
@@ -351,7 +351,7 @@ const Table = ({ search }: TableProps) => {
       header: "RetroPGF Tags",
       cell: (info) => (
         <HStack columnGap="4px" margin="0px !important">
-          {info.row.original.content?.impactCategory?.map((item) => {
+          {info.row.original.content?.impactCategory?.data.map((item) => {
             const value = primaryCategories.find(
               (pc) => pc.title === item.split("_").join(" ")
             );

@@ -24,7 +24,7 @@ import {
   Divider,
   Stack,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { ProjectSearch } from "./ProjectSearch";
 import {
   createColumnHelper,
@@ -43,22 +43,27 @@ import {
   TbExternalLink,
   TbInfoCircle,
 } from "react-icons/tb";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { maximumAllocated } from "../constants";
 import { CustomInput } from "./CustomInput";
-import { cloneDeep } from "lodash";
 import {
+  useCustomToast,
   useDispatchSelectedProjects,
   useSelectedProjects,
 } from "@/hooks/bases";
-import { Project } from "@/modules/projects/types";
+import { ACCESS_TOKEN_COOKIE_KEY, distributionRoundId } from "@/constant";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import { getCookie } from "cookies-next";
+import { AxiosError } from "axios";
+import { useRouter } from "next/router";
 // TODO should fix any type
 
 const columnHelper = createColumnHelper<any>();
 
 const ChakraForm = chakra("form");
 type AllocatedForm = {
-  projects: Array<{ id: Readonly<number>; value: number; percent: number }>;
+  projects: Array<{ id?: Readonly<number>; value?: number; percent?: number }>;
   totalAllocated: number;
 };
 interface ProjectListProps {
@@ -67,21 +72,37 @@ interface ProjectListProps {
 }
 export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
   const globalSelectedProjects = useSelectedProjects() as any;
+
+  const router = useRouter();
+
   const dispatchGlobalSelectedProjects = useDispatchSelectedProjects();
 
   const { register, control, setValue, handleSubmit, getValues } =
     useForm<AllocatedForm>({
       defaultValues: {
         totalAllocated: 0,
+        projects: globalSelectedProjects.map((item) => ({
+          ...item,
+          value: 0,
+          percent: 0,
+        })),
       },
     });
+
+  const calculateTotalAllocated = () => {
+    return (
+      getValues("projects")?.reduce((accumulator, current) => {
+        return accumulator + Number(current.value);
+      }, 0) || 0
+    );
+  };
 
   const values = useWatch({ control });
 
   const data = useMemo<any>(() => {
     if (search) {
-      return globalSelectedProjects.filter((row) =>
-        row.project.name.toLowerCase().includes(search.toLowerCase())
+      return globalSelectedProjects.filter((project) =>
+        project.name.toLowerCase().includes(search.toLowerCase())
       );
     }
     return globalSelectedProjects;
@@ -89,10 +110,34 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
 
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  const toast = useCustomToast();
+
+  useEffect(() => {
+    const projectsInFormId = getValues("projects").map((item) => item.id);
+    const projectsId = globalSelectedProjects.map((item) => item.id);
+    globalSelectedProjects.forEach((item) => {
+      if (!projectsInFormId.includes(item.id)) {
+        setValue("projects", [
+          ...getValues("projects"),
+          { ...item, value: item.value ?? 0, percent: item.percent ?? 0 },
+        ]);
+      } else {
+        setValue(
+          "projects",
+          getValues("projects").filter((pr) => projectsId.includes(pr.id))
+        );
+      }
+    });
+
+    setValue("totalAllocated", calculateTotalAllocated());
+  }, [globalSelectedProjects]);
+
+  console.log({ values });
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
-        cell: (info) => info.getValue() + 1,
+        cell: (info) => info.row.index + 1,
         header: () => "#",
       }),
       columnHelper.accessor("project", {
@@ -103,7 +148,10 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
               width="36px"
               height="36px"
               rounded="full"
-              src={info.getValue().src || "/assets/images/default-img.png"}
+              src={
+                info.row.original.content.profile.profileImageUrl ||
+                "/assets/images/default-img.png"
+              }
             />
             <Link
               color="gray.0"
@@ -113,9 +161,9 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
               display="flex"
               alignItems="center"
               whiteSpace="nowrap"
-              href={info.getValue().href}
+              href={info.row.original.content.websiteUrl}
             >
-              {info.getValue().name}{" "}
+              {info.row.original.name}{" "}
               <TbExternalLink
                 color="var(--chakra-colors-gray-0)"
                 fontSize="md"
@@ -144,6 +192,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
               <CustomInput
                 {...register(`projects.${findIndex}.value`, {
                   onChange: (e) => {
+                    setValue(`projects.${findIndex}.id`, info.row.original.id);
                     const sumOfValues = getValues("projects").reduce(
                       (accumulator, current) => {
                         return Number(current.value) + accumulator;
@@ -151,7 +200,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                       0
                     );
                     if (Number(sumOfValues) <= maximumAllocated) {
-                      if (typeof values.totalAllocated !== "undefined") {
+                      if (typeof getValues("totalAllocated") !== "undefined") {
                         const calculatePercent = () => {
                           return (+e.target.value * 100) / maximumAllocated;
                         };
@@ -163,16 +212,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                           `projects.${findIndex}.percent`,
                           calculatePercent()
                         );
-                        const calculateTotalAllocated = () => {
-                          return (
-                            getValues("projects")?.reduce(
-                              (accumulator, current) => {
-                                return accumulator + Number(current.value);
-                              },
-                              0
-                            ) || 0
-                          );
-                        };
+
                         setValue("totalAllocated", calculateTotalAllocated());
                       }
                     }
@@ -216,6 +256,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
               <Input
                 {...register(`projects.${findIndex}.percent`, {
                   onChange: (e) => {
+                    setValue(`projects.${findIndex}.id`, info.row.original.id);
                     const sumOfPercentages = getValues("projects").reduce(
                       (accumulator, current) => {
                         return Number(current.percent) + accumulator;
@@ -223,7 +264,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                       0
                     );
                     if (sumOfPercentages <= 100) {
-                      if (typeof values.totalAllocated !== "undefined") {
+                      if (typeof getValues("totalAllocated") !== "undefined") {
                         setValue(
                           `projects.${findIndex}.percent`,
                           e.target.value
@@ -235,16 +276,6 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                           `projects.${findIndex}.value`,
                           calculateValue()
                         );
-                        const calculateTotalAllocated = () => {
-                          return (
-                            getValues("projects")?.reduce(
-                              (accumulator, current) => {
-                                return accumulator + Number(current.value);
-                              },
-                              0
-                            ) || 0
-                          );
-                        };
 
                         setValue("totalAllocated", calculateTotalAllocated());
                       }
@@ -285,7 +316,14 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                   border="none"
                   p="0px"
                 >
-                  <MenuItem bg="rgba(11, 11, 15)" px="12px" py="10px">
+                  <MenuItem
+                    onClick={() => {
+                      router.push(`/projects/${info.row.original.id}`);
+                    }}
+                    bg="rgba(11, 11, 15)"
+                    px="12px"
+                    py="10px"
+                  >
                     <HStack>
                       <TbInfoCircle
                         color="var(--chakra-colors-gray-40)"
@@ -299,26 +337,55 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                   <Divider opacity="0.8" borderColor="gray.500" />
                   <MenuItem
                     onClick={() => {
+                      const tempProject = globalSelectedProjects.find(
+                        (item) => item.id === info.row.original.id
+                      );
                       const findIndex = globalSelectedProjects.findIndex(
                         (item) => item.id === info.row.original.id
                       );
-                      setValue(`projects.${findIndex}.value`, 0);
-                      setValue(`projects.${findIndex}.percent`, 0);
-                      const calculateTotalAllocated = () => {
-                        return (
-                          getValues("projects")?.reduce(
-                            (accumulator, current) => {
-                              return accumulator + Number(current.value);
-                            },
-                            0
-                          ) || 0
-                        );
+                      const tempProjectValues = {
+                        value: getValues("projects")?.[findIndex]?.value ?? 0,
+                        percent:
+                          getValues("projects")?.[findIndex]?.percent ?? 0,
                       };
 
-                      setValue("totalAllocated", calculateTotalAllocated());
                       dispatchGlobalSelectedProjects((prev) =>
                         prev.filter((item) => item.id !== info.row.original.id)
                       );
+
+                      toast({
+                        status: "error",
+                        render: ({ onClose }) => (
+                          <HStack borderRadius="4px" p="8px 16px" bg="red.400">
+                            <Text color="white">
+                              “Protocol Guild” removed from the list.
+                            </Text>
+                            <Button
+                              onClick={() => {
+                                console.log(values);
+
+                                dispatchGlobalSelectedProjects((prev) => [
+                                  ...prev,
+                                  {
+                                    ...tempProject,
+                                    value: tempProjectValues.value,
+                                    percent: tempProjectValues.percent,
+                                  },
+                                ]);
+
+                                onClose();
+                              }}
+                              _hover={{}}
+                              _active={{}}
+                              size="sm"
+                              borderRadius="17px"
+                              variant="outline"
+                            >
+                              Undo
+                            </Button>
+                          </HStack>
+                        ),
+                      });
                     }}
                     bg="rgba(11, 11, 15)"
                     px="12px"
@@ -366,7 +433,8 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
     <VStack rowGap="16px" width="full">
       <HStack width="full" justifyContent="space-between">
         <Text color="gray.20" fontSize="lg" fontWeight="500">
-          Description
+          Distribute OP tokens to projects and help guide funding decisions for
+          Optimism badge holders.
         </Text>
         {globalSelectedProjects.length !== 0 && (
           <Button
@@ -479,7 +547,47 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
           </Text>
         </HStack>
         <Button
-          onClick={handleSubmit((formData) => console.log({ formData }))}
+          isDisabled={!getValues("totalAllocated")}
+          onClick={handleSubmit((formData) => {
+            const [, id] = distributionRoundId[0];
+
+            const hasAmountProjects = formData.projects.filter(
+              (project) => +project.value !== 0
+            );
+            // updates is the api body name :(
+            const updates = hasAmountProjects.map((item) => ({
+              project_id: item.id,
+              amount: +item.value,
+            }));
+
+            axiosClient
+              .post(
+                apiKeys.distribute,
+                {
+                  distribution_round_id: id,
+                  updates,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${getCookie(
+                      ACCESS_TOKEN_COOKIE_KEY
+                    )}`,
+                  },
+                }
+              )
+              .then((response) => {
+                toast({
+                  status: "success",
+                  description: response.data?.message,
+                });
+              })
+              .catch((error: AxiosError<{ error_message: string }>) => {
+                toast({
+                  status: "error",
+                  description: error.response.data.error_message,
+                });
+              });
+          })}
           type="button"
           variant="primary"
         >

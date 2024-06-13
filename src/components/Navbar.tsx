@@ -102,7 +102,7 @@ const ProfileBox = () => {
               variant="primaryDark"
               width="full"
               as={Link}
-              href={`/profile/${user?.email}`}
+              href={`/profile/${user?.id}`}
             >
               <HStack width="full" justifyContent="flex-start" columnGap="8px">
                 <TbUserCircle fontSize="20px" />
