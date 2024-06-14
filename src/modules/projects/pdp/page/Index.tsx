@@ -133,7 +133,7 @@ export const Index = () => {
                 </Text>
               </VStack>
             </GridItem>
-            <GridItem rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
+            <GridItem maxH="352px" overflowY='auto' rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
               <Text
                 color="gray.20"
                 fontSize="xl"
@@ -180,7 +180,7 @@ export const Index = () => {
                 </Text>
               </VStack>
             </GridItem>
-            <GridItem rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
+            <GridItem maxH="352px" overflowY='auto' rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
               <Text
                 color="gray.20"
                 fontSize="xl"
