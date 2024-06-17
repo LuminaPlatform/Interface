@@ -16,7 +16,7 @@ export const UnAuthorized = () => {
         fontSize="lg"
         fontWeight="500"
       >
-        Oops! It seems you're not logged in. To access reviews from users you
+        Oops! It seems you&apos;re not logged in. To access reviews from users you
         follow, simply log in to your account. Discover insights and opinions
         from your trusted network, tailored to your interests and preferences.
         Ready to explore? Log in now to unlock a personalized feed of reviews
