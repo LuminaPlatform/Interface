@@ -4,6 +4,7 @@ import {
   HStack,
   Text,
   useDisclosure,
+  UseDisclosureProps,
   VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -18,10 +19,15 @@ import { reviewStatuses } from "@/constant";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 
-interface FeedbackProps {
+interface FeedbackProps extends UseDisclosureProps {
   headerTitle: string;
 }
-export const Feedback = ({ headerTitle }: FeedbackProps) => {
+export const Feedback = ({
+  headerTitle,
+  isOpen,
+  onClose,
+  onOpen,
+}: FeedbackProps) => {
   const userViewpoint = useProjectData()?.userViewpoint;
   const project = useProjectData();
   const dispatchProjectData = useProjectDataDispatch();
@@ -33,13 +39,10 @@ export const Feedback = ({ headerTitle }: FeedbackProps) => {
       )?.name ?? undefined
   );
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   const userData = useGlobalUserData();
 
   const isWhiteList = true;
   const hasAccessWriteReview = userData?.user?.x_username && isWhiteList;
-
 
   useEffect(() => {
     if (typeof status !== "undefined") {

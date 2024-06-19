@@ -252,7 +252,7 @@ export const ChangePasswordModal = ({
           !!errors.currentPassword ||
           isLoading
         }
-        mainButtonText="Submit Password"
+        mainButtonText="Update Password"
         submitHandler={handleSubmit((values) => {
           handleChangePassword(values);
         })}

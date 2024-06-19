@@ -4,6 +4,7 @@ import {
   HStack,
   SimpleGrid,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { Header } from "../components/Header";
@@ -26,6 +27,8 @@ export const Index = () => {
       impactMetrics,
     },
   } = project;
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <VStack
@@ -90,7 +93,7 @@ export const Index = () => {
               order={{ base: "1", lg: "0" }}
               colSpan={{ base: 1, lg: 2 }}
             >
-              <Reviews />
+              <Reviews isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
             </GridItem>
             <GridItem
               order={{ base: "0", lg: "1" }}
@@ -99,7 +102,12 @@ export const Index = () => {
               borderRadius="10px"
               p="16px"
             >
-              <Feedback headerTitle="Which status best describes your view of the project?" />
+              <Feedback
+                isOpen={isOpen}
+                onOpen={onOpen}
+                onClose={onClose}
+                headerTitle="Which status best describes your view of the project?"
+              />
             </GridItem>
           </SimpleGrid>
           <SimpleGrid
@@ -125,7 +133,7 @@ export const Index = () => {
                 </Text>
               </VStack>
             </GridItem>
-            <GridItem rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
+            <GridItem maxH="352px" overflowY='auto' rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
               <Text
                 color="gray.20"
                 fontSize="xl"
@@ -172,7 +180,7 @@ export const Index = () => {
                 </Text>
               </VStack>
             </GridItem>
-            <GridItem rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
+            <GridItem maxH="352px" overflowY='auto' rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
               <Text
                 color="gray.20"
                 fontSize="xl"
