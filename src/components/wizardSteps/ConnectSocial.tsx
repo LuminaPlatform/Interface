@@ -56,8 +56,6 @@ export const ConnectSocial = ({
             connect={{
               buttonText: "Connect",
               handleClick: () => {
-                console.log(isConnect);
-                
                 setConnect(true);
               },
               isConnect: isConnect,

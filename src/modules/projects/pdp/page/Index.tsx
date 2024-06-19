@@ -4,6 +4,7 @@ import {
   HStack,
   SimpleGrid,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { Header } from "../components/Header";
@@ -26,6 +27,8 @@ export const Index = () => {
       impactMetrics,
     },
   } = project;
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <VStack
@@ -90,13 +93,21 @@ export const Index = () => {
               order={{ base: "1", lg: "0" }}
               colSpan={{ base: 1, lg: 2 }}
             >
-              <Reviews />
+              <Reviews isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
             </GridItem>
             <GridItem
               order={{ base: "0", lg: "1" }}
               colSpan={{ base: 1, lg: 1 }}
+              bg="gray.700"
+              borderRadius="10px"
+              p="16px"
             >
-              <Feedback />
+              <Feedback
+                isOpen={isOpen}
+                onOpen={onOpen}
+                onClose={onClose}
+                headerTitle="Which status best describes your view of the project?"
+              />
             </GridItem>
           </SimpleGrid>
           <SimpleGrid
@@ -122,7 +133,7 @@ export const Index = () => {
                 </Text>
               </VStack>
             </GridItem>
-            <GridItem rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
+            <GridItem maxH="352px" overflowY='auto' rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
               <Text
                 color="gray.20"
                 fontSize="xl"
@@ -133,12 +144,13 @@ export const Index = () => {
                 Contribution links
               </Text>
               <VStack width="full" rowGap="12px">
-                {contributionLinks.map((item) => (
+                {contributionLinks.data.map((item) => (
                   <ProjectLink
                     description={item.description}
                     url={item.url}
                     key={item.url}
                     showCount={false}
+                    type={item.type}
                   />
                 ))}
               </VStack>
@@ -168,7 +180,7 @@ export const Index = () => {
                 </Text>
               </VStack>
             </GridItem>
-            <GridItem rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
+            <GridItem maxH="352px" overflowY='auto' rowGap="12px" colSpan={{ base: 1, lg: 1 }}>
               <Text
                 color="gray.20"
                 fontSize="xl"
@@ -179,7 +191,7 @@ export const Index = () => {
                 Impact Metrics
               </Text>
               <VStack width="full" rowGap="12px">
-                {impactMetrics.map((item) => (
+                {impactMetrics.data.map((item) => (
                   <ProjectLink
                     key={item.url}
                     description={item.description}

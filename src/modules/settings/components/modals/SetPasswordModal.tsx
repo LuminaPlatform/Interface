@@ -143,9 +143,8 @@ export const SetPasswordModal = ({
         isLoading={isLoading}
         cancelHandler={onClose}
         isDisabled={!!errors.password || !!errors.rePassword}
-        mainButtonText="Submit Password"
+        mainButtonText="Set Password"
         submitHandler={handleSubmit((values) => {
-          console.log({ values });
           setPassword({
             isSet: true,
           });

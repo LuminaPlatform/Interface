@@ -144,7 +144,6 @@ export const Wallet = () => {
   const { wallet } = useGlobalUserData();
   const { onOpen } = useWalletModal();
   const dispatch = useDispatchModalSteps();
-  console.log({ wallet });
 
   return (
     <VStack zIndex={1} borderRadius="12px" width="full" p="24px" bg="gray.800">

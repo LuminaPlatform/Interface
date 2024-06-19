@@ -141,6 +141,7 @@ export const ReviewCard = ({
                 width={{ base: "16px", md: "24px" }}
                 height={{ base: "16px", md: "24px" }}
               />
+
               <Text color="gray.40" fontSize={{ base: "sm", md: "md" }}>
                 {review.user.display_name}
               </Text>

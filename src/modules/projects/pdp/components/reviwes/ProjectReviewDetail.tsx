@@ -5,16 +5,17 @@ import {
   Link,
   Stack,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { useProjectData, useProjectReviews } from "../../hooks";
 import { TbLink } from "react-icons/tb";
 import { FeedbackResult } from "../FeedbackResult";
+import { Feedback } from "../Feedback";
 
 export const ProjectReviewDetail = () => {
   const project = useProjectData();
-  console.log({ project });
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Stack
       borderRadius="12px"
@@ -78,13 +79,12 @@ export const ProjectReviewDetail = () => {
         </VStack>
       </Stack>
       <VStack rowGap="16px" width={{ base: "220px", md: "full", lg: "220px" }}>
-        <Text color="gray.20" fontSize="md">
-          Check out how the community views this project!
-        </Text>
-        <FeedbackResult />
-        <Text width="full" textAlign="left" color="gray.60" fontSize="xs">
-          Based on 604 rating
-        </Text>
+        <Feedback
+          isOpen={isOpen}
+          onOpen={onOpen}
+          onClose={onClose}
+          headerTitle="Check out how the community views this project!"
+        />
       </VStack>
     </Stack>
   );

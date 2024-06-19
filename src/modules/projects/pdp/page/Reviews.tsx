@@ -7,7 +7,6 @@ import { ProjectReviewDetail } from "../components/reviwes/ProjectReviewDetail";
 export const Reviews = () => {
   const reviews = useProjectReviews();
   const project = useProjectData();
-  console.log({ reviews });
 
   return (
     <VStack
@@ -37,9 +36,20 @@ export const Reviews = () => {
         width="full"
         gridTemplateColumns={{ base: "1fr", md: "1fr auto", lg: "1fr 266px" }}
       >
-        <GridItem order={{ base: 1, md: 0 }} width="full">
+        <GridItem
+          as={VStack}
+          rowGap="16px"
+          order={{ base: 1, md: 0 }}
+          width="full"
+        >
           {reviews.length === 0 ? (
-            <Text mt="48px" width="full" textAlign="center" color="gray.0" fontSize="2xl">
+            <Text
+              mt="48px"
+              width="full"
+              textAlign="center"
+              color="gray.0"
+              fontSize="2xl"
+            >
               There isn&apos;t any review
             </Text>
           ) : (
@@ -53,7 +63,14 @@ export const Reviews = () => {
             ))
           )}
         </GridItem>
-        <GridItem order={{ base: 0, md: 1 }} height="fit-content" width="full">
+        <GridItem
+          position="sticky"
+          top="0"
+          right="0"
+          order={{ base: 0, md: 1 }}
+          height="fit-content"
+          width="full"
+        >
           <ProjectReviewDetail />
         </GridItem>
       </Grid>

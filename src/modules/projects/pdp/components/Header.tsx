@@ -27,7 +27,6 @@ export const Header = () => {
   const { query } = useRouter();
 
   const project = useProjectData();
-  console.log({ project });
 
   const { name } = project;
 

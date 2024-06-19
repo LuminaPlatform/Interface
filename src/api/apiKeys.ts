@@ -7,18 +7,26 @@ export const apiKeys = {
       },
       twitter: "",
       email: "/auth/login/email",
-      wallet: "",
     },
     signup: {
       google: "",
       twitter: "",
       email: "/auth/signup/email/request",
-      wallet: "",
     },
     isAuthorized: "/auth/me",
     otp: "/auth/signup/email/verify",
+    wallet: {
+      add: "/auth/wallet/add",
+    },
+
+    resetPassword: {
+      verify: "/auth/password/reset/verify",
+      otp: "/auth/password/reset/request",
+    },
   },
   fetch: "/read/fetch",
+  viewpoint: "/read/viewpoints",
   create: "/create",
-  update:'/update'
+  update: "/update",
+  distribute: "/distribution/distribute",
 };

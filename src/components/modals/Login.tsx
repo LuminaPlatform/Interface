@@ -74,7 +74,6 @@ export const Login = ({}: WalletModalBodyProps) => {
               );
               const authorizationCode = urlParams.get("code");
 
-              console.log("Authorization Code:", authorizationCode);
 
               window.location.href = "/welcome";
             }

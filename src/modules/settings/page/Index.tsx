@@ -16,7 +16,6 @@ export const Index = () => {
   const [isEditable, setEditable] = useState(false);
 
   const {user} = useGlobalUserData();
-  console.log({ user });
 
   // TODO should add default value
   const { ...methods } = useForm<settingsFormType>({

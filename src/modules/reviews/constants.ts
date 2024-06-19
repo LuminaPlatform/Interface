@@ -9,9 +9,4 @@ export const tabs = [
     title: "Newest",
     query: "newest",
   },
-  {
-    id: 2,
-    title: "Popular",
-    query: "popular",
-  },
 ];

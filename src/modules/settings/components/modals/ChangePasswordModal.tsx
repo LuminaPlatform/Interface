@@ -9,7 +9,6 @@ import {
   Text,
   useBoolean,
   UseDisclosureProps,
-  useToast,
   VStack,
 } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
@@ -20,7 +19,7 @@ import { SettingsModalFooter } from "../EmailFooter";
 import { Dispatch, SetStateAction, useState } from "react";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
-import { useGlobalUserData } from "@/hooks/bases";
+import { useCustomToast, useGlobalUserData } from "@/hooks/bases";
 import { AxiosError } from "axios";
 
 interface ChangePasswordModalProps extends UseDisclosureProps {
@@ -44,7 +43,7 @@ export const ChangePasswordModal = ({
   const userInfo = useGlobalUserData();
 
   const { password } = useWatch({ control });
-  const toast = useToast();
+  const toast = useCustomToast();
   const handleChangePassword = (values) => {
     setLoading(true);
     axiosClient
@@ -64,7 +63,6 @@ export const ChangePasswordModal = ({
         });
       })
       .catch((error: AxiosError<{ error_message: string }>) => {
-        console.log({ error });
 
         return toast({
           status: "error",
@@ -75,7 +73,7 @@ export const ChangePasswordModal = ({
         setLoading(false);
       });
   };
-
+  const email = userInfo.user.email;
   return (
     <VStack rowGap="16px" width="full">
       <FormControl pb="32px">
@@ -226,7 +224,17 @@ export const ChangePasswordModal = ({
           Forgot your password?
         </Text>
         <Button
-          onClick={() => setModalBody(SettingsModalBody.passwordOTP)}
+          onClick={() => {
+            axiosClient
+              .get(`${apiKeys.auth.resetPassword.otp}/${email}`)
+              .then(() => setModalBody(SettingsModalBody.passwordOTP))
+              .catch((error: AxiosError<{ error_message: string }>) => {
+                toast({
+                  status: "error",
+                  description: error.response.data.error_message,
+                });
+              });
+          }}
           size="sm"
           fontSize="md"
           fontWeight="700"
@@ -244,7 +252,7 @@ export const ChangePasswordModal = ({
           !!errors.currentPassword ||
           isLoading
         }
-        mainButtonText="Submit Password"
+        mainButtonText="Update Password"
         submitHandler={handleSubmit((values) => {
           handleChangePassword(values);
         })}

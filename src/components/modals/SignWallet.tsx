@@ -1,6 +1,13 @@
-import { useDispatchModalSteps, useWalletModal } from "@/hooks/bases";
+import { apiKeys } from "@/api/apiKeys";
+import { axiosClient } from "@/config/axios";
+import {
+  useCustomToast,
+  useDispatchModalSteps,
+  useWalletModal,
+} from "@/hooks/bases";
 import { STEP_MODAL, WalletModalBodyProps } from "@/types";
 import { Button, HStack, Text, VStack } from "@chakra-ui/react";
+import { AxiosError } from "axios";
 import { motion } from "framer-motion";
 
 interface SignWalletProps extends WalletModalBodyProps {}
@@ -18,6 +25,8 @@ export const SignWallet = ({}: SignWalletProps) => {
     error,
     signMessage,
     variables,
+    submittedAt,
+    ...other
   } = useSignMessage();
 
   const { onClose } = useWalletModal();
@@ -41,6 +50,28 @@ export const SignWallet = ({}: SignWalletProps) => {
       dispatchSteps(STEP_MODAL.wallet);
     }
   }, [signMessageData]);
+
+  const toast = useCustomToast();
+
+  useEffect(() => {
+    if (signMessageData) {
+      axiosClient
+        .post(apiKeys.auth.wallet.add, {
+          wallet: address,
+          signature: signMessageData,
+          timestamp: submittedAt,
+        })
+        .then((response) => {
+        })
+        .catch((error: AxiosError<{ error_message: string }>) => {
+          return toast({
+            status: "error",
+            description: error.response.data.error_message,
+          });
+        });
+    }
+  }, [signMessageData]);
+
   return (
     <VStack
       as={motion.div}

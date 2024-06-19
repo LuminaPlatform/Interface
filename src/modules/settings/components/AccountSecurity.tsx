@@ -59,7 +59,6 @@ export const AccountSecurity = () => {
     isSet: !!userInfo?.user?.password,
   });
 
-  console.log({ password });
 
   const modals = useMemo<modalsBodyType>(() => {
     return {

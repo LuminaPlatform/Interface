@@ -6,7 +6,6 @@ import {
   useDispatchSelectedProjects,
   useSelectedProjects,
 } from "@/hooks/bases";
-import { Project } from "@/modules/projects/types";
 
 interface AddProjectsProps {
   onClose: () => void;
@@ -16,7 +15,7 @@ export const AddProjects = ({ onClose }: AddProjectsProps) => {
   const globalSelectedProjects = useSelectedProjects();
   const DispatchGlobalSelectedProjects = useDispatchSelectedProjects();
 
-  const [selectedProjects, setSelectedProjects] = useState<Array<Project>>(
+  const [selectedProjects, setSelectedProjects] = useState<Array<any>>(
     () => globalSelectedProjects
   );
 

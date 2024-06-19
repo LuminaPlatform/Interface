@@ -12,7 +12,6 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
   const foundReviewStatus = reviewStatuses.find(
     (item) => item.name === review.viewpoint
   );
-  console.log({ project });
 
   return (
     <VStack

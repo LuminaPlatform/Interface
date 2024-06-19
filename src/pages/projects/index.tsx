@@ -19,7 +19,7 @@ export const getServerSideProps = async (ctx) => {
     0: {
       model: "Project",
       model_id: "None",
-      limit: 5,
+      limit: pageThreshold,
       orders: [],
       fetch_graph: {
         flex_fields: [
@@ -34,7 +34,7 @@ export const getServerSideProps = async (ctx) => {
           },
           { name: "content.fundingSources" },
           { name: "content.includedInBallots" },
-          { name: "content.lists" },
+          { name: "content.lists.count" },
           { name: "content.profile" },
           { name: "content.impactCategory" },
         ],

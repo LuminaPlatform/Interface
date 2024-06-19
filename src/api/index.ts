@@ -1,9 +1,7 @@
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "./apiKeys";
 
-export const getUserInformation = async (email: string) => {
-  console.log({email});
-  
+export const getUserInformation = async (id: string) => {
   return await axiosClient
     .post(apiKeys.fetch, {
       0: {
@@ -19,9 +17,9 @@ export const getUserInformation = async (email: string) => {
           ],
         },
         condition: {
-          field: "email",
+          field: "id",
           operator: "EQ",
-          value: email,
+          value: id,
           __type__: "SimpleSearchCondition",
         },
       },
@@ -38,14 +36,16 @@ export const getUserInformation = async (email: string) => {
           ],
         },
         condition: {
-          field: "user.email",
+          field: "user_id",
           operator: "EQ",
-          value: email,
+          value: id,
           __type__: "SimpleSearchCondition",
         },
       },
     })
-    .then((response) => response.data)
+    .then((response) => {
+      return response.data;
+    })
     .catch((error) => {
       console.log({ error });
     });
