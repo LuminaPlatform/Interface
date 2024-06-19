@@ -48,7 +48,7 @@ export const WalletConnectProvider = ({
   );
 };
 
-export const SelectedProjects = createContext<Array<Project>>(undefined);
+export const SelectedProjects = createContext<Array<Project>>([]);
 export const SetSelectedProjects =
   createContext<Dispatch<SetStateAction<Project[]>>>(undefined);
 
@@ -123,7 +123,7 @@ export const GlobalUserProvider = ({
 
   useEffect(() => {
     if (!userData && !!userBaseData) {
-      getUserInformation(userBaseData.email).then((data) => {
+      getUserInformation(userBaseData.id.toString()).then((data) => {
         if (!!data) {
           setState({
             user: data[0][0],

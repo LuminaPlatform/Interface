@@ -57,7 +57,6 @@ export const UserInfo = () => {
   const [isFollowed, setFollowed] = useState(false);
 
   const hasWallet = !!userInfo.wallet;
-  console.log({ userInfo });
 
   return (
     <Stack

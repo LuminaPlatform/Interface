@@ -41,8 +41,6 @@ import { apiKeys } from "@/api/apiKeys";
 const ProfileBox = () => {
   const userData = useGlobalUserData();
   const user = userData?.user;
-  console.log({user});
-  
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const baseUserData = useAuthorization();
@@ -102,7 +100,7 @@ const ProfileBox = () => {
               variant="primaryDark"
               width="full"
               as={Link}
-              href={`/profile/${user?.email}`}
+              href={`/profile/${user?.id}`}
             >
               <HStack width="full" justifyContent="flex-start" columnGap="8px">
                 <TbUserCircle fontSize="20px" />
@@ -214,13 +212,7 @@ const Navbar = () => {
           />
         </InputGroup>
         {!!authorization && (
-          <Box
-            cursor="pointer"
-            onClick={() => {
-              console.log("clicked on notif");
-            }}
-            position="relative"
-          >
+          <Box cursor="pointer" onClick={() => {}} position="relative">
             {false && (
               <Text
                 textAlign="center"

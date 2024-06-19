@@ -132,7 +132,7 @@ export const Sidebar = () => {
         position="absolute"
         top="16px"
         left={0}
-        transform={isOpen ? "translateX(149px)" : "translateX(65px)"}
+        transform={isOpen ? "translateX(189px)" : "translateX(87px)"}
         width="36px"
         height="36px"
         bg="rgba(38, 38, 41,0.6)"
@@ -152,7 +152,12 @@ export const Sidebar = () => {
       </Button>
       <VStack width="full">
         <Center py="32px" width="full">
-          <Img src={logoImg} alt="lumina" />
+          <Img
+            width={isOpen ? "131px" : "32px"}
+            height="48px"
+            src={logoImg}
+            alt="lumina"
+          />
         </Center>
         {routes.map((route, index) => (
           <VStack width="full" margin={0} key={route.id}>

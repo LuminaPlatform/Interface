@@ -29,9 +29,7 @@ export const UserInfoEditable = ({
   isEditable,
   setEditable,
 }: UserInfoEditableProps) => {
-  const handleSave = () => {
-    console.log("saveProfile");
-  };
+  const handleSave = () => {};
 
   const {
     formState: { errors },

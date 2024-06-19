@@ -21,10 +21,7 @@ interface WriteFeedbackProps {
 const WriteFeedback = ({ setStatus, status, onClose }: WriteFeedbackProps) => {
   const {
     name,
-    content: {
-      bio,
-      profile
-    },
+    content: { bio, profile },
   } = useProjectData();
 
   return (

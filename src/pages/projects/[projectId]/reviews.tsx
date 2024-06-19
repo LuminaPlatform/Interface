@@ -1,5 +1,6 @@
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import {
   ProjectDetailProvider,
   ProjectReviewsProvider,
@@ -11,10 +12,17 @@ import { GetServerSideProps } from "next";
 interface ReviewsProps {
   project: Project;
   reviews: Review[];
+  viewpoints: any;
+  userViewpoint: any;
 }
-const Reviews = ({ reviews, project }: ReviewsProps) => {
+const Reviews = ({
+  reviews,
+  project,
+  viewpoints,
+  userViewpoint,
+}: ReviewsProps) => {
   return (
-    <ProjectDetailProvider project={project}>
+    <ProjectDetailProvider project={{ ...project, viewpoints, userViewpoint }}>
       <ProjectReviewsProvider reviews={reviews}>
         <PageBase />
       </ProjectReviewsProvider>
@@ -29,6 +37,66 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
 ) => {
   const params = ctx.params;
   const projectId = params.projectId;
+
+  const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
+
+  const userViewpoint = await axiosClient
+    .get(apiKeys["auth"]["isAuthorized"], {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then((response) => {
+      return axiosClient.post(
+        apiKeys["fetch"],
+        {
+          "0": {
+            model: "ViewPoint",
+            model_id: "None",
+            limit: 1,
+            orders: [],
+            fetch_graph: {
+              flex_fields: [
+                {
+                  name: "*",
+                },
+              ],
+            },
+            condition: {
+              __type__: "ComplexSearchCondition",
+              operator: "AND",
+              conditions: [
+                {
+                  __type__: "SimpleSearchCondition",
+                  field: "user_id",
+                  operator: "EQ",
+                  value: response.data.id,
+                },
+                {
+                  __type__: "SimpleSearchCondition",
+                  field: "project_id",
+                  operator: "EQ",
+                  value: projectId,
+                },
+              ],
+            },
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+    })
+    .then((res) => res.data[0])
+    .catch(() => {
+      return [];
+    });
+
+  const viewpoints = await axiosClient
+    .get(`${apiKeys.viewpoint}/${projectId}`)
+    .then((response) => response.data.viewpoints);
 
   return axiosClient
     .post(apiKeys.fetch, {
@@ -87,7 +155,7 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
                     name: "display_name",
                   },
                   {
-                    name: "profile_picture",
+                    name: "id",
                   },
                 ],
               },
@@ -104,6 +172,8 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
         props: {
           project: project[0],
           reviews,
+          viewpoints,
+          userViewpoint: userViewpoint ?? [],
         },
       };
     })

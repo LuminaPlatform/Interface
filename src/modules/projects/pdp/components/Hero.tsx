@@ -1,9 +1,18 @@
-import { Box, HStack, Img, Stack, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  Img,
+  Stack,
+  Text,
+  useClipboard,
+  VStack,
+} from "@chakra-ui/react";
 import { useProjectData } from "../hooks";
 import { textTruncator } from "@/utils";
 import Link from "next/link";
 import { TbLink } from "react-icons/tb";
 import { primaryCategories } from "@/constant";
+import { useEffect } from "react";
 
 const Tags = () => {
   const { content } = useProjectData();
@@ -15,6 +24,12 @@ const Tags = () => {
     },
   } = content;
 
+  const { onCopy, setValue, hasCopied } = useClipboard("");
+
+  useEffect(() => {
+    setValue(address);
+  }, []);
+
   return (
     <Stack
       flexDirection={{ base: "column", md: "row" }}
@@ -23,7 +38,7 @@ const Tags = () => {
       alignItems={{ base: "flex-start" }}
     >
       <HStack width="full" justifyContent="flex-start" alignItems="flex-start">
-        {impactCategory.map((tag) => {
+        {impactCategory.data.map((tag) => {
           const foundCategory = primaryCategories.find(
             (item) => item.title === tag.split("_").join(" ")
           );
@@ -62,6 +77,7 @@ const Tags = () => {
           {applicantType}
         </Text>
         <Text
+          onClick={onCopy}
           bg="gray.600"
           borderRadius="12px"
           height="24px"
@@ -71,7 +87,7 @@ const Tags = () => {
           px="8px"
           color="gray.80"
         >
-          {textTruncator(address)}
+          {hasCopied ? "Copied!" : textTruncator(address)}
         </Text>
       </HStack>
     </Stack>

@@ -69,7 +69,6 @@ export const EmailVerifyModal = ({
         isDisabled={!!errors.email}
         mainButtonText="Submit Email"
         submitHandler={handleSubmit((values) => {
-          console.log({ values });
           setModalBody(SettingsModalBody.emailOTP);
         })}
       />

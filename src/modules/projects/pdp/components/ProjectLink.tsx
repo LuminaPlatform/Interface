@@ -1,18 +1,34 @@
 import { Box, HStack, Link, Text } from "@chakra-ui/react";
-import { TbBrandGithub, TbExternalLink } from "react-icons/tb";
+import { useMemo } from "react";
+import { TbBrandGithub, TbExternalLink, TbMap, TbWorld } from "react-icons/tb";
 
 interface ProjectLinkProps {
   showCount: boolean;
   description: string;
   count?: string;
   url: string;
+  type?: string;
 }
+
 export const ProjectLink = ({
   showCount,
   description,
   count,
   url,
+  type,
 }: ProjectLinkProps) => {
+  const icons = useMemo(
+    () => ({
+      CONTRACT_ADDRESS: (
+        <TbMap color="var(--chakra-colors-gray-80)" fontSize="20px" />
+      ),
+      OTHER: <TbWorld color="var(--chakra-colors-gray-80)" fontSize="20px" />,
+      GITHUB_REPO: (
+        <TbBrandGithub color="var(--chakra-colors-gray-80)" fontSize="20px" />
+      ),
+    }),
+    []
+  );
   return (
     <HStack
       justifyContent="space-between"
@@ -26,9 +42,11 @@ export const ProjectLink = ({
       target="_blank"
       rel="noopener noreferrer"
     >
-      <Box width="20px" height="20px">
-        <TbBrandGithub color="var(--chakra-colors-gray-80)" fontSize="20px" />
-      </Box>
+      {type && (
+        <Box width="20px" height="20px">
+          {icons[type]}
+        </Box>
+      )}
       <Text fontSize="sm" color="gray.10">
         {description}
       </Text>

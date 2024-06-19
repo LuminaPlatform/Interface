@@ -7,7 +7,6 @@ import { useReviewsData } from "../hooks";
 const TabBody = () => {
   const reviews = useReviewsData();
 
-  console.log({ reviews });
 
   return (
     <VStack rowGap="16px" py="16px">

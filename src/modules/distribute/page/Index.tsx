@@ -14,7 +14,7 @@ import { TbBookmarkPlus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
 import { AddProjects } from "../components/AddProjects";
 import { useAccount } from "wagmi";
-import { useSelectedProjects } from "@/hooks/bases";
+import { useAuthorization, useSelectedProjects } from "@/hooks/bases";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import { distributeTabs } from "../constants";
 import { PopularProjectsPanel } from "../components/PopularProjectsPanel";
@@ -22,20 +22,21 @@ import { StringParam, useQueryParams } from "use-query-params";
 import { ProjectSearch } from "../components/ProjectSearch";
 
 const Index = () => {
-  const { isConnected } = useAccount();
+  const userData = useAuthorization();
   const selectedProject = useSelectedProjects();
+
   const { onClose, isOpen, onOpen } = useDisclosure();
   const [search, setSearch] = useState("");
 
   const content = useMemo(() => {
-    if (!isConnected) {
+    if (!userData) {
       return <UnAuthorized />;
     }
-    if (selectedProject.length === 0) {
+    if (selectedProject?.length === 0) {
       return <EmptyState onOpen={onOpen} />;
     }
     return <ProjectList search={search} onOpen={onOpen} />;
-  }, [selectedProject, isConnected, search]);
+  }, [selectedProject, userData, search]);
 
   const [query, setQuery] = useQueryParams({
     tab: StringParam,
@@ -85,18 +86,16 @@ const Index = () => {
             </Tab>
           ))}
         </TabList>
-        {(selectedProject.length !== 0 || activeTab === 1) && (
+        {(selectedProject?.length !== 0 || activeTab === 1) && (
           <Box width="full" mt="16px">
             <ProjectSearch search={search} setSearch={setSearch} />
           </Box>
         )}
         <TabPanels>
           <TabPanel>{content}</TabPanel>
-          <TabPanel>
-            <PopularProjectsPanel search={search} />
-          </TabPanel>
+          <TabPanel>{/* <PopularProjectsPanel search={search} /> */}</TabPanel>
         </TabPanels>
-      </Tabs>{" "}
+      </Tabs>
       <ModalBase
         isOpen={isOpen}
         onClose={onClose}
