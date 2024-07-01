@@ -105,15 +105,15 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
                 model: "Project.reviews",
                 model_id: +query.projectId,
                 orders: [],
-                fetch_graph: {
-                  flex_fields: [
+                graph: {
+                  fetch_fields: [
                     {
                       name: "*",
                     },
                     {
                       name: "user",
-                      fetch_graph: {
-                        flex_fields: [
+                      graph: {
+                        fetch_fields: [
                           {
                             name: "display_name",
                           },

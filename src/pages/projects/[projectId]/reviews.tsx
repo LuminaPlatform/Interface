@@ -55,8 +55,8 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
             model_id: "None",
             limit: 1,
             orders: [],
-            fetch_graph: {
-              flex_fields: [
+            graph: {
+              fetch_fields: [
                 {
                   name: "*",
                 },
@@ -67,13 +67,13 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
               operator: "AND",
               conditions: [
                 {
-                  __type__: "SimpleSearchCondition",
+                  __type__: "SimpleFetchCondition",
                   field: "user_id",
                   operator: "EQ",
                   value: response.data.id,
                 },
                 {
-                  __type__: "SimpleSearchCondition",
+                  __type__: "SimpleFetchCondition",
                   field: "project_id",
                   operator: "EQ",
                   value: projectId,
@@ -105,8 +105,8 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
         model_id: "None",
         limit: 1,
         orders: [],
-        fetch_graph: {
-          flex_fields: [
+        graph: {
+          fetch_fields: [
             {
               name: "id",
             },
@@ -131,7 +131,7 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
           ],
         },
         condition: {
-          __type__: "SimpleSearchCondition",
+          __type__: "SimpleFetchCondition",
           field: "id",
           operator: "EQ",
           value: projectId,
@@ -142,15 +142,15 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
         model_id: projectId,
         limit: 4,
         orders: [],
-        fetch_graph: {
-          flex_fields: [
+        graph: {
+          fetch_fields: [
             {
               name: "*",
             },
             {
               name: "user",
-              fetch_graph: {
-                flex_fields: [
+              graph: {
+                fetch_fields: [
                   {
                     name: "display_name",
                   },

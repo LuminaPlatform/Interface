@@ -22,8 +22,8 @@ export const getServerSideProps = async (ctx) => {
       model: "Project",
       model_id: "None",
       orders: [],
-      fetch_graph: {
-        flex_fields: [
+      graph: {
+        fetch_fields: [
           {
             name: "id",
           },

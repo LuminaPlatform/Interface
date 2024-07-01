@@ -58,8 +58,8 @@ export type FetchObject = {
   model_id: string;
   limit: number;
   orders: [];
-  fetch_graph: {
-    flex_fields: {}[];
+  graph: {
+    fetch_fields: {}[];
   };
   condition: {};
 };

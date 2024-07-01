@@ -56,15 +56,15 @@ export const getServerSideProps = async (ctx) => {
                 model_id: "None",
                 limit: 20,
                 orders: [],
-                fetch_graph: {
-                  flex_fields: [
+                graph: {
+                  fetch_fields: [
                     {
                       name: "*",
                     },
                     {
                       name: "user",
-                      fetch_graph: {
-                        flex_fields: [
+                      graph: {
+                        fetch_fields: [
                           {
                             name: "display_name",
                           },
@@ -76,8 +76,8 @@ export const getServerSideProps = async (ctx) => {
                     },
                     {
                       name: "project",
-                      fetch_graph: {
-                        flex_fields: [
+                      graph: {
+                        fetch_fields: [
                           {
                             name: "*",
                           },
@@ -119,15 +119,15 @@ export const getServerSideProps = async (ctx) => {
       model_id: "None",
       limit: 20,
       orders: [],
-      fetch_graph: {
-        flex_fields: [
+      graph: {
+        fetch_fields: [
           {
             name: "*",
           },
           {
             name: "user",
-            fetch_graph: {
-              flex_fields: [
+            graph: {
+              fetch_fields: [
                 {
                   name: "display_name",
                 },

@@ -9,8 +9,8 @@ export const getUserInformation = async (id: string) => {
         model_id: "None",
         limit: 1,
         orders: [],
-        fetch_graph: {
-          flex_fields: [
+        graph: {
+          fetch_fields: [
             {
               name: "*",
             },
@@ -20,7 +20,7 @@ export const getUserInformation = async (id: string) => {
           field: "id",
           operator: "EQ",
           value: id,
-          __type__: "SimpleSearchCondition",
+          __type__: "SimpleFetchCondition",
         },
       },
       1: {
@@ -28,8 +28,8 @@ export const getUserInformation = async (id: string) => {
         model_id: "None",
         limit: 1,
         orders: [],
-        fetch_graph: {
-          flex_fields: [
+        graph: {
+          fetch_fields: [
             {
               name: "*",
             },
@@ -39,7 +39,7 @@ export const getUserInformation = async (id: string) => {
           field: "user_id",
           operator: "EQ",
           value: id,
-          __type__: "SimpleSearchCondition",
+          __type__: "SimpleFetchCondition",
         },
       },
     })

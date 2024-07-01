@@ -108,8 +108,8 @@ App.getInitialProps = async ({ ctx }) => {
           model_id: "None",
           limit: 1,
           orders: [],
-          fetch_graph: {
-            flex_fields: [
+          graph: {
+            fetch_fields: [
               {
                 name: "*",
               },
@@ -119,7 +119,7 @@ App.getInitialProps = async ({ ctx }) => {
             field: "email",
             operator: "EQ",
             value: response.data.email,
-            __type__: "SimpleSearchCondition",
+            __type__: "SimpleFetchCondition",
           },
         },
         1: {
@@ -127,8 +127,8 @@ App.getInitialProps = async ({ ctx }) => {
           model_id: "None",
           limit: 1,
           orders: [],
-          fetch_graph: {
-            flex_fields: [
+          graph: {
+            fetch_fields: [
               {
                 name: "*",
               },
@@ -138,7 +138,7 @@ App.getInitialProps = async ({ ctx }) => {
             field: "user_id",
             operator: "EQ",
             value: response.data.id,
-            __type__: "SimpleSearchCondition",
+            __type__: "SimpleFetchCondition",
           },
         },
       });
