@@ -21,8 +21,8 @@ export const getServerSideProps = async (ctx) => {
       model_id: "None",
       limit: pageThreshold,
       orders: [],
-      fetch_graph: {
-        flex_fields: [
+      graph: {
+        fetch_fields: [
           {
             name: "id",
           },
@@ -40,7 +40,7 @@ export const getServerSideProps = async (ctx) => {
         ],
       },
       condition: {
-        __type__: "SimpleSearchCondition",
+        __type__: "SimpleFetchCondition",
         field: "id",
         operator: "GTE",
         value: (page - 1) * pageThreshold,
