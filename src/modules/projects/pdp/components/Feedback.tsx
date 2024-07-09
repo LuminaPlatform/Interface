@@ -9,15 +9,20 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ReviewStatus } from "@/types";
-import { TbEdit } from "react-icons/tb";
+import { TbEdit, TbMessage2Plus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
 import WriteFeedback from "./WriteFeedback";
 import { FeedbackResult } from "./FeedbackResult";
 import { useGlobalUserData } from "@/hooks/bases";
-import { useProjectData, useProjectDataDispatch } from "../hooks";
+import {
+  useProjectData,
+  useProjectDataDispatch,
+  useProjectReviews,
+} from "../hooks";
 import { reviewStatuses } from "@/constant";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
+import { ImportReview } from "./ImportReview";
 
 interface FeedbackProps extends UseDisclosureProps {
   headerTitle: string;
@@ -30,8 +35,14 @@ export const Feedback = ({
 }: FeedbackProps) => {
   const userViewpoint = useProjectData()?.userViewpoint;
   const project = useProjectData();
-  const dispatchProjectData = useProjectDataDispatch();
+  const reviews = useProjectReviews();
 
+  const dispatchProjectData = useProjectDataDispatch();
+  const {
+    onClose: onCloseImportReview,
+    onOpen: onOpenImportReview,
+    isOpen: isOpenImportReview,
+  } = useDisclosure();
   const [status, setStatus] = useState<ReviewStatus["name"]>(
     () =>
       reviewStatuses.find(
@@ -42,7 +53,7 @@ export const Feedback = ({
   const userData = useGlobalUserData();
 
   const isWhiteList = true;
-  const hasAccessWriteReview = userData?.user?.x_username && isWhiteList;
+  const hasAccessWriteReview = !userData?.user?.x_username && isWhiteList;
 
   useEffect(() => {
     if (typeof status !== "undefined") {
@@ -103,30 +114,48 @@ export const Feedback = ({
           Based on 604 rating
         </Text>
 
-        {hasAccessWriteReview && (
-          <Button
-            onClick={onOpen}
-            size="md"
-            leftIcon={<TbEdit />}
-            width="full"
-            variant="outline"
-          >
-            Write a Review
-          </Button>
+        {hasAccessWriteReview && reviews.length !== 0 && (
+          <>
+            <Button
+              onClick={onOpen}
+              size="md"
+              leftIcon={<TbEdit />}
+              width="full"
+              variant="outline"
+            >
+              Write a Review
+            </Button>
+            <Button
+              onClick={onOpenImportReview}
+              size="md"
+              leftIcon={<TbMessage2Plus />}
+              width="full"
+              variant="ghost"
+            >
+              Import a Review
+            </Button>
+          </>
         )}
       </VStack>
       {hasAccessWriteReview && (
-        <ModalBase
-          modalBody={
-            <WriteFeedback
-              onClose={onClose}
-              setStatus={setStatus}
-              status={status}
-            />
-          }
-          isOpen={isOpen}
-          onClose={onClose}
-        />
+        <>
+          <ModalBase
+            modalBody={
+              <WriteFeedback
+                onClose={onClose}
+                setStatus={setStatus}
+                status={status}
+              />
+            }
+            isOpen={isOpen}
+            onClose={onClose}
+          />
+          <ModalBase
+            modalBody={<ImportReview onClose={onCloseImportReview} />}
+            isOpen={isOpenImportReview}
+            onClose={onCloseImportReview}
+          />
+        </>
       )}
     </VStack>
   );

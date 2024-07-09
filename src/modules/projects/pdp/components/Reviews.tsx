@@ -3,13 +3,15 @@ import {
   Button,
   HStack,
   Text,
+  useDisclosure,
   UseDisclosureProps,
   VStack,
 } from "@chakra-ui/react";
 import { useProjectData, useProjectReviews } from "../hooks";
 import { useAuthorization, useGlobalUserData } from "@/hooks/bases";
-import { useMemo } from "react";
 import { TbEdit, TbMessagePlus } from "react-icons/tb";
+import { ModalBase } from "@/components/ModalBase";
+import { ImportReview } from "./ImportReview";
 
 interface EmptyStateProps extends UseDisclosureProps {}
 const EmptyState = ({ onOpen }: EmptyStateProps) => {
@@ -18,6 +20,11 @@ const EmptyState = ({ onOpen }: EmptyStateProps) => {
   console.log(userBaseInfo);
   const isWhiteList = true;
   const userHasAccessToWrite = userDetail?.user?.x_username && isWhiteList;
+  const {
+    onClose: onCloseImportReview,
+    onOpen: onOpenImportReview,
+    isOpen: isOpenImportReview,
+  } = useDisclosure();
   return (
     <VStack maxW="421px" height="full" justifyContent="center">
       <Text
@@ -42,7 +49,7 @@ const EmptyState = ({ onOpen }: EmptyStateProps) => {
         It looks like there are no reviews for this project yet. Stay tuned for
         updates!
       </Text>
-      {userBaseInfo && userHasAccessToWrite && (
+      {!userBaseInfo && !userHasAccessToWrite && (
         <HStack mt="24px">
           <Button
             onClick={onOpen}
@@ -52,11 +59,16 @@ const EmptyState = ({ onOpen }: EmptyStateProps) => {
           >
             Write a Review
           </Button>
-          <Button leftIcon={<TbMessagePlus />} variant="outline" size="sm">
+          <Button onClick={onOpenImportReview} leftIcon={<TbMessagePlus />} variant="outline" size="sm">
             Import a Review
           </Button>
         </HStack>
       )}
+      <ModalBase
+        modalBody={<ImportReview onClose={onCloseImportReview} />}
+        isOpen={isOpenImportReview}
+        onClose={onCloseImportReview}
+      />
     </VStack>
   );
 };
