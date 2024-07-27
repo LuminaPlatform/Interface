@@ -23,25 +23,37 @@ import { apiKeys } from "@/api/apiKeys";
 import { usePathname, useSearchParams } from "next/navigation";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-import { useEffect } from "react";
+import { ReactElement, ReactNode, useEffect } from "react";
 import { useRouter } from "next/router";
 import { AuthenticationData } from "@/types";
+import { NextPage } from "next";
 
 const queryClient = new QueryClient();
 
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+function commonLayout(page) {
+  return <Layout>{page}</Layout>;
+}
 export default function App({
   Component,
   pageProps,
   baseUserData,
   userAllData,
-}: AppProps & {
+}: AppPropsWithLayout & {
   baseUserData: AuthenticationData;
   userAllData: any;
 }) {
+  const getLayout = Component.getLayout || commonLayout;
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
 
   NProgress.configure({ showSpinner: false });
 
@@ -74,9 +86,7 @@ export default function App({
                   <AuthorizationProvider data={baseUserData}>
                     <SelectedProjectProvider>
                       <GlobalUserProvider userData={userAllData}>
-                        <Layout>
-                          <Component {...pageProps} />
-                        </Layout>
+                        {getLayout(<Component {...pageProps} />)}
                       </GlobalUserProvider>
                     </SelectedProjectProvider>
                   </AuthorizationProvider>
