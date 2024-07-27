@@ -35,7 +35,7 @@ function Error({ statusCode }) {
           fontWeight="500"
         >
           Oh no! Something went unexpectedly wrong on our end. Rest assured,
-          we're fixing it ASAP.
+          we&apos;re fixing it ASAP.
         </Text>
         <HStack columnGap="24px">
           <Button onClick={() => router.reload()} variant="outline">

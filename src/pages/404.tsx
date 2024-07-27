@@ -42,7 +42,7 @@ const NotFound = () => {
           color="gray.0"
           fontWeight="500"
         >
-          Whoops! We've searched high and low but can't find the page you're
+          Whoops! We&apos;ve searched high and low but can&apos;t find the page you&apos;re
           looking for.
         </Text>
         <Button onClick={() => router.replace("/")} variant="primary">
