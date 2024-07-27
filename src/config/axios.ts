@@ -8,3 +8,10 @@ export const axiosClient = axios.create({
     Authorization: `Bearer ${getBrowserCookie("access_token")}`,
   },
 });
+
+axiosClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    throw error;
+  }
+);
