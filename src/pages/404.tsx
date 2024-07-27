@@ -21,12 +21,11 @@ const NotFound = () => {
     <VStack
       width="full"
       position="relative"
-      rowGap="24px"
       minH="100vh"
       justifyContent="center"
     >
       <LighthouseComponent />
-      <VStack position="relative" zIndex={1}>
+      <VStack rowGap="24px" position="relative" zIndex={1}>
         <Img src="/assets/images/404/404.png" />
         <Text
           color="gray.0"
