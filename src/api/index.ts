@@ -42,6 +42,30 @@ export const getUserInformation = async (id: string) => {
           __type__: "SimpleFetchCondition",
         },
       },
+      2: {
+        model: "User.followers",
+        model_id: id,
+        orders: [],
+        graph: {
+          fetch_fields: [
+            {
+              name: "*",
+            },
+          ],
+        },
+      },
+      3: {
+        model: "User.following",
+        model_id: id,
+        orders: [],
+        graph: {
+          fetch_fields: [
+            {
+              name: "*",
+            },
+          ],
+        },
+      },
     })
     .then((response) => {
       return response.data;

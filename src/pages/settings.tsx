@@ -14,8 +14,9 @@ import { useEffect } from "react";
 
 interface SettingsProps {
   user: any;
+  profileImage: any;
 }
-const Settings = ({ user }: SettingsProps) => {
+const Settings = ({ user, profileImage }: SettingsProps) => {
   const userBaseData = useAuthorization();
   const userInfo = useGlobalUserData();
   const dispatchUserInfo = useDispatchGlobalUserData();
@@ -33,7 +34,7 @@ const Settings = ({ user }: SettingsProps) => {
       router.replace("/projects");
     }
   }, [userBaseData]);
-  return <Index />;
+  return <Index profileImage={profileImage} />;
 };
 
 export default Settings;
@@ -56,6 +57,24 @@ export const getServerSideProps = async (ctx) => {
     });
     const userInformation = await getUserInformation(userBaseData.data.id);
 
+    const profileImage = await axiosClient
+      .post(apiKeys.fetch, {
+        0: {
+          model: "User.profile",
+          model_id: userInformation[0][0].id,
+          orders: [],
+          graph: {
+            fetch_fields: [
+              {
+                name: "*",
+              },
+            ],
+          },
+        },
+      })
+      .then((res) => {
+        return res.data[0][0] ?? null;
+      });
     if (!userInformation) {
       return {
         redirect: {
@@ -65,7 +84,7 @@ export const getServerSideProps = async (ctx) => {
       };
     }
     return {
-      props: { user: userInformation },
+      props: { user: userInformation, profileImage },
     };
   } catch (error) {
     return {

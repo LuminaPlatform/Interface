@@ -11,37 +11,88 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useForm, useFormContext, useWatch } from "react-hook-form";
 import { TbCameraPlus, TbEdit, TbPencil } from "react-icons/tb";
 import { settingsFormType } from "../types";
 import { ModalBase } from "@/components/ModalBase";
 import { UserInfoModal, UserInfoModalHeader } from "./UserInfoModal";
 import { fileLimitation } from "@/config/fileLimitation";
-import { useGlobalUserData } from "@/hooks/bases";
+import {
+  useCustomToast,
+  useDispatchGlobalUserData,
+  useGlobalUserData,
+} from "@/hooks/bases";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import { AxiosError } from "axios";
 
 type UserInfoEditableProps = {
   isEditable: boolean;
   setEditable: Dispatch<SetStateAction<boolean>>;
+  profileImageId: number;
 };
 
 export const UserInfoEditable = ({
   isEditable,
   setEditable,
+  profileImageId,
 }: UserInfoEditableProps) => {
-  const handleSave = () => {};
+  const userInfo = useGlobalUserData();
+
+  const toast = useCustomToast();
 
   const {
     formState: { errors },
     register,
     setValue,
     control,
+    resetField,
   } = useFormContext<settingsFormType>();
+  const dispatchUserInfo = useDispatchGlobalUserData();
+
+  const handleSave = async (file: File, setAvatar) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "proposal",
+      JSON.stringify({
+        model: "User",
+        id: userInfo.user.id,
+        field: "profile_id",
+      })
+    );
+    axiosClient
+      .post(apiKeys.file, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => {
+        toast({
+          status: "success",
+          description: "Your avatar is updated",
+        });
+        setAvatar(res.data.id);
+        dispatchUserInfo({
+          ...userInfo,
+          user: {
+            ...userInfo.user,
+            profile_id: res.data.id,
+          },
+        });
+        resetField("profile");
+      })
+      .catch((error: AxiosError<{ error_message: string }>) => {
+        toast({
+          status: "error",
+          description: error.response.data.error_message,
+        });
+      });
+  };
+
   const { profile } = useWatch<settingsFormType>({ control });
+  const [avatarImage, setAvatarImage] = useState(profileImageId);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const userInfo = useGlobalUserData();
 
   return (
     <>
@@ -65,14 +116,17 @@ export const UserInfoEditable = ({
               <Avatar
                 badgeSize="48px"
                 src={
-                  typeof profile !== "string" && profile !== null
+                  profile !== null
                     ? profile && URL.createObjectURL(profile)
-                    : "/assets/images/default-avatar.png"
+                    : avatarImage
+                      ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${avatarImage}`
+                      : "/assets/images/default-avatar.png"
                 }
                 hasBadge={false}
                 imageStyle={{
                   width: { base: "80px", md: "124px" },
                   height: { base: "80px", md: "124px" },
+                  objectFit: "contain",
                 }}
               />
               {isEditable && (
@@ -149,7 +203,9 @@ export const UserInfoEditable = ({
           variant="outline"
           onClick={() => {
             if (isEditable) {
-              handleSave();
+              if (!!profile) {
+                handleSave(profile, setAvatarImage);
+              }
               setEditable(false);
             } else {
               setEditable(true);

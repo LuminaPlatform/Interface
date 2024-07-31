@@ -14,15 +14,19 @@ interface ReviewsProps {
   reviews: Review[];
   viewpoints: any;
   userViewpoint: any;
+  userRole: any;
 }
 const Reviews = ({
   reviews,
   project,
   viewpoints,
   userViewpoint,
+  userRole,
 }: ReviewsProps) => {
   return (
-    <ProjectDetailProvider project={{ ...project, viewpoints, userViewpoint }}>
+    <ProjectDetailProvider
+      project={{ ...project, viewpoints, userViewpoint, userRole }}
+    >
       <ProjectReviewsProvider reviews={reviews}>
         <PageBase />
       </ProjectReviewsProvider>
@@ -39,56 +43,53 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
   const projectId = params.projectId;
 
   const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
-
+  const userInfo = await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
   const userViewpoint = await axiosClient
-    .get(apiKeys["auth"]["isAuthorized"], {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then((response) => {
-      return axiosClient.post(
-        apiKeys["fetch"],
-        {
-          "0": {
-            model: "ViewPoint",
-            model_id: "None",
-            limit: 1,
-            orders: [],
-            graph: {
-              fetch_fields: [
-                {
-                  name: "*",
-                },
-              ],
-            },
-            condition: {
-              __type__: "ComplexSearchCondition",
-              operator: "AND",
-              conditions: [
-                {
-                  __type__: "SimpleFetchCondition",
-                  field: "user_id",
-                  operator: "EQ",
-                  value: response.data.id,
-                },
-                {
-                  __type__: "SimpleFetchCondition",
-                  field: "project_id",
-                  operator: "EQ",
-                  value: projectId,
-                },
-              ],
-            },
+    .post(
+      apiKeys["fetch"],
+      {
+        "0": {
+          model: "ViewPoint",
+          model_id: "None",
+          limit: 1,
+          orders: [],
+          graph: {
+            fetch_fields: [
+              {
+                name: "*",
+              },
+            ],
+          },
+          condition: {
+            __type__: "ComplexSearchCondition",
+            operator: "AND",
+            conditions: [
+              {
+                __type__: "SimpleFetchCondition",
+                field: "user_id",
+                operator: "EQ",
+                value: userInfo.data.id,
+              },
+              {
+                __type__: "SimpleFetchCondition",
+                field: "project_id",
+                operator: "EQ",
+                value: projectId,
+              },
+            ],
           },
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-    })
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
     .then((res) => res.data[0])
     .catch(() => {
       return [];
@@ -140,7 +141,6 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
       1: {
         model: "Project.reviews",
         model_id: projectId,
-        limit: 4,
         orders: [],
         graph: {
           fetch_fields: [
@@ -157,6 +157,19 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
                   {
                     name: "id",
                   },
+                  {
+                    name: "profile_id",
+                  },
+                ],
+              },
+            },
+            {
+              name: "files",
+              graph: {
+                fetch_fields: [
+                  {
+                    name: "*",
+                  },
                 ],
               },
             },
@@ -165,15 +178,27 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
         condition: {},
       },
     })
-    .then((response) => {
+    .then(async (response) => {
       const project = response.data["0"];
       const reviews = response.data["1"];
+
+      const userRole = await axiosClient.post(apiKeys.fetch, {
+        "0": {
+          model: "User.roles",
+          model_id: userInfo.data.id,
+          orders: [],
+          graph: { fetch_fields: [{ name: "*" }] },
+          condition: {},
+        },
+      });
+
       return {
         props: {
           project: project[0],
           reviews,
           viewpoints,
           userViewpoint: userViewpoint ?? [],
+          userRole: userRole.data[0],
         },
       };
     })

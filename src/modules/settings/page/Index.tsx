@@ -12,16 +12,18 @@ import { Interests } from "../components/Interests";
 import { settingsFormType } from "../types";
 
 const ChakraForm = chakra("form");
-export const Index = () => {
-  const [isEditable, setEditable] = useState(false);
 
-  const {user} = useGlobalUserData();
+interface SettingsProps {
+  profileImage: any;
+}
+export const Index = ({ profileImage }: SettingsProps) => {
+  const [isEditable, setEditable] = useState(false);
 
   // TODO should add default value
   const { ...methods } = useForm<settingsFormType>({
     mode: "onChange",
     defaultValues: {
-      profile: user.profile_picture,
+      profile: null,
     },
   });
 
@@ -39,7 +41,11 @@ export const Index = () => {
           >
             Account Setting
           </Text>
-          <UserInfoEditable isEditable={isEditable} setEditable={setEditable} />
+          <UserInfoEditable
+            profileImageId={profileImage?.id}
+            isEditable={isEditable}
+            setEditable={setEditable}
+          />
           <Wallet />
           <AccountSecurity />
           <Interests />

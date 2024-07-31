@@ -34,6 +34,7 @@ export const EditEmailModal = ({ onClose }: EditEmailModalProps) => {
 
   const dispatchGlobalUser = useDispatchGlobalUserData();
   const toast = useCustomToast();
+  const globalUser = useGlobalUserData();
   return (
     <VStack rowGap="16px" width="full">
       <FormControl pb="32px">
@@ -82,7 +83,11 @@ export const EditEmailModal = ({ onClose }: EditEmailModalProps) => {
               },
             })
             .then((response) => {
-              dispatchGlobalUser({ user: response.data[0], wallet });
+              dispatchGlobalUser({
+                ...globalUser,
+                user: response.data[0],
+                wallet,
+              });
               onClose();
               return toast({
                 status: "success",

@@ -98,45 +98,126 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
                 ...project,
                 viewpoints: response.data.viewpoints,
               });
-            });
-          await axiosClient
-            .post(apiKeys.fetch, {
-              "0": {
-                model: "Project.reviews",
-                model_id: +query.projectId,
-                orders: [],
-                graph: {
-                  fetch_fields: [
-                    {
-                      name: "*",
-                    },
-                    {
-                      name: "user",
-                      graph: {
-                        fetch_fields: [
-                          {
-                            name: "display_name",
-                          },
-                          {
-                            name: "id",
-                          },
-                        ],
-                      },
-                    },
-                  ],
-                },
-                condition: {},
-              },
+              return response;
             })
-            .then((response) => {
-              projectReviewDispatch(response.data[0]);
+            .then(() => {
+              const formData = new FormData();
+              medias.forEach((media) => formData.append("file", media));
+              formData.append(
+                "proposal",
+                JSON.stringify({
+                  model: "Review",
+                  id: response.data[0].id,
+                  field: "files",
+                })
+              );
+              if (medias.length !== 0) {
+                return axiosClient
+                  .post(apiKeys.file, formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                  })
+                  .then(() => {
+                    return axiosClient.post(apiKeys.fetch, {
+                      0: {
+                        model: "Project.reviews",
+                        model_id: +query.projectId,
+                        orders: [],
+                        graph: {
+                          fetch_fields: [
+                            {
+                              name: "*",
+                            },
+                            {
+                              name: "user",
+                              graph: {
+                                fetch_fields: [
+                                  {
+                                    name: "display_name",
+                                  },
+                                  {
+                                    name: "id",
+                                  },
+                                  {
+                                    name: "profile_id",
+                                  },
+                                ],
+                              },
+                            },
+                            {
+                              name: "files",
+                              graph: {
+                                fetch_fields: [
+                                  {
+                                    name: "*",
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                        condition: {},
+                      },
+                    });
+                  });
+              }
+            })
+            .then((resp) => {
+              if (medias.length === 0) {
+                return axiosClient.post(apiKeys.fetch, {
+                  0: {
+                    model: "Project.reviews",
+                    model_id: +query.projectId,
+                    orders: [],
+                    graph: {
+                      fetch_fields: [
+                        {
+                          name: "*",
+                        },
+                        {
+                          name: "user",
+                          graph: {
+                            fetch_fields: [
+                              {
+                                name: "display_name",
+                              },
+                              {
+                                name: "id",
+                              },
+                              {
+                                name: "profile_id",
+                              },
+                            ],
+                          },
+                        },
+                        {
+                          name: "files",
+                          graph: {
+                            fetch_fields: [
+                              {
+                                name: "*",
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                    condition: {},
+                  },
+                });
+              }
+              return resp;
+            })
+            .then((res) => {
+              projectReviewDispatch(res.data[0]);
+              return res;
             });
-
-          return toast({
-            description: "Your review is submitted.",
-            status: "success",
-          });
         }
+      })
+      .then(() => {
+        return toast({
+          description: "Your review is submitted.",
+          status: "success",
+        });
       })
       .catch((err: AxiosError<{ error_message }>) => {
         toast({

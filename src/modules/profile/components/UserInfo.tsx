@@ -14,13 +14,16 @@ import {
 } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
 import { UsersModal } from "./UsersModal";
 import { Avatar, AvatarText } from "@/components/AvatarText";
 import { useGlobalUserData } from "@/hooks/bases";
-import { useUserProfile } from "../hooks";
-import { xDomain } from "@/constant";
+import { useDispatchUserProfile, useUserProfile } from "../hooks";
+import { ACCESS_TOKEN_COOKIE_KEY, xDomain } from "@/constant";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import { getCookie } from "cookies-next";
 
 const ModalHeader = ({ text }: { text: string }) => (
   <Text
@@ -53,11 +56,15 @@ export const UserInfo = () => {
     onClose: followingOnClose,
   } = useDisclosure();
 
+  const dispatchProfile = useDispatchUserProfile();
   const userInfo = useUserProfile();
-  const [isFollowed, setFollowed] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const hasWallet = !!userInfo.wallet;
 
+  const globalUser = useGlobalUserData();
+
+  const isSelfUser = globalUser?.user?.id === userInfo.user.id;
   return (
     <Stack
       flexDirection={{ base: "column", md: "row" }}
@@ -69,12 +76,15 @@ export const UserInfo = () => {
       <Avatar
         badgeSize="48px"
         src={
-          userInfo.user.profile_picture ?? "/assets/images/default-avatar.png"
+          userInfo.user?.profile_id
+            ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${userInfo.user?.profile_id}`
+            : "/assets/images/default-avatar.png"
         }
         hasBadge
         imageStyle={{
           width: { base: "100px", md: "186px" },
           height: { base: "100px", md: "186px" },
+          objectFit: "contain",
         }}
       />
 
@@ -118,11 +128,32 @@ export const UserInfo = () => {
                 </Link>
               )}
             </HStack>
-            {!userInfo.isSelfUser &&
-              (!isFollowed ? (
+            {!isSelfUser &&
+              !!globalUser &&
+              (!userInfo.isCurrentProfileFollowed ? (
                 <Button
                   onClick={() => {
-                    setFollowed(true);
+                    setLoading(true);
+                    axiosClient
+                      .post(apiKeys.relation.add, {
+                        "0": {
+                          model_name: "User",
+                          params: {
+                            following: [userInfo.user.id],
+                          },
+                          id: globalUser.user.id,
+                        },
+                      })
+                      .then((res) => {
+                        dispatchProfile({
+                          ...userInfo,
+                          followers: [...userInfo.followers, res.data[0]],
+                          isCurrentProfileFollowed: true,
+                        });
+                      })
+                      .finally(() => {
+                        setLoading(false);
+                      });
                   }}
                   leftIcon={<TbUserPlus />}
                   variant="primary"
@@ -136,7 +167,38 @@ export const UserInfo = () => {
                   background="gray.40"
                   color="gray.500"
                   onClick={() => {
-                    setFollowed(false);
+                    setLoading(true);
+                    axiosClient
+                      .post(
+                        apiKeys.relation.remove,
+                        {
+                          "0": {
+                            model_name: "User",
+                            params: {
+                              following: [userInfo.user.id],
+                            },
+                            id: globalUser.user.id,
+                          },
+                        },
+                        {
+                          headers: {
+                            Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`,
+                          },
+                        }
+                      )
+                      .then((res) => {
+                        const filteredFollowers = userInfo.followers.filter(
+                          (item) => item.id !== res.data[0].id
+                        );
+                        dispatchProfile({
+                          ...userInfo,
+                          followers: [...filteredFollowers],
+                          isCurrentProfileFollowed: false,
+                        });
+                      })
+                      .finally(() => {
+                        setLoading(false);
+                      });
                   }}
                 >
                   Following
@@ -169,13 +231,13 @@ export const UserInfo = () => {
           <Button onClick={followersOnOpen} flex="1" variant="primaryDark">
             <HStack width="full" justifyContent="space-between">
               <Text>Followers</Text>
-              <Text>10</Text>
+              <Text>{userInfo.followers.length}</Text>
             </HStack>
           </Button>
           <Button onClick={followingOnOpen} flex="1" variant="primaryDark">
             <HStack width="full" justifyContent="space-between">
               <Text>Followings</Text>
-              <Text>10</Text>
+              <Text>{userInfo.followings.length}</Text>
             </HStack>
           </Button>
         </HStack>
@@ -184,13 +246,13 @@ export const UserInfo = () => {
         modalHeader={<ModalHeader text="Followers" />}
         onClose={followersOnClose}
         isOpen={followersIsOpen}
-        modalBody={<UsersModal />}
+        modalBody={<UsersModal type="FOLLOWERS" />}
       />
       <ModalBase
         modalHeader={<ModalHeader text="Followings" />}
         onClose={followingOnClose}
         isOpen={followingIsOpen}
-        modalBody={<UsersModal />}
+        modalBody={<UsersModal type="FOLLOWING" />}
       />
     </Stack>
   );

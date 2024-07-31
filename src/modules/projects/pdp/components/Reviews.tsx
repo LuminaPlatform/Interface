@@ -15,11 +15,11 @@ import { ImportReview } from "./ImportReview";
 
 interface EmptyStateProps extends UseDisclosureProps {}
 const EmptyState = ({ onOpen }: EmptyStateProps) => {
-  const userBaseInfo = useAuthorization();
-  const userDetail = useGlobalUserData();
-  console.log(userBaseInfo);
-  const isWhiteList = true;
-  const userHasAccessToWrite = userDetail?.user?.x_username && isWhiteList;
+  const project = useProjectData();
+  const hasAccessWriteReview = !!project.userRole.find((role) =>
+    role.name.includes("BETA_USER")
+  );
+
   const {
     onClose: onCloseImportReview,
     onOpen: onOpenImportReview,
@@ -49,7 +49,7 @@ const EmptyState = ({ onOpen }: EmptyStateProps) => {
         It looks like there are no reviews for this project yet. Stay tuned for
         updates!
       </Text>
-      {!userBaseInfo && !userHasAccessToWrite && (
+      {hasAccessWriteReview && (
         <HStack mt="24px">
           <Button
             onClick={onOpen}
@@ -59,7 +59,12 @@ const EmptyState = ({ onOpen }: EmptyStateProps) => {
           >
             Write a Review
           </Button>
-          <Button onClick={onOpenImportReview} leftIcon={<TbMessagePlus />} variant="outline" size="sm">
+          <Button
+            onClick={onOpenImportReview}
+            leftIcon={<TbMessagePlus />}
+            variant="outline"
+            size="sm"
+          >
             Import a Review
           </Button>
         </HStack>
@@ -80,7 +85,7 @@ export const Reviews = ({ isOpen, onClose, onOpen }: ReviewsProps) => {
   const project = useProjectData();
 
   return (
-    <VStack height="full" justifyContent="center" rowGap="16px" width="full">
+    <VStack rowGap="16px" width="full">
       {reviews.length === 0 ? (
         <EmptyState isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
       ) : (

@@ -45,7 +45,7 @@ export const Avatar = ({
       />
       {hasBadge && (
         <Img
-        objectFit='cover'
+          objectFit="cover"
           src="/assets/images/profile/badge.png"
           position="absolute"
           bottom="0"
@@ -63,12 +63,13 @@ export const AvatarText = ({
   hasBadge,
   name,
   badgeSize,
+  src,
 }: AvatarTextProps) => {
   return (
     <HStack>
       <Avatar
         badgeSize={badgeSize}
-        src="/assets/images/default-img.png"
+        src={src}
         hasBadge={hasBadge}
         imageStyle={imageStyle}
       />

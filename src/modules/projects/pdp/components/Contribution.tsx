@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { TbChevronRight } from "react-icons/tb";
-import { useProjectData } from "../hooks";
+import { useProjectData, useProjectReviews } from "../hooks";
 import { useEffect, useRef, useState } from "react";
 import { Reviews } from "./Reviews";
 import { Feedback } from "./Feedback";
@@ -17,6 +17,7 @@ import { ProjectLink } from "./ProjectLink";
 
 export const Contribution = () => {
   const project = useProjectData();
+  const reviews = useProjectReviews();
   const {
     id,
     content: {
@@ -44,7 +45,6 @@ export const Contribution = () => {
     setImpactHeight(impactRef?.current?.clientHeight);
   }, [impactRef?.current?.clientHeight]);
 
-  console.log({ height: impactRef?.current?.clientHeight });
 
   return (
     <VStack width="full">
@@ -57,26 +57,32 @@ export const Contribution = () => {
         >
           Reviews
         </Text>
-        <HStack>
-          <Text
-            color="primary.200"
-            fontSize="md"
-            fontWeight="700"
-            as={Link}
-            href={`/projects/${id}/reviews`}
-          >
-            Show All Reviews
-          </Text>
-          <TbChevronRight
-            size="16px"
-            color="var(--chakra-colors-primary-200)"
-          />
-        </HStack>
+        {reviews.length !== 0 && (
+          <HStack>
+            <Text
+              color="primary.200"
+              fontSize="md"
+              fontWeight="700"
+              as={Link}
+              href={`/projects/${id}/reviews`}
+            >
+              Show All Reviews
+            </Text>
+            <TbChevronRight
+              size="16px"
+              color="var(--chakra-colors-primary-200)"
+            />
+          </HStack>
+        )}
       </HStack>
       <SimpleGrid width="full" gap="24px" columns={{ base: 1, lg: 3 }}>
         <GridItem
+          h={
+            !!project.userRole.find((role) => role.name.includes("BETA_USER"))
+              ? "384px"
+              : "276px"
+          }
           overflow="auto"
-          maxH="384px"
           order={{ base: "1", lg: "0" }}
           colSpan={{ base: 1, lg: 2 }}
         >

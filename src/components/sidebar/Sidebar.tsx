@@ -47,6 +47,8 @@ const ChakraLink = chakra(Link, {
 });
 
 export const Sidebar = () => {
+  const isAuthorized = useAuthorization();
+
   const selectedProjects = useSelectedProjects();
   const routes = [
     {
@@ -84,7 +86,9 @@ export const Sidebar = () => {
     {
       id: 2,
       href: "/distribute",
-      title: `Distribute ${selectedProjects.length}`,
+      title: !!isAuthorized
+        ? `Distribute ${selectedProjects.length}`
+        : "Distribute",
       icon: (isActive: boolean) => (
         <Icon
           fontSize="24px"

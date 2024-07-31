@@ -39,6 +39,7 @@ export const useDispatchAuthorization = () => useContext(SetAuthorization);
 
 export const useLogout = () => {
   const dispatchAuthorization = useDispatchAuthorization();
+  const dispatchGlobalUser = useDispatchGlobalUserData();
 
   const { disconnect, reset } = useDisconnect({
     config: wagmiConfig,
@@ -49,6 +50,7 @@ export const useLogout = () => {
     reset();
     deleteCookie(ACCESS_TOKEN_COOKIE_KEY);
     dispatchAuthorization(undefined);
+    dispatchGlobalUser(undefined)
   };
 };
 

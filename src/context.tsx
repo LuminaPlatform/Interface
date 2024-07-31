@@ -75,8 +75,11 @@ export const AuthorizationProvider = ({
   children,
   data,
 }: AuthorizationProviderProps) => {
-  const [user, setUser] = useState(() => data);
+  const [user, setUser] = useState(data);
 
+  // useEffect(() => {
+  //   setUser(data);
+  // }, [data]);
   return (
     <Authorization.Provider value={user}>
       <SetAuthorization.Provider value={setUser}>
@@ -101,11 +104,22 @@ export const ModalStepsProvider = ({ children }: ModalStepsProviderProps) => {
   );
 };
 
-export const GlobalUser = createContext<{ user: any; wallet: any }>(undefined);
-export const SetGlobalUser =
-  createContext<Dispatch<SetStateAction<{ user: any; wallet: any }>>>(
-    undefined
-  );
+export const GlobalUser = createContext<{
+  user: any;
+  wallet: any;
+  followers: any;
+  followings: any;
+}>(undefined);
+export const SetGlobalUser = createContext<
+  Dispatch<
+    SetStateAction<{
+      user: any;
+      wallet: any;
+      followers: any;
+      followings: any;
+    }>
+  >
+>(undefined);
 
 interface GlobalUserProviderProps extends PropsWithChildren {
   userData: any;
@@ -115,9 +129,12 @@ export const GlobalUserProvider = ({
   children,
   userData,
 }: GlobalUserProviderProps) => {
-  const [state, setState] = useState<{ user: any; wallet: any }>(
-    userData ?? undefined
-  );
+  const [state, setState] = useState<{
+    user: any;
+    wallet: any;
+    followers: any;
+    followings: any;
+  }>(userData ?? undefined);
 
   const userBaseData = useAuthorization();
 
@@ -128,11 +145,13 @@ export const GlobalUserProvider = ({
           setState({
             user: data[0][0],
             wallet: data[1],
+            followers: data[2],
+            followings: data[3],
           });
         }
       });
     }
-  }, [userBaseData]);
+  }, [userBaseData, userData]);
 
   return (
     <GlobalUser.Provider value={state}>

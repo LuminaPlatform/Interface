@@ -50,10 +50,9 @@ export const Feedback = ({
       )?.name ?? undefined
   );
 
-  const userData = useGlobalUserData();
-
-  const isWhiteList = true;
-  const hasAccessWriteReview = !userData?.user?.x_username && isWhiteList;
+  const hasAccessWriteReview = !!project.userRole.find((role) =>
+    role.name.includes("BETA_USER")
+  );
 
   useEffect(() => {
     if (typeof status !== "undefined") {

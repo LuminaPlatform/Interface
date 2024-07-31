@@ -46,7 +46,7 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
 
   const [isLoading, setLoading] = useState(false);
 
-  const userInfo = useGlobalUserData();
+  const globalUser = useGlobalUserData();
   const dispatchGlobalUser = useDispatchGlobalUserData();
 
   const toast = useCustomToast();
@@ -66,7 +66,7 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
         <Input
           placeholder="Username"
           variant="outline"
-          defaultValue={userInfo.user?.username}
+          defaultValue={globalUser.user?.username}
           {...register("username", {
             required: {
               value: true,
@@ -93,7 +93,7 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
         <Input
           placeholder="Nickname"
           variant="outline"
-          defaultValue={userInfo.user?.display_name}
+          defaultValue={globalUser.user?.display_name}
           {...register("nickname", {
             required: {
               value: true,
@@ -132,13 +132,14 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
                     username: values.username,
                     display_name: values.nickname,
                   },
-                  id: userInfo.user.id,
+                  id: globalUser.user.id,
                 },
               })
               .then((response) => {
                 dispatchGlobalUser({
+                  ...globalUser,
                   user: response.data[0],
-                  wallet: userInfo.wallet,
+                  wallet: globalUser.wallet,
                 });
                 return toast({
                   status: "success",

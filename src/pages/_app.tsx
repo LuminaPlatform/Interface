@@ -42,7 +42,6 @@ export default function App({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-
   NProgress.configure({ showSpinner: false });
 
   useEffect(() => {
@@ -91,6 +90,7 @@ export default function App({
 }
 App.getInitialProps = async ({ ctx }) => {
   const cookies = ctx.req?.cookies;
+
   if (!!cookies) {
     const accessToken = cookies[ACCESS_TOKEN_COOKIE_KEY];
     if (!accessToken) {
@@ -141,6 +141,30 @@ App.getInitialProps = async ({ ctx }) => {
             __type__: "SimpleFetchCondition",
           },
         },
+        2: {
+          model: "User.followers",
+          model_id: response.data.id,
+          orders: [],
+          graph: {
+            fetch_fields: [
+              {
+                name: "*",
+              },
+            ],
+          },
+        },
+        3: {
+          model: "User.following",
+          model_id: response.data.id,
+          orders: [],
+          graph: {
+            fetch_fields: [
+              {
+                name: "*",
+              },
+            ],
+          },
+        },
       });
       if (response.status === 200) {
         return {
@@ -148,6 +172,8 @@ App.getInitialProps = async ({ ctx }) => {
           userAllData: {
             user: userAllDataResponse.data[0][0],
             wallet: userAllDataResponse.data[1],
+            followers: userAllDataResponse.data[2],
+            followings: userAllDataResponse.data[3],
           },
         };
       }

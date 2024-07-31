@@ -10,11 +10,13 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TbPlus } from "react-icons/tb";
 import { InterestModalBody } from "../types";
 import { CategoryModal } from "./modals/CategoryModal";
 import { SettingsModalsHeader } from "./SettingsModalHeader";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
 
 const interests = [
   {
@@ -92,11 +94,11 @@ export const Interests = () => {
     [InterestModalBody.projects]: {
       component: (
         <CategoryModal
+          type="CATEGORIES"
           onClose={onClose}
           selectedData={projects}
           setData={setProjects}
           title="Choose categories that align with your interests to discover projects you’ll love to follow and participate in!"
-          data={projectData}
         />
       ),
       header: "Project",
@@ -104,18 +106,17 @@ export const Interests = () => {
     [InterestModalBody.people]: {
       component: (
         <CategoryModal
+          type="PEOPLE"
           onClose={onClose}
           selectedData={selectedPeoples}
           setData={setSelectedPeoples}
           title="Pick categories based on what the people you want to follow are great at.
         This way, you connect with the right crowd!"
-          data={peopleData}
         />
       ),
       header: "People",
     },
   };
-
 
   return (
     <>

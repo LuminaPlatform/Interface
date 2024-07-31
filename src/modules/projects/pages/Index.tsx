@@ -1,9 +1,56 @@
 import { Box, Input, Text, VStack } from "@chakra-ui/react";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Table from "../components/Table";
+import { debounce } from "lodash";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
 
 const Index = () => {
   const [search, setSearch] = useState("");
+
+  const [searchedProjects, setSearchedProjects] = useState([]);
+
+  const handleSearchProjects = useMemo(
+    () =>
+      debounce((value) => {
+        axiosClient
+          .post(apiKeys.fetch, {
+            0: {
+              model: "Project",
+              model_id: "None",
+              orders: [],
+              graph: {
+                fetch_fields: [
+                  {
+                    name: "id",
+                  },
+                  {
+                    name: "name",
+                  },
+                  {
+                    name: "logo_id",
+                  },
+                  { name: "content.fundingSources" },
+                  { name: "content.includedInBallots" },
+                  { name: "content.lists.count" },
+                  { name: "content.profile" },
+                  { name: "content.impactCategory" },
+                ],
+              },
+              condition: {
+                __type__: "SimpleFetchCondition",
+                field: "name",
+                operator: "LIKE",
+                value,
+              },
+            },
+          })
+          .then((res) => {
+            setSearchedProjects(res.data[0]);
+          });
+      }, 1000),
+    []
+  );
 
   return (
     <VStack
@@ -29,6 +76,7 @@ const Index = () => {
         onChange={(e) => {
           const value = e.target.value.replace(/^\s+|\s+$/g, "");
           setSearch(value);
+          handleSearchProjects(value);
         }}
         bg="gray.600"
         border="1px solid"
@@ -53,7 +101,7 @@ const Index = () => {
         placeholder="Search Project"
       />
       <Box width="full" overflow="auto">
-        <Table search={search} />
+        <Table searchedProjects={searchedProjects} />
       </Box>
     </VStack>
   );

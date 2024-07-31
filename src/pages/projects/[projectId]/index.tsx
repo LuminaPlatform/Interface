@@ -15,15 +15,19 @@ const ProjectDetail = ({
   reviews,
   viewpoints,
   userViewpoint,
+  userRole,
 }: {
   project: Project;
   reviews: Review[];
   viewpoints: any;
   userViewpoint: any;
+  userRole: any;
 }) => {
 
   return (
-    <ProjectDetailProvider project={{ ...project, viewpoints, userViewpoint }}>
+    <ProjectDetailProvider
+      project={{ ...project, viewpoints, userViewpoint, userRole }}
+    >
       <ProjectReviewsProvider reviews={reviews}>
         <Index />
       </ProjectReviewsProvider>
@@ -38,55 +42,57 @@ export const getServerSideProps = async (ctx: any) => {
   const projectId = params.projectId;
   const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
 
-  const userViewpoint = await axiosClient
-    .get(apiKeys["auth"]["isAuthorized"], {
+  const userInfo =
+    !!accessToken &&
+    (await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-    })
-    .then((response) => {
-      return axiosClient.post(
-        apiKeys["fetch"],
-        {
-          "0": {
-            model: "ViewPoint",
-            model_id: "None",
-            limit: 1,
-            orders: [],
-            graph: {
-              fetch_fields: [
-                {
-                  name: "*",
-                },
-              ],
-            },
-            condition: {
-              __type__: "ComplexSearchCondition",
-              operator: "AND",
-              conditions: [
-                {
+    }));
+  const userViewpoint = await axiosClient
+    .post(
+      apiKeys["fetch"],
+      {
+        "0": {
+          model: "ViewPoint",
+          model_id: "None",
+          limit: 1,
+          orders: [],
+          graph: {
+            fetch_fields: [
+              {
+                name: "*",
+              },
+            ],
+          },
+          condition: {
+            __type__: "ComplexSearchCondition",
+            operator: "AND",
+            conditions: [
+              {
+                ...(userInfo && {
                   __type__: "SimpleFetchCondition",
                   field: "user_id",
                   operator: "EQ",
-                  value: response.data.id,
-                },
-                {
-                  __type__: "SimpleFetchCondition",
-                  field: "project_id",
-                  operator: "EQ",
-                  value: projectId,
-                },
-              ],
-            },
+                  value: userInfo.data.id,
+                }),
+              },
+              {
+                __type__: "SimpleFetchCondition",
+                field: "project_id",
+                operator: "EQ",
+                value: projectId,
+              },
+            ],
           },
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-    })
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
     .then((res) => res.data[0])
     .catch(() => {
       return [];
@@ -96,8 +102,7 @@ export const getServerSideProps = async (ctx: any) => {
     .get(`${apiKeys.viewpoint}/${projectId}`)
     .then((response) => response.data.viewpoints);
 
-
-  const postData: { 0: FetchObject; 1: FetchObject } = {
+  const postData = {
     0: {
       model: "Project",
       model_id: "None",
@@ -138,7 +143,6 @@ export const getServerSideProps = async (ctx: any) => {
     1: {
       model: "Project.reviews",
       model_id: projectId,
-      limit: 4,
       orders: [],
       graph: {
         fetch_fields: [
@@ -154,6 +158,19 @@ export const getServerSideProps = async (ctx: any) => {
                 },
                 {
                   name: "id",
+                },
+                {
+                  name: "profile_id",
+                },
+              ],
+            },
+          },
+          {
+            name: "files",
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*",
                 },
               ],
             },
@@ -172,6 +189,18 @@ export const getServerSideProps = async (ctx: any) => {
   const project = projectResponse.data["0"];
   const reviews = projectResponse.data["1"];
 
+  let userRole;
+  if (userInfo?.data) {
+    userRole = await axiosClient.post(apiKeys.fetch, {
+      "0": {
+        model: "User.roles",
+        model_id: userInfo.data.id,
+        orders: [],
+        graph: { fetch_fields: [{ name: "*" }] },
+        condition: {},
+      },
+    });
+  }
 
   if (project) {
     return {
@@ -180,6 +209,7 @@ export const getServerSideProps = async (ctx: any) => {
         reviews,
         viewpoints,
         userViewpoint: userViewpoint ?? [],
+        userRole: (await userRole?.data[0]) ?? [],
       },
     };
   }

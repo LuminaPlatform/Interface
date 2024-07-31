@@ -53,9 +53,12 @@ export type Review = {
   user_id: number;
   project_id: number;
   viewpoint: VIEW_POINT;
+  createTimestamp: string;
   user: {
     display_name: string | null;
-    profile_picture: string | null;
+    id: string | null;
+    profile_id: string | null;
   };
   project?: Project;
+  files: any;
 };

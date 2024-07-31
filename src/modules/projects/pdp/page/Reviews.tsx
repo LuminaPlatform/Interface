@@ -30,11 +30,11 @@ export const Reviews = () => {
         height="100px"
         backgroundColor="rgba(255,136,0,0.5)"
       />
-      <BreadCrumb />
+      <BreadCrumb projectName={project.name} />
       <Grid
         gap="24px"
         width="full"
-        gridTemplateColumns={{ base: "1fr", md: "1fr auto", lg: "1fr 266px" }}
+        gridTemplateColumns={{ base: "1fr", md: "1fr 0.5fr", lg: "1fr 266px" }}
       >
         <GridItem
           as={VStack}
@@ -64,7 +64,7 @@ export const Reviews = () => {
           )}
         </GridItem>
         <GridItem
-          position="sticky"
+          position={{ md: "sticky" }}
           top="0"
           right="0"
           order={{ base: 0, md: 1 }}

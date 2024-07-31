@@ -69,7 +69,11 @@ const ProfileBox = () => {
               rounded="full"
               width="32px"
               height="32px"
-              src={user?.profile_picture ?? "/assets/images/default-avatar.png"}
+              src={
+                user?.profile_id
+                  ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${user.profile_id}`
+                  : "/assets/images/default-avatar.png"
+              }
               alt="user"
             />
             <Text color="gray.10" fontSize="md" fontWeight="200">
@@ -91,7 +95,11 @@ const ProfileBox = () => {
               rounded="full"
               width="64px"
               height="64px"
-              src={user.profile_picture ?? "/assets/images/default-avatar.png"}
+              src={
+                user?.profile_id
+                  ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${user.profile_id}`
+                  : "/assets/images/default-avatar.png"
+              }
               alt="profile"
             />
             <Text

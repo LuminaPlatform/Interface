@@ -13,6 +13,7 @@ import {
 import { useRouter } from "next/router";
 import { useProjectData } from "../hooks";
 import {
+  useAuthorization,
   useDispatchSelectedProjects,
   useSelectedProjects,
 } from "@/hooks/bases";
@@ -35,14 +36,16 @@ export const Header = () => {
   const isProjectSelected = useMemo(() => {
     return selectedProjects.find((item) => item.id === project.id);
   }, [project.id, selectedProjects]);
+
+  const isAuthorized = useAuthorization();
   return (
     <Stack
       width="full"
       justifyContent={{ md: "space-between" }}
       flexDirection={{ base: "column", md: "row" }}
     >
-      <BreadCrumb />
-      {isConnected && (
+      <BreadCrumb projectName={name} />
+      {!!isAuthorized && (
         <Button
           onClick={() => {
             if (isProjectSelected) {

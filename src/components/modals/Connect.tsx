@@ -187,7 +187,7 @@ const ModalBody = ({}: WalletModalBodyProps) => {
         />
         <MethodSeparator />
         <IconButton
-          text="Join by Email"
+          text="Login by Email"
           onClick={() => {
             dispatchSteps(STEP_MODAL.login);
           }}

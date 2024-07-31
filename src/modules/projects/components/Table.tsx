@@ -132,21 +132,16 @@ export const ArrowDown = () => (
 );
 
 interface TableProps {
-  search: string;
+  searchedProjects: any[];
 }
-const Table = ({ search }: TableProps) => {
+const Table = ({ searchedProjects }: TableProps) => {
   const projectsData = useProjects();
   // const networkThreshold = 7;
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const data = useMemo(
-    () =>
-      search
-        ? projectsData.filter((row) =>
-            row.name.toLowerCase().includes(search.toLowerCase())
-          )
-        : projectsData,
-    [projectsData, search]
+    () => (searchedProjects.length !== 0 ? searchedProjects : projectsData),
+    [projectsData, searchedProjects]
   );
   const columnHelper = createColumnHelper<any>();
 
@@ -467,34 +462,36 @@ const Table = ({ search }: TableProps) => {
           ))}
         </Tbody>
       </ChakraTable>
-      <HStack alignItems="center" width="full" justifyContent="center">
-        <Flex columnGap="10px" alignItems="center">
-          <Button
-            onClick={() => {
-              // if (page !== limit) {
-              router.push(`/projects?page=${+page + 1}`);
-              // }
-            }}
-            variant="ghost"
-          >
-            <TbChevronLeft />
-          </Button>
-          <Text fontSize="lg" color="gray.0">
-            {page}
-          </Text>
-          <Button
-            isDisabled={+page === 1}
-            onClick={() => {
-              if (+page !== 1) {
-                router.push(`/projects?page=${+page - 1}`);
-              }
-            }}
-            variant="ghost"
-          >
-            <TbChevronRight />
-          </Button>
-        </Flex>
-      </HStack>
+      {searchedProjects.length === 0 && (
+        <HStack alignItems="center" width="full" justifyContent="center">
+          <Flex columnGap="10px" alignItems="center">
+            <Button
+              onClick={() => {
+                // if (page !== limit) {
+                router.push(`/projects?page=${+page + 1}`);
+                // }
+              }}
+              variant="ghost"
+            >
+              <TbChevronLeft />
+            </Button>
+            <Text fontSize="lg" color="gray.0">
+              {page}
+            </Text>
+            <Button
+              isDisabled={+page === 1}
+              onClick={() => {
+                if (+page !== 1) {
+                  router.push(`/projects?page=${+page - 1}`);
+                }
+              }}
+              variant="ghost"
+            >
+              <TbChevronRight />
+            </Button>
+          </Flex>
+        </HStack>
+      )}
     </Box>
   );
 };

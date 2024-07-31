@@ -30,7 +30,6 @@ export const ReviewCard = ({
     (item) => item.name === review.viewpoint
   );
   return (
-    // TODO should use dynamic alt
     <>
       <HStack
         onClick={onOpen}
@@ -55,7 +54,6 @@ export const ReviewCard = ({
           >
             <Img
               alt={project.name}
-              // TODO should add review img
               rounded="full"
               src={project.content.profile?.profileImageUrl}
               width={{ base: "24px", md: "36px" }}
@@ -64,7 +62,6 @@ export const ReviewCard = ({
             <Text
               width="full"
               textAlign="center"
-              display="flex"
               alignSelf="center"
               color="gray.40"
               fontSize={{ base: "sm", md: "md" }}
@@ -101,22 +98,23 @@ export const ReviewCard = ({
           <Stack
             flexDirection={{ base: "column", md: "row" }}
             position="relative"
+            width="full"
           >
-            {/* TODO should attachment added to model */}
-            {/* {false && (
+            {review.files && (
               <AspectRatio
-                order={{ base: "0", md: "1" }}
                 ratio={1.14}
                 minWidth={{ base: "full", md: "192px" }}
-                maxWidth={{ base: "100%", md: "192px" }}
+                w="192px"
+                h="108px"
+                maxH={{ base: "250px", md: "initial" }}
+                order={{ base: "0", md: "1" }}
               >
                 <Img
-                  objectFit="cover"
-                  src="/assets/images/default-img.png"
+                  src={`${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${review.files.id}`}
                   alt="banner"
                 />
               </AspectRatio>
-            )} */}
+            )}
             <Text
               width="full"
               display="flex"
@@ -134,10 +132,12 @@ export const ReviewCard = ({
             <HStack columnGap="8px">
               <Img
                 rounded="full"
-                border="1px solid"
-                borderColor="gray.0"
                 alt="writer"
-                src="/assets/images/default-avatar.png"
+                src={
+                  review.user?.profile_id
+                    ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${review.user?.profile_id}`
+                    : "/assets/images/default-avatar.png"
+                }
                 width={{ base: "16px", md: "24px" }}
                 height={{ base: "16px", md: "24px" }}
               />
@@ -148,11 +148,14 @@ export const ReviewCard = ({
             </HStack>
             <HStack fontWeight="500" fontSize="xs" color="gray.80">
               <Text>
-                {new Date().getFullYear()}-{new Date().getMonth() + 1}-
-                {new Date().getDate()}
+                {new Date(review.createTimestamp).getFullYear()}-
+                {new Date(review.createTimestamp).getMonth() + 1}-
+                {new Date(review.createTimestamp).getDate()}
               </Text>
-              {/* TODO should add timestamps */}
-              <Text>17:05</Text>
+              <Text>
+                {new Date(review.createTimestamp).getHours()}:
+                {new Date(review.createTimestamp).getMinutes()}
+              </Text>
             </HStack>
           </HStack>
         </VStack>

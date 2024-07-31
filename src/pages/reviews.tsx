@@ -14,16 +14,6 @@ interface ReviewsProps {
   reviews: Review[];
 }
 const Reviews = (props: ReviewsProps) => {
-  const { query } = useRouter();
-
-  const dispatchAuthorization = useDispatchAuthorization();
-  useEffect(() => {
-    if (!query?.tab || query.tab === "for_you") {
-      const { userData } = props;
-      dispatchAuthorization(userData);
-    }
-  }, []);
-
   return (
     <ReviewsProvider reviews={props.reviews}>
       <Index />
@@ -38,91 +28,118 @@ export const getServerSideProps = async (ctx) => {
   const tab = query.tab;
 
   const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
-  // 1st check user is authorized or not
-  if (typeof tab === "undefined" || tab === "for_you") {
-    if (accessToken) {
-      return axiosClient
-        .get(apiKeys["auth"]["isAuthorized"], {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-        .then(async (response) => {
-          if (response.status === 200) {
-            // TODO this api should change for specific user
-            const response = await axiosClient.post(apiKeys["fetch"], {
-              0: {
-                model: "Review",
-                model_id: "None",
-                limit: 20,
-                orders: [],
-                graph: {
-                  fetch_fields: [
-                    {
-                      name: "*",
-                    },
-                    {
-                      name: "user",
-                      graph: {
-                        fetch_fields: [
-                          {
-                            name: "display_name",
-                          },
-                          {
-                            name: "profile_picture",
-                          },
-                        ],
-                      },
-                    },
-                    {
-                      name: "project",
-                      graph: {
-                        fetch_fields: [
-                          {
-                            name: "*",
-                          },
-                        ],
-                      },
-                    },
-                  ],
-                },
-              },
-            });
-            return {
-              props: {
-                userData: response.data,
-                reviews: await response.data["0"],
-              },
-            };
-          }
-        })
-        .catch((error) => {
-          return {
-            props: {
-              userData: null,
-              reviews: [],
-            },
-          };
-        });
-    }
 
+  const userData = await axiosClient
+    .get(apiKeys["auth"]["isAuthorized"], {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .catch(() => {
+      return null;
+    });
+
+  if (typeof tab === "undefined" || tab === "for_you") {
+    const response = await axiosClient.post(apiKeys["fetch"], {
+      0: {
+        model: "Review",
+        model_id: "None",
+        orders: [],
+        graph: {
+          fetch_fields: [
+            {
+              name: "*",
+            },
+            {
+              name: "files",
+              graph: {
+                fetch_fields: [
+                  {
+                    name: "*",
+                  },
+                ],
+              },
+            },
+            {
+              name: "user",
+              graph: {
+                fetch_fields: [
+                  {
+                    name: "display_name",
+                  },
+                  {
+                    name: "id",
+                  },
+                  {
+                    name: "profile_id",
+                  },
+                ],
+              },
+            },
+            {
+              name: "project",
+              graph: {
+                fetch_fields: [
+                  {
+                    name: "id",
+                  },
+                  {
+                    name: "name",
+                  },
+                  {
+                    name: "logo_id",
+                  },
+                  { name: "content.fundingSources" },
+                  { name: "content.includedInBallots" },
+                  { name: "content.applicantType" },
+                  { name: "content.websiteUrl" },
+                  { name: "content.bio" },
+                  { name: "content.profile" },
+                  { name: "content.applicant" },
+                  { name: "content.contributionDescription" },
+                  { name: "content.contributionLinks" },
+                  { name: "content.impactDescription" },
+                  { name: "content.impactMetrics" },
+                  { name: "content.impactCategory" },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    });
     return {
       props: {
-        userData: null,
-        reviews: [],
+        userData: userData.data,
+        reviews: await response.data["0"],
       },
     };
   }
+
   const response = await axiosClient.post(apiKeys["fetch"], {
     0: {
       model: "Review",
       model_id: "None",
-      limit: 20,
-      orders: [],
+      orders: [
+        {
+          field: "createTimestamp",
+          desc: true,
+        },
+      ],
       graph: {
         fetch_fields: [
           {
             name: "*",
+          },
+          {
+            name: "files",
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*",
+                },
+              ],
+            },
           },
           {
             name: "user",
@@ -132,8 +149,39 @@ export const getServerSideProps = async (ctx) => {
                   name: "display_name",
                 },
                 {
-                  name: "profile_picture",
+                  name: "id",
                 },
+                {
+                  name: "profile_id",
+                },
+              ],
+            },
+          },
+          {
+            name: "project",
+            graph: {
+              fetch_fields: [
+                {
+                  name: "id",
+                },
+                {
+                  name: "name",
+                },
+                {
+                  name: "logo_id",
+                },
+                { name: "content.fundingSources" },
+                { name: "content.includedInBallots" },
+                { name: "content.applicantType" },
+                { name: "content.websiteUrl" },
+                { name: "content.bio" },
+                { name: "content.profile" },
+                { name: "content.applicant" },
+                { name: "content.contributionDescription" },
+                { name: "content.contributionLinks" },
+                { name: "content.impactDescription" },
+                { name: "content.impactMetrics" },
+                { name: "content.impactCategory" },
               ],
             },
           },
@@ -143,7 +191,8 @@ export const getServerSideProps = async (ctx) => {
   });
   return {
     props: {
-      userData: null,
+      test: "saalam",
+      userData: userData.data,
       reviews: response.data["0"],
     },
   };

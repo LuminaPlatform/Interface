@@ -8,7 +8,7 @@ import {
 import { Project, Review } from "../types";
 
 interface ProjectDetailProviderProps extends PropsWithChildren {
-  project: Project & { viewpoints: any; userViewpoint: any };
+  project: Project & { viewpoints: any; userViewpoint: any; userRole: any };
 }
 export const ProjectDetail =
   createContext<ProjectDetailProviderProps["project"]>(undefined);

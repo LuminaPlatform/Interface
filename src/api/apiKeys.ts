@@ -7,6 +7,7 @@ export const apiKeys = {
       },
       twitter: "",
       email: "/auth/login/email",
+      wallet: "/auth/login/wallet",
     },
     signup: {
       google: "",
@@ -29,4 +30,10 @@ export const apiKeys = {
   create: "/create",
   update: "/update",
   distribute: "/distribution/distribute",
+  getSignMessage: "/auth/wallet/get-message",
+  file: "/file/file",
+  relation: {
+    remove: "/remove-relations",
+    add: "/add-relations",
+  },
 };

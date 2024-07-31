@@ -36,8 +36,6 @@ export const ImportReview = ({ onClose }: ImportReviewProps) => {
 
   const [step, setStep] = useState(IMPORT_REVIEW_STEP.importForm);
 
-  console.log({ errors });
-
   const contentStep = useMemo(
     () => ({
       [IMPORT_REVIEW_STEP.importForm]: (
@@ -158,9 +156,7 @@ export const ImportReview = ({ onClose }: ImportReviewProps) => {
 
   return (
     <VStack
-      onSubmit={handleSubmit((values) => {
-        console.log({ values });
-      })}
+      onSubmit={handleSubmit((values) => {})}
       as="form"
       rowGap="16px"
       maxWidth="600px"

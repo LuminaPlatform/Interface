@@ -2,20 +2,44 @@ import { getUserInformation } from "@/api";
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { useAuthorization, useGlobalUserData } from "@/hooks/bases";
 import { UserProfileProvider } from "@/modules/profile/context";
+import {
+  useDispatchUserProfile,
+  useUserProfile,
+} from "@/modules/profile/hooks";
 import { Index } from "@/modules/profile/pages/Index";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 interface ProfileProps {
-  isSelfUser: boolean;
   // TODO should fixed type
   user: any;
   wallet: any;
   activities: any;
+  userProjectsCategories: any;
+  followers: any;
+  followings: any;
 }
-const Profile = ({ user, isSelfUser, wallet, activities }: ProfileProps) => {
-
+const Profile = ({
+  user,
+  wallet,
+  activities,
+  userProjectsCategories,
+  followers,
+  followings,
+}: ProfileProps) => {
   return (
-    <UserProfileProvider data={{ isSelfUser, user, wallet, activities }}>
+    <UserProfileProvider
+      data={{
+        user,
+        wallet,
+        activities,
+        userProjectsCategories,
+        followers,
+        followings,
+      }}
+    >
       <Index />
     </UserProfileProvider>
   );
@@ -26,12 +50,19 @@ export const getServerSideProps = async (ctx) => {
   const { userId } = ctx.params;
   const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
 
-  const userActivities = await axiosClient
+  const userBaseInfo = accessToken
+    ? await axiosClient.get(apiKeys.auth.isAuthorized, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+    : null;
+  const selfUserData = (await userBaseInfo?.data) ?? null;
+  const fetchPlan = await axiosClient
     .post(apiKeys["fetch"], {
       0: {
         model: "Review",
         model_id: "None",
-        limit: 100,
         orders: [],
         graph: {
           fetch_fields: [
@@ -40,6 +71,16 @@ export const getServerSideProps = async (ctx) => {
             },
             {
               name: "project",
+              graph: {
+                fetch_fields: [
+                  {
+                    name: "*",
+                  },
+                ],
+              },
+            },
+            {
+              name: "files",
               graph: {
                 fetch_fields: [
                   {
@@ -58,6 +99,9 @@ export const getServerSideProps = async (ctx) => {
                   {
                     name: "id",
                   },
+                  {
+                    name: "profile_id",
+                  },
                 ],
               },
             },
@@ -71,37 +115,91 @@ export const getServerSideProps = async (ctx) => {
         },
       },
     })
-    .then((response) => response.data[0]);
+    .then((response) => response.data);
+
+  const userActivities = await fetchPlan[0];
   const userProfileData = await getUserInformation(userId);
+
+  if (!!selfUserData) {
+  }
+
+  const followers = await axiosClient
+    .post(apiKeys.fetch, {
+      0: {
+        model: "User.followers",
+        model_id: userId,
+        orders: [],
+        graph: {
+          fetch_fields: [
+            {
+              name: "*",
+            },
+          ],
+        },
+      },
+    })
+    .then((res) => {
+      return res.data[0];
+    });
+  const followings = await axiosClient
+    .post(apiKeys.fetch, {
+      0: {
+        model: "User.following",
+        model_id: userId,
+        orders: [],
+        graph: {
+          fetch_fields: [
+            {
+              name: "*",
+            },
+          ],
+        },
+      },
+    })
+    .then((res) => {
+      return res.data[0];
+    });
+  const userProjectsCategories = await axiosClient
+    .post(apiKeys.fetch, {
+      0: {
+        model: "User.interested_categories",
+        model_id: userId,
+        orders: [],
+        graph: {
+          fetch_fields: [
+            {
+              name: "*",
+            },
+          ],
+        },
+      },
+    })
+    .then((res) => res.data[0]);
   if (!userProfileData) {
     return {
       notFound: true,
     };
   }
   try {
-    const response = await axiosClient.get(apiKeys.auth.isAuthorized, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    const selfUserData = response.data;
-
-
     return {
       props: {
-        isSelfUser: selfUserData?.id === +userId,
         user: userProfileData[0][0],
         wallet: userProfileData[1]?.[0] ?? null,
         activities: userActivities,
+        userProjectsCategories,
+        followers,
+        followings,
       },
     };
   } catch (error) {
     return {
       props: {
-        isSelfUser: false,
         user: userProfileData[0][0],
         wallet: userProfileData[1]?.[0] ?? null,
         activities: userActivities,
+        userProjectsCategories,
+        followers,
+        followings,
       },
     };
   }
