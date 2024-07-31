@@ -29,7 +29,13 @@ const Settings = ({ user, profileImage }: SettingsProps) => {
 
   useEffect(() => {
     if (!userInfo && !!userBaseData) {
-      dispatchUserInfo({ user: userData, wallet });
+      dispatchUserInfo({
+        user: userData,
+        wallet,
+        // TODO shoud get from api
+        followers: [],
+        followings: [],
+      });
     } else if (!userBaseData) {
       router.replace("/projects");
     }

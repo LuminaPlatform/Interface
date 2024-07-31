@@ -17,7 +17,7 @@ import { useAccount } from "wagmi";
 import { useAuthorization, useSelectedProjects } from "@/hooks/bases";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import { distributeTabs } from "../constants";
-import { PopularProjectsPanel } from "../components/PopularProjectsPanel";
+// import { PopularProjectsPanel } from "../components/PopularProjectsPanel";
 import { StringParam, useQueryParams } from "use-query-params";
 import { ProjectSearch } from "../components/ProjectSearch";
 
