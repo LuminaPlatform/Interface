@@ -1,5 +1,8 @@
 export const apiKeys = {
   auth: {
+    password: {
+      change: "/auth/password/change",
+    },
     login: {
       google: {
         req: "/auth/login/google/request",

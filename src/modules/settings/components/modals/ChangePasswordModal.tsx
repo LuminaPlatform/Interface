@@ -47,23 +47,18 @@ export const ChangePasswordModal = ({
   const handleChangePassword = (values) => {
     setLoading(true);
     axiosClient
-      .post(apiKeys.update, {
-        "0": {
-          model_name: "User",
-          params: {
-            password: values.password,
-          },
-          id: userInfo?.user.id,
-        },
+      .post(apiKeys.auth.password.change, {
+        current_password: values.currentPassword,
+        new_password: values.password,
       })
       .then(() => {
+        onClose();
         return toast({
           status: "success",
           description: "Your password is changed.",
         });
       })
       .catch((error: AxiosError<{ error_message: string }>) => {
-
         return toast({
           status: "error",
           description: error.response.data?.error_message,
