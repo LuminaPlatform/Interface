@@ -110,7 +110,7 @@ export const getServerSideProps = async (ctx) => {
     });
     return {
       props: {
-        userData: userData.data,
+        userData: userData?.data ?? null,
         reviews: await response.data["0"],
       },
     };
@@ -192,7 +192,7 @@ export const getServerSideProps = async (ctx) => {
   return {
     props: {
       test: "saalam",
-      userData: userData.data,
+      userData: userData?.data ?? null,
       reviews: response.data["0"],
     },
   };
