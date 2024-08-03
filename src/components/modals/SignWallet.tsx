@@ -37,47 +37,12 @@ export const SignWallet = ({}: SignWalletProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [timestamp, setTimestamp] = useState("");
 
-  // useEffect(() => {
-  //   const timestampRegex =
-  //     /Timestamp: (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)/;
-  //   const match = signMessageApi.match(timestampRegex);
-  //   if (match) {
-  //     const [, timestamp] = match;
-  //     // const date = new Date(timestamp).getTime();
-
-  //     setTimestamp(timestamp);
-  //   }
-  // }, [signMessageApi]);
-
   useEffect(() => {
     if (isConnected && !signMessageData) {
-      setIsLoading(true);
-      axiosClient
-        .get(`${apiKeys.getSignMessage}/${address}`)
-        .then((response) => {
-          setSignMessageApi(response.data);
-        })
-        .finally(() => setIsLoading(false));
+      console.log("render");
     }
-  }, [isConnected]);
+  }, []);
 
-  useEffect(() => {
-    (async () => {
-      if (variables?.message && signMessageData) {
-        const recoveredAddress = await recoverMessageAddress({
-          message: variables?.message,
-          signature: signMessageData,
-        });
-      }
-    })();
-  }, [signMessageData, variables?.message]);
-
-  useEffect(() => {
-    if (!!signMessageData) {
-      onClose();
-      dispatchSteps(STEP_MODAL.wallet);
-    }
-  }, [signMessageData]);
 
   const toast = useCustomToast();
 
@@ -135,10 +100,22 @@ export const SignWallet = ({}: SignWalletProps) => {
             </Button>
             <Button
               onClick={() => {
-                signMessage({
-                  message: signMessageApi,
-                  account: address,
-                });
+                setIsLoading(true);
+                axiosClient
+                  .get(`${apiKeys.getSignMessage}/${address}`)
+                  .then((response) => {
+                    setSignMessageApi(response.data);
+                  })
+                  .then(() => {
+                    signMessage({
+                      message: signMessageApi,
+                      account: address,
+                    });
+                  })
+                  .then(() => {
+                    console.log({ signMessageData });
+                  })
+                  .finally(() => setIsLoading(false));
               }}
               flex={1}
               variant="primary"
