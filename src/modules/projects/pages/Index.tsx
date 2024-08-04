@@ -1,5 +1,5 @@
 import { Box, Input, Text, VStack } from "@chakra-ui/react";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Table from "../components/Table";
 import { debounce } from "lodash";
 import { axiosClient } from "@/config/axios";

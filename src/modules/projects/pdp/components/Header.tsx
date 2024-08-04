@@ -7,7 +7,6 @@ import {
   useSelectedProjects,
 } from "@/hooks/bases";
 import { useMemo } from "react";
-import { useAccount } from "wagmi";
 import { BreadCrumb } from "./BreadCrumb";
 
 export const Header = () => {
@@ -15,8 +14,7 @@ export const Header = () => {
   const selectedProjects = useSelectedProjects();
 
   const project = useProjectData();
-
-  const { isConnected } = useAccount();
+  const { name } = project;
 
   const isProjectSelected = useMemo(() => {
     return selectedProjects.find((item) => item.id === project.id);

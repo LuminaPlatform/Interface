@@ -155,7 +155,7 @@ export const ImportReview = ({ onClose }: ImportReviewProps) => {
 
   return (
     <VStack
-      onSubmit={handleSubmit((values) => {})}
+      onSubmit={handleSubmit(() => {})}
       as="form"
       rowGap="16px"
       maxWidth="600px"

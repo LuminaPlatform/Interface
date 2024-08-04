@@ -45,7 +45,6 @@ export const Contribution = () => {
     setImpactHeight(impactRef?.current?.clientHeight);
   }, [impactRef?.current?.clientHeight]);
 
-
   return (
     <VStack width="full">
       <HStack justifyContent="space-between" width="full">
@@ -78,7 +77,9 @@ export const Contribution = () => {
       <SimpleGrid width="full" gap="24px" columns={{ base: 1, lg: 3 }}>
         <GridItem
           h={
-            !!project.userRole.find((role) => role.name.includes("BETA_USER"))
+            !!project.userRole.find((role: any) =>
+              role.name.includes("BETA_USER")
+            )
               ? "384px"
               : "276px"
           }

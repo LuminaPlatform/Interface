@@ -1,4 +1,5 @@
 import {
+  AspectRatio,
   HStack,
   Img,
   Stack,
