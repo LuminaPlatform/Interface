@@ -16,6 +16,7 @@
     "@tanstack/react-query": "^5.29.2",
     "@tanstack/react-table": "^8.15.3",
     "@types/lodash": "^4.17.0",
+    "@types/nprogress": "^0.2.3",
     "@walletconnect/ethereum-provider": "^2.13.1",
     "@walletconnect/modal": "^2.6.2",
     "axios": "^1.6.8",
@@ -39,6 +40,8 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",
     "typescript": "^5"
