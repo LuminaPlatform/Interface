@@ -61,7 +61,7 @@ const UnFollowModal = ({ setFollowed, onClose }: UnFollowModalProps) => {
     </VStack>
   );
 };
-const UserFollowBox = ({ item }) => {
+const UserFollowBox = ({ item }: { item: string }) => {
   const [isFollowed, setFollowed] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (

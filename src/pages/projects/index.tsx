@@ -4,8 +4,12 @@ import { pageThreshold } from "@/constant";
 import { ProjectsProvider } from "@/modules/projects/context";
 import Index from "@/modules/projects/pages/Index";
 import { FetchObject } from "@/types";
+import { GetServerSideProps } from "next";
 
-export default function Projects({ projects }) {
+interface ProjectsProps {
+  projects: any;
+}
+export default function Projects({ projects }: ProjectsProps) {
   return (
     <ProjectsProvider data={projects}>
       <Index />
@@ -13,8 +17,8 @@ export default function Projects({ projects }) {
   );
 }
 
-export const getServerSideProps = async (ctx) => {
-  const page = ctx.query.page || 1;
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const page: number = +ctx.query.page || 1;
   const postData: { 0: FetchObject } = {
     0: {
       model: "Project",

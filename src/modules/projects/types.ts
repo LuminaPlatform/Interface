@@ -4,7 +4,11 @@ export type Project = {
   name: string;
   content: {
     contributionLinks: {
-      data: { description: string; type: string; url: string }[];
+      data: {
+        description: string;
+        type: "CONTRACT_ADDRESS" | "OTHER" | "GITHUB_REPO";
+        url: string;
+      }[];
     };
     contributionDescription: string;
     impactDescription: string;
