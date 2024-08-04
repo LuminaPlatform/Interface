@@ -25,6 +25,8 @@ import {
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { AxiosError } from "axios";
+import { getCookie } from "cookies-next";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 
 type UserInfoEditableProps = {
   isEditable: boolean;
@@ -61,7 +63,10 @@ export const UserInfoEditable = ({
     );
     axiosClient
       .post(apiKeys.file, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`,
+        },
       })
       .then((res) => {
         toast({
