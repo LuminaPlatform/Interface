@@ -12,12 +12,11 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction } from "react";
-import { useForm, useFormContext, useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { TbCameraPlus, TbEdit, TbPencil } from "react-icons/tb";
 import { settingsFormType } from "../types";
 import { ModalBase } from "@/components/ModalBase";
 import { UserInfoModal, UserInfoModalHeader } from "./UserInfoModal";
-import { fileLimitation } from "@/config/fileLimitation";
 import { useGlobalUserData } from "@/hooks/bases";
 
 type UserInfoEditableProps = {
@@ -31,12 +30,7 @@ export const UserInfoEditable = ({
 }: UserInfoEditableProps) => {
   const handleSave = () => {};
 
-  const {
-    formState: { errors },
-    register,
-    setValue,
-    control,
-  } = useFormContext<settingsFormType>();
+  const { register, setValue, control } = useFormContext<settingsFormType>();
   const { profile } = useWatch<settingsFormType>({ control });
 
   const { isOpen, onClose, onOpen } = useDisclosure();

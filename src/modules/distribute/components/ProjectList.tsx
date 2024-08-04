@@ -12,7 +12,6 @@ import {
   Tbody,
   Td,
   Button,
-  IconButton,
   InputGroup,
   InputRightElement,
   chakra,
@@ -24,8 +23,7 @@ import {
   Divider,
   Stack,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
-import { ProjectSearch } from "./ProjectSearch";
+import { useEffect, useMemo, useState } from "react";
 import {
   createColumnHelper,
   flexRender,
@@ -43,7 +41,7 @@ import {
   TbExternalLink,
   TbInfoCircle,
 } from "react-icons/tb";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { maximumAllocated } from "../constants";
 import { CustomInput } from "./CustomInput";
 import {
@@ -77,11 +75,11 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
 
   const dispatchGlobalSelectedProjects = useDispatchSelectedProjects();
 
-  const { register, control, setValue, handleSubmit, getValues } =
+  const { register, setValue, handleSubmit, getValues } =
     useForm<AllocatedForm>({
       defaultValues: {
         totalAllocated: 0,
-        projects: globalSelectedProjects.map((item) => ({
+        projects: globalSelectedProjects.map((item: any) => ({
           ...item,
           value: 0,
           percent: 0,
@@ -97,11 +95,9 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
     );
   };
 
-  const values = useWatch({ control });
-
   const data = useMemo<any>(() => {
     if (search) {
-      return globalSelectedProjects.filter((project) =>
+      return globalSelectedProjects.filter((project: any) =>
         project.name.toLowerCase().includes(search.toLowerCase())
       );
     }
@@ -114,8 +110,8 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
 
   useEffect(() => {
     const projectsInFormId = getValues("projects").map((item) => item.id);
-    const projectsId = globalSelectedProjects.map((item) => item.id);
-    globalSelectedProjects.forEach((item) => {
+    const projectsId = globalSelectedProjects.map((item: any) => item.id);
+    globalSelectedProjects.forEach((item: any) => {
       if (!projectsInFormId.includes(item.id)) {
         setValue("projects", [
           ...getValues("projects"),
@@ -178,7 +174,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
         ),
         cell: (info) => {
           const findIndex = globalSelectedProjects.findIndex(
-            (item) => item.id === info.row.original.id
+            (item: any) => item.id === info.row.original.id
           );
           return (
             <InputGroup height="42px">
@@ -235,7 +231,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
         ),
         cell: (info) => {
           const findIndex = globalSelectedProjects.findIndex(
-            (item) => item.id === info.row.original.id
+            (item: any) => item.id === info.row.original.id
           );
           return (
             <InputGroup maxWidth="80px" height="42px" padding="0">
@@ -336,10 +332,10 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                   <MenuItem
                     onClick={() => {
                       const tempProject = globalSelectedProjects.find(
-                        (item) => item.id === info.row.original.id
+                        (item: any) => item.id === info.row.original.id
                       );
                       const findIndex = globalSelectedProjects.findIndex(
-                        (item) => item.id === info.row.original.id
+                        (item: any) => item.id === info.row.original.id
                       );
                       const tempProjectValues = {
                         value: getValues("projects")?.[findIndex]?.value ?? 0,

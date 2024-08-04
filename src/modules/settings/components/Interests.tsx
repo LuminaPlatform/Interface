@@ -1,6 +1,5 @@
 import { ModalBase } from "@/components/ModalBase";
 import {
-  Box,
   Button,
   CloseButton,
   HStack,
@@ -10,22 +9,12 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { TbPlus } from "react-icons/tb";
 import { InterestModalBody } from "../types";
 import { CategoryModal } from "./modals/CategoryModal";
 import { SettingsModalsHeader } from "./SettingsModalHeader";
 
-const interests = [
-  {
-    id: 0,
-    title: "Metaverse",
-  },
-  {
-    id: 0,
-    title: "Lend & Borrow",
-  },
-];
 const projectData = [
   {
     id: 0,
@@ -115,7 +104,6 @@ export const Interests = () => {
       header: "People",
     },
   };
-
 
   return (
     <>

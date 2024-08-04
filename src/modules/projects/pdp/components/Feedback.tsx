@@ -1,7 +1,5 @@
 import {
   Button,
-  Divider,
-  HStack,
   Text,
   useDisclosure,
   UseDisclosureProps,

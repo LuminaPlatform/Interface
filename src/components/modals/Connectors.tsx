@@ -1,8 +1,7 @@
 import { dataConnectors } from "@/constant";
 import { STEP_MODAL, WalletModalBodyProps } from "@/types";
-import { Button, Icon, Img, Text, VStack } from "@chakra-ui/react";
+import { Icon, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { Dispatch, SetStateAction } from "react";
 import { TbArrowNarrowLeft } from "react-icons/tb";
 import { useConnect } from "wagmi";
 import { IconButton } from "./Connect";

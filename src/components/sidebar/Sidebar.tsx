@@ -6,7 +6,6 @@ import {
   useSelectedProjects,
 } from "@/hooks/bases";
 import {
-  Box,
   Button,
   Center,
   chakra,
@@ -14,16 +13,12 @@ import {
   HStack,
   Icon,
   Img,
-  Stack,
   Text,
-  useBreakpointValue,
   VStack,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
-import { Distribute, Project, Reviews, Setting } from "./Icons";
 import {
   TbChartBar,
   TbChartPie4,

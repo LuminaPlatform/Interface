@@ -6,6 +6,7 @@ import { Review } from "@/modules/projects/types";
 import { ReviewsProvider } from "@/modules/reviews/context";
 import Index from "@/modules/reviews/page/Index";
 import { AuthenticationData } from "@/types";
+import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -33,7 +34,7 @@ const Reviews = (props: ReviewsProps) => {
 
 export default Reviews;
 
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const query = ctx.query;
   const tab = query.tab;
 
@@ -97,6 +98,8 @@ export const getServerSideProps = async (ctx) => {
           }
         })
         .catch((error) => {
+          console.log(error);
+
           return {
             props: {
               userData: null,

@@ -1,8 +1,5 @@
-import { Button, Img, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import { Button, Img, Text, VStack } from "@chakra-ui/react";
 import { TbBookmarkPlus } from "react-icons/tb";
-import { AddProjects } from "./AddProjects";
-import { ModalBase } from "@/components/ModalBase";
-import { Dispatch, SetStateAction } from "react";
 
 interface EmptyStateProps {
   onOpen: () => void;

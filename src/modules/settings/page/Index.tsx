@@ -1,10 +1,7 @@
-import { Avatar } from "@/components/AvatarText";
-import { Button, chakra, HStack, Stack, Text, VStack } from "@chakra-ui/react";
-import { TbPencil } from "react-icons/tb";
+import { chakra, Text, VStack } from "@chakra-ui/react";
 import { UserInfoEditable } from "../components/UserInfoEditable";
-import { useEffect, useState } from "react";
-import { useAuthorization, useGlobalUserData } from "@/hooks/bases";
-import { useRouter } from "next/router";
+import { useState } from "react";
+import { useGlobalUserData } from "@/hooks/bases";
 import { FormProvider, useForm } from "react-hook-form";
 import { Wallet } from "../components/Wallet";
 import { AccountSecurity } from "../components/AccountSecurity";
@@ -15,7 +12,7 @@ const ChakraForm = chakra("form");
 export const Index = () => {
   const [isEditable, setEditable] = useState(false);
 
-  const {user} = useGlobalUserData();
+  const { user } = useGlobalUserData();
 
   // TODO should add default value
   const { ...methods } = useForm<settingsFormType>({

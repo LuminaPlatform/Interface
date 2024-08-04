@@ -1,6 +1,5 @@
 import { ReviewStatus } from "@/types";
 import { Dispatch, SetStateAction } from "react";
-import { File } from "buffer";
 
 export interface StatusesProps {
   status: ReviewStatus["name"];

@@ -35,7 +35,8 @@ export const ImportedReviewBoxContent = () => {
 interface ImportedReviewBoxProps {
   isChild: boolean;
 }
-export const ImportedReviewBox = ({ isChild }: ImportedReviewBoxProps) => {
+export const ImportedReviewBox = ({}: // isChild
+ImportedReviewBoxProps) => {
   return (
     <VStack rowGap="16px">
       <VStack

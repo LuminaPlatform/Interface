@@ -1,7 +1,6 @@
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
-import { tableData } from "@/modules/projects/constant";
 import {
   ProjectDetailProvider,
   ProjectReviewsProvider,
@@ -21,7 +20,6 @@ const ProjectDetail = ({
   viewpoints: any;
   userViewpoint: any;
 }) => {
-
   return (
     <ProjectDetailProvider project={{ ...project, viewpoints, userViewpoint }}>
       <ProjectReviewsProvider reviews={reviews}>
@@ -95,7 +93,6 @@ export const getServerSideProps = async (ctx: any) => {
   const viewpoints = await axiosClient
     .get(`${apiKeys.viewpoint}/${projectId}`)
     .then((response) => response.data.viewpoints);
-
 
   const postData: { 0: FetchObject; 1: FetchObject } = {
     0: {
@@ -171,7 +168,6 @@ export const getServerSideProps = async (ctx: any) => {
 
   const project = projectResponse.data["0"];
   const reviews = projectResponse.data["1"];
-
 
   if (project) {
     return {

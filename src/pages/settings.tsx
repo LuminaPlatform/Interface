@@ -8,7 +8,7 @@ import {
   useGlobalUserData,
 } from "@/hooks/bases";
 import { Index } from "@/modules/settings/page/Index";
-import { redirect } from "next/navigation";
+import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -38,7 +38,7 @@ const Settings = ({ user }: SettingsProps) => {
 
 export default Settings;
 
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
   if (!accessToken) {
     return {
@@ -68,6 +68,8 @@ export const getServerSideProps = async (ctx) => {
       props: { user: userInformation },
     };
   } catch (error) {
+    console.log(error);
+
     return {
       redirect: {
         permanent: false,

@@ -178,6 +178,8 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
       };
     })
     .catch((error) => {
+      console.log(error);
+
       return {
         notFound: true,
       };

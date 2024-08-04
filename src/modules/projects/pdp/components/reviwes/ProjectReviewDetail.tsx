@@ -8,9 +8,8 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useProjectData, useProjectReviews } from "../../hooks";
+import { useProjectData } from "../../hooks";
 import { TbLink } from "react-icons/tb";
-import { FeedbackResult } from "../FeedbackResult";
 import { Feedback } from "../Feedback";
 
 export const ProjectReviewDetail = () => {

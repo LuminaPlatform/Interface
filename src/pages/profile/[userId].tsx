@@ -4,6 +4,7 @@ import { axiosClient } from "@/config/axios";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { UserProfileProvider } from "@/modules/profile/context";
 import { Index } from "@/modules/profile/pages/Index";
+import { GetServerSidePropsContext } from "next";
 
 interface ProfileProps {
   isSelfUser: boolean;
@@ -13,7 +14,6 @@ interface ProfileProps {
   activities: any;
 }
 const Profile = ({ user, isSelfUser, wallet, activities }: ProfileProps) => {
-
   return (
     <UserProfileProvider data={{ isSelfUser, user, wallet, activities }}>
       <Index />
@@ -22,7 +22,7 @@ const Profile = ({ user, isSelfUser, wallet, activities }: ProfileProps) => {
 };
 export default Profile;
 
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const { userId } = ctx.params;
   const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
 
@@ -72,7 +72,7 @@ export const getServerSideProps = async (ctx) => {
       },
     })
     .then((response) => response.data[0]);
-  const userProfileData = await getUserInformation(userId);
+  const userProfileData = await getUserInformation(userId as string);
   if (!userProfileData) {
     return {
       notFound: true,
@@ -86,7 +86,6 @@ export const getServerSideProps = async (ctx) => {
     });
     const selfUserData = response.data;
 
-
     return {
       props: {
         isSelfUser: selfUserData?.id === +userId,
@@ -95,7 +94,8 @@ export const getServerSideProps = async (ctx) => {
         activities: userActivities,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
+    console.log(error);
     return {
       props: {
         isSelfUser: false,

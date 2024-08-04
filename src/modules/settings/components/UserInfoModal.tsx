@@ -8,7 +8,7 @@ import {
   UseDisclosureProps,
   VStack,
 } from "@chakra-ui/react";
-import { useFormContext, useWatch } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { settingsFormType } from "../types";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
@@ -145,7 +145,7 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
                   description: "Your information is updated",
                 });
               })
-              .catch((error) => {
+              .catch(() => {
                 toast({
                   status: "error",
                   // TODO should fix error message

@@ -1,8 +1,7 @@
 import { Badge } from "@/components/Badge";
 import { reviewStatuses } from "@/constant";
-import { useProjectData } from "@/modules/projects/pdp/hooks";
 import { Project, Review } from "@/modules/projects/types";
-import { Box, HStack, Img, Text, VStack } from "@chakra-ui/react";
+import { HStack, Img, Text, VStack } from "@chakra-ui/react";
 
 interface ReviewDetailProps {
   review: Review;

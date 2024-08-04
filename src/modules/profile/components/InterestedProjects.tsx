@@ -1,5 +1,4 @@
-import { Button, HStack, Text, VStack } from "@chakra-ui/react";
-import Link from "next/link";
+import { HStack, Text, VStack } from "@chakra-ui/react";
 
 const projects = Array(2)
   .fill("")

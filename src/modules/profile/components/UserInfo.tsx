@@ -1,24 +1,19 @@
 import { ModalBase } from "@/components/ModalBase";
 import { textTruncator } from "@/utils";
 import {
-  Box,
   Button,
   Code,
   HStack,
-  Img,
   Link,
   Stack,
   Text,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
 import { UsersModal } from "./UsersModal";
-import { Avatar, AvatarText } from "@/components/AvatarText";
-import { useGlobalUserData } from "@/hooks/bases";
+import { Avatar } from "@/components/AvatarText";
 import { useUserProfile } from "../hooks";
 import { xDomain } from "@/constant";
 
@@ -38,10 +33,8 @@ const ModalHeader = ({ text }: { text: string }) => (
     {text}
   </Text>
 );
-const hasBadge = true;
 
 export const UserInfo = () => {
-  const params = useParams<{ username: string }>();
   const {
     isOpen: followersIsOpen,
     onOpen: followersOnOpen,

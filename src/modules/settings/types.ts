@@ -1,4 +1,3 @@
-import { OTPFormType } from "@/types";
 
 export type settingsFormType = {
   profile: FileList[0];

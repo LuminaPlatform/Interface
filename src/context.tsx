@@ -8,9 +8,6 @@ import {
   useState,
 } from "react";
 import { Project } from "./modules/projects/types";
-import { useAccount } from "wagmi";
-import { ACCESS_TOKEN_COOKIE_KEY } from "./constant";
-import { getCookie } from "cookies-next";
 import { AuthenticationData, STEP_MODAL } from "./types";
 import { getUserInformation } from "./api";
 import { useAuthorization } from "./hooks/bases";
@@ -53,7 +50,7 @@ export const SetSelectedProjects =
   createContext<Dispatch<SetStateAction<Project[]>>>(undefined);
 
 interface SelectedProjectProviderProps extends PropsWithChildren {}
-export const SelectedProjectProvider = ({ children }: PropsWithChildren) => {
+export const SelectedProjectProvider = ({ children }: SelectedProjectProviderProps) => {
   const [state, setState] = useState<Array<Project>>([]);
   return (
     <SelectedProjects.Provider value={state}>

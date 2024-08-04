@@ -1,5 +1,5 @@
-import { chakra, UseDisclosureProps, VStack } from "@chakra-ui/react";
-import { useForm, useFormContext, useWatch } from "react-hook-form";
+import { UseDisclosureProps, VStack } from "@chakra-ui/react";
+import { useFormContext, useWatch } from "react-hook-form";
 import { Dispatch, SetStateAction } from "react";
 import { SettingsModalBody, SettingsModalsForm } from "../../types";
 import { OTP } from "@/components/modals/OTP";

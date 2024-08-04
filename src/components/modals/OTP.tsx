@@ -1,10 +1,4 @@
-import { useEmailLogin, useOTPVerification } from "@/hooks/auth";
-import {
-  useCustomToast,
-  useDispatchAuthorization,
-  useWalletModal,
-} from "@/hooks/bases";
-import { ModalForm, OTPProps, STEP_MODAL, WalletModalBodyProps } from "@/types";
+import { ModalForm, OTPProps } from "@/types";
 import {
   Button,
   chakra,
@@ -19,7 +13,6 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm, useFormContext, useWatch } from "react-hook-form";
 import { TbArrowNarrowLeft } from "react-icons/tb";
-import { cookies } from "next/headers";
 
 const OTPFields = Array(6)
   .fill("")

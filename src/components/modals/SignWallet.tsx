@@ -12,37 +12,17 @@ import { motion } from "framer-motion";
 
 interface SignWalletProps extends WalletModalBodyProps {}
 
-import { useEffect, useRef } from "react";
-import { recoverMessageAddress } from "viem";
+import { useEffect } from "react";
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 
 export const SignWallet = ({}: SignWalletProps) => {
   const dispatchSteps = useDispatchModalSteps();
 
-  const recoveredAddress = useRef<string>();
-  const {
-    data: signMessageData,
-    error,
-    signMessage,
-    variables,
-    submittedAt,
-    ...other
-  } = useSignMessage();
+  const { data: signMessageData, signMessage, submittedAt } = useSignMessage();
 
   const { onClose } = useWalletModal();
   const { isConnected, address } = useAccount();
   const { disconnect } = useDisconnect();
-
-  useEffect(() => {
-    (async () => {
-      if (variables?.message && signMessageData) {
-        const recoveredAddress = await recoverMessageAddress({
-          message: variables?.message,
-          signature: signMessageData,
-        });
-      }
-    })();
-  }, [signMessageData, variables?.message]);
 
   useEffect(() => {
     if (!!signMessageData) {
@@ -62,6 +42,7 @@ export const SignWallet = ({}: SignWalletProps) => {
           timestamp: submittedAt,
         })
         .then((response) => {
+          console.log(response.data);
         })
         .catch((error: AxiosError<{ error_message: string }>) => {
           return toast({
