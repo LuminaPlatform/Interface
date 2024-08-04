@@ -68,7 +68,15 @@ const ProfileBox = () => {
               }
               alt="user"
             />
-            <Text color="gray.10" fontSize="md" fontWeight="200">
+            <Text
+              width="100px"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              color="gray.10"
+              fontSize="md"
+              fontWeight="200"
+            >
               {user.display_name ?? user.email}
             </Text>
           </HStack>
@@ -99,6 +107,10 @@ const ProfileBox = () => {
               color="gray.0"
               fontSize="xl"
               fontWeight="600"
+              width="full"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
             >
               {user.display_name ?? user.email}
             </Text>
