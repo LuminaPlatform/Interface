@@ -3,7 +3,6 @@ import {
   FormLabel,
   Input,
   InputGroup,
-  InputLeftElement,
   InputRightElement,
   useBoolean,
   UseDisclosureProps,
@@ -11,10 +10,10 @@ import {
 } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { SettingsModalsForm } from "../../types";
-import { TbEye, TbEyeOff, TbMail } from "react-icons/tb";
+import { TbEye, TbEyeOff } from "react-icons/tb";
 import { InputError } from "@/components/InputError";
 import { SettingsModalFooter } from "../EmailFooter";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 interface SetPasswordModalProps extends UseDisclosureProps {
   setPassword: Dispatch<
@@ -38,7 +37,7 @@ export const SetPasswordModal = ({
   const [isShow, setShow] = useBoolean(false);
 
   const { password } = useWatch({ control });
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   return (
     <VStack rowGap="16px" width="full">
@@ -144,7 +143,7 @@ export const SetPasswordModal = ({
         cancelHandler={onClose}
         isDisabled={!!errors.password || !!errors.rePassword}
         mainButtonText="Set Password"
-        submitHandler={handleSubmit((values) => {
+        submitHandler={handleSubmit(() => {
           setPassword({
             isSet: true,
           });

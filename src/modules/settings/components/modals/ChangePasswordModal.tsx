@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { SettingsModalBody, SettingsModalsForm } from "../../types";
-import { TbEye, TbEyeOff, TbMail } from "react-icons/tb";
+import { TbEye, TbEyeOff } from "react-icons/tb";
 import { InputError } from "@/components/InputError";
 import { SettingsModalFooter } from "../EmailFooter";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -44,7 +44,7 @@ export const ChangePasswordModal = ({
 
   const { password } = useWatch({ control });
   const toast = useCustomToast();
-  const handleChangePassword = (values) => {
+  const handleChangePassword = (values: SettingsModalsForm) => {
     setLoading(true);
     axiosClient
       .post(apiKeys.update, {
@@ -63,7 +63,6 @@ export const ChangePasswordModal = ({
         });
       })
       .catch((error: AxiosError<{ error_message: string }>) => {
-
         return toast({
           status: "error",
           description: error.response.data?.error_message,

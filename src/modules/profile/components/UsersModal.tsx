@@ -12,7 +12,7 @@ import {
   UseDisclosureProps,
   VStack,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { TbSearch, TbUserCheck, TbUserPlus } from "react-icons/tb";
 import { useDispatchUserProfile, useUserProfile } from "../hooks";
 import { useDispatchGlobalUserData, useGlobalUserData } from "@/hooks/bases";
@@ -81,11 +81,13 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
                 },
                 {
                   headers: {
-                    Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`,
+                    Authorization: `Bearer ${getCookie(
+                      ACCESS_TOKEN_COOKIE_KEY
+                    )}`,
                   },
                 }
               )
-              .then((res) => {
+              .then(() => {
                 return axiosClient
                   .post(apiKeys.fetch, {
                     0: {
@@ -101,14 +103,14 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
                       },
                     },
                   })
-                  .then((res) => {
+                  .then(() => {
                     const filteredGlobalUserFollowings =
                       globalUser.followings.filter(
-                        (item) => item.id !== user.id
+                        (item: any) => item.id !== user.id
                       );
                     const filteredProfileFollowings =
                       userProfile.followings.filter(
-                        (item) => item.id !== user.id
+                        (item: any) => item.id !== user.id
                       );
                     dispatchGlobalUser({
                       ...globalUser,
@@ -134,7 +136,12 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
     </VStack>
   );
 };
-const UserFollowBox = ({ item, type }) => {
+
+interface UserFollowBoxProps {
+  item: any;
+  type: "FOLLOWERS" | "FOLLOWING";
+}
+const UserFollowBox = ({ item, type }: UserFollowBoxProps) => {
   const userInfo = useUserProfile();
   const globalUser = useGlobalUserData();
   const dispatchGlobalUser = useDispatchGlobalUserData();
@@ -146,13 +153,14 @@ const UserFollowBox = ({ item, type }) => {
     if (type === "FOLLOWERS") {
       return (
         globalUser?.followings?.find(
-          (following) => following?.id === item.id
+          (following: any) => following?.id === item.id
         ) ?? false
       );
     }
     return (
-      globalUser?.followers?.find((follower) => follower?.id === item.id) ??
-      false
+      globalUser?.followers?.find(
+        (follower: any) => follower?.id === item.id
+      ) ?? false
     );
   }, [globalUser]);
 
@@ -209,11 +217,13 @@ const UserFollowBox = ({ item, type }) => {
                     },
                     {
                       headers: {
-                        Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`,
+                        Authorization: `Bearer ${getCookie(
+                          ACCESS_TOKEN_COOKIE_KEY
+                        )}`,
                       },
                     }
                   )
-                  .then((res) => {
+                  .then(() => {
                     return axiosClient
                       .post(apiKeys.fetch, {
                         0: {
@@ -282,7 +292,7 @@ export const UsersModal = ({ type }: UsersModalProps) => {
   const filteredUsers = useMemo(
     () =>
       search
-        ? users.filter((item) => {
+        ? users.filter((item: any) => {
             return item.email?.includes(search);
           }) ?? []
         : users,
@@ -333,7 +343,7 @@ export const UsersModal = ({ type }: UsersModalProps) => {
         divider={<Divider borderColor="gray.600" opacity="0.5" />}
         bg="gray.700"
       >
-        {filteredUsers?.map((item) => (
+        {filteredUsers?.map((item: any) => (
           <UserFollowBox type={type} item={item} key={item} />
         ))}
       </VStack>

@@ -1,13 +1,6 @@
 import { ActionCard } from "@/components/ActionCard";
 import { ModalBase } from "@/components/ModalBase";
-import {
-  Box,
-  HStack,
-  Stack,
-  Text,
-  useDisclosure,
-  VStack,
-} from "@chakra-ui/react";
+import { Stack, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import { TbBrandX, TbLock, TbMail, TbPencil } from "react-icons/tb";
 import { EmailVerifyModal } from "./modals/EmailVerifyModal";
@@ -34,8 +27,9 @@ export const AccountSecurity = () => {
     reValidateMode: "onChange",
   });
 
-  const handleSetPublic = (dispatch) => {
-    dispatch((prev) => ({ ...prev, isPublic: !prev.isPublic }));
+  // TODO should fix this type
+  const handleSetPublic = (dispatch: any) => {
+    dispatch((prev: any) => ({ ...prev, isPublic: !prev.isPublic }));
   };
 
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -58,7 +52,6 @@ export const AccountSecurity = () => {
   const [password, setPassword] = useState({
     isSet: !!userInfo?.user?.password,
   });
-
 
   const modals = useMemo<modalsBodyType>(() => {
     return {

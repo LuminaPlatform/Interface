@@ -11,7 +11,6 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  Link,
   Text,
   VStack,
 } from "@chakra-ui/react";

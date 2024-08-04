@@ -18,9 +18,9 @@ export const UserActivities = () => {
         Activities
       </Text>
       {userProfileData?.activities.length === 0 ? (
-        <Text color='gray.0' >There are not any activities </Text>
+        <Text color="gray.0">There are not any activities </Text>
       ) : (
-        userProfileData?.activities.map((item) => (
+        userProfileData?.activities.map((item: any) => (
           <ReviewCard
             project={item.project}
             key={item.id}

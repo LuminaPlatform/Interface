@@ -1,6 +1,5 @@
 import {
   Button,
-  Divider,
   HStack,
   Icon,
   Img,
@@ -13,11 +12,10 @@ import { LuWallet } from "react-icons/lu";
 import { IconType } from "react-icons";
 import { MdOutlineMailOutline } from "react-icons/md";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import {
   ModalForm,
   OTPFormType,
-  OTPProps,
   STEP_MODAL,
   WalletModalBodyProps,
 } from "@/types";
@@ -57,8 +55,6 @@ const OTPContainer = ({}: OTPContainerProps) => {
 
   const email = getValues("email");
   const password = getValues("password");
-
-  const { onClose } = useWalletModal();
 
   const dispatchAuthorization = useDispatchAuthorization();
   return (

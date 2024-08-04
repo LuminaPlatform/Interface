@@ -7,10 +7,8 @@ import {
   FormLabel,
   FormLabelProps,
   HStack,
-  Icon,
   Img,
   Input,
-  ModalCloseButton,
   Text,
   Tooltip,
   UseDisclosureProps,
@@ -219,7 +217,7 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
           status: "success",
         });
       })
-      .catch((err: AxiosError<{ error_message }>) => {
+      .catch((err: AxiosError<{ error_message: string }>) => {
         toast({
           description: err.response.data.error_message,
           status: "error",

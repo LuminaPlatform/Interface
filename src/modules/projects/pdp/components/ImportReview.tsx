@@ -11,7 +11,6 @@ import {
   UseDisclosureProps,
   VStack,
 } from "@chakra-ui/react";
-import { StatusesProps } from "../types";
 import { useForm } from "react-hook-form";
 import { InputError } from "@/components/InputError";
 import { useMemo, useState } from "react";

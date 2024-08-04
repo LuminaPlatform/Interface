@@ -2,15 +2,9 @@ import { getUserInformation } from "@/api";
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
-import { useAuthorization, useGlobalUserData } from "@/hooks/bases";
 import { UserProfileProvider } from "@/modules/profile/context";
-import {
-  useDispatchUserProfile,
-  useUserProfile,
-} from "@/modules/profile/hooks";
 import { Index } from "@/modules/profile/pages/Index";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { GetServerSidePropsContext } from "next";
 
 interface ProfileProps {
   // TODO should fixed type
@@ -46,8 +40,9 @@ const Profile = ({
 };
 export default Profile;
 
-export const getServerSideProps = async (ctx) => {
-  const { userId } = ctx.params;
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const params = ctx.params;
+  const userId = params.userId as string;
   const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
 
   const userBaseInfo = accessToken
@@ -191,7 +186,8 @@ export const getServerSideProps = async (ctx) => {
         followings,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
+    console.log(error);
     return {
       props: {
         user: userProfileData[0][0],

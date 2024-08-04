@@ -12,12 +12,11 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction, useState } from "react";
-import { useForm, useFormContext, useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { TbCameraPlus, TbEdit, TbPencil } from "react-icons/tb";
 import { settingsFormType } from "../types";
 import { ModalBase } from "@/components/ModalBase";
 import { UserInfoModal, UserInfoModalHeader } from "./UserInfoModal";
-import { fileLimitation } from "@/config/fileLimitation";
 import {
   useCustomToast,
   useDispatchGlobalUserData,
@@ -42,16 +41,14 @@ export const UserInfoEditable = ({
 
   const toast = useCustomToast();
 
-  const {
-    formState: { errors },
-    register,
-    setValue,
-    control,
-    resetField,
-  } = useFormContext<settingsFormType>();
+  const { register, setValue, control, resetField } =
+    useFormContext<settingsFormType>();
   const dispatchUserInfo = useDispatchGlobalUserData();
 
-  const handleSave = async (file: File, setAvatar) => {
+  const handleSave = async (
+    file: File,
+    setAvatar: Dispatch<SetStateAction<number>>
+  ) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append(
@@ -119,8 +116,8 @@ export const UserInfoEditable = ({
                   profile !== null
                     ? profile && URL.createObjectURL(profile)
                     : avatarImage
-                      ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${avatarImage}`
-                      : "/assets/images/default-avatar.png"
+                    ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${avatarImage}`
+                    : "/assets/images/default-avatar.png"
                 }
                 hasBadge={false}
                 imageStyle={{

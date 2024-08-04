@@ -1,19 +1,8 @@
 import { reviewStatuses } from "@/constant";
-import { ReviewStatus } from "@/types";
 import { Box, HStack, Text, VStack } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useEffect } from "react";
-import {
-  TbHeart,
-  TbHeartFilled,
-  TbMoodAngry,
-  TbThumbDown,
-  TbThumbDownFilled,
-  TbThumbUp,
-  TbThumbUpFilled,
-} from "react-icons/tb";
+import { Dispatch, SetStateAction } from "react";
+
 import { useProjectData } from "../hooks";
-import { axiosClient } from "@/config/axios";
-import { apiKeys } from "@/api/apiKeys";
 
 export const FeedbackResult = ({
   hasAccessWriteReview,

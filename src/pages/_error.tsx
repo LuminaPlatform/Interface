@@ -1,8 +1,12 @@
 import { Button, HStack, Img, Text, VStack } from "@chakra-ui/react";
+import { NextPageContext } from "next";
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
 
-function Error({ statusCode }) {
+interface ErrorProps{
+  statusCode:number
+}
+function Error({ statusCode }: ErrorProps) {
   console.log(
     statusCode
       ? `An error ${statusCode} occurred on server`
@@ -50,7 +54,7 @@ function Error({ statusCode }) {
   );
 }
 
-Error.getInitialProps = ({ res, err }) => {
+Error.getInitialProps = ({ res, err }: NextPageContext) => {
   const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
   return { statusCode };
 };

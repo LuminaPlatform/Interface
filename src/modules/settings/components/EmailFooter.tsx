@@ -1,13 +1,20 @@
 import { Button, HStack } from "@chakra-ui/react";
 
 // TODO should set type
+interface SettingsModalFooterProps {
+  cancelHandler: () => void;
+  submitHandler: () => void;
+  mainButtonText: string;
+  isDisabled: boolean;
+  isLoading: boolean;
+}
 export const SettingsModalFooter = ({
   cancelHandler,
   submitHandler,
   mainButtonText,
   isDisabled,
   isLoading,
-}) => {
+}: SettingsModalFooterProps) => {
   return (
     <HStack width="full">
       <Button

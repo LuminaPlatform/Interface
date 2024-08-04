@@ -11,7 +11,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { IconType } from "react-icons";
 import {
   TbCircleCheckFilled,
@@ -26,7 +26,7 @@ interface ActionCardProps {
   pin?: {
     showPin: boolean;
     isPin: boolean;
-    setPin: (args: any) => void;
+    setPin: (args: unknown) => void;
   };
   actionCardId: number;
   secure?: {
@@ -47,13 +47,10 @@ export const ActionCard = ({
   logo,
   text,
   pin,
-  actionCardId,
   secure,
   connect,
 }: ActionCardProps) => {
   const [isHover, setHover] = useState(false);
-
-  const [isLoading, setLoading] = useState(false);
 
   return (
     <HStack

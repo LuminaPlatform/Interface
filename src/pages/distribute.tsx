@@ -2,6 +2,7 @@ import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
 import Index from "@/modules/distribute/page/Index";
 import { ProjectsProvider } from "@/modules/projects/context";
+import { GetServerSideProps } from "next";
 
 interface DistributeProps {
   projects: any;
@@ -16,12 +17,11 @@ const Distribute = ({ projects }: DistributeProps) => {
 
 export default Distribute;
 
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const postData = {
     0: {
       model: "Project",
       model_id: "None",
-      orders: [],
       graph: {
         fetch_fields: [
           {

@@ -12,10 +12,7 @@ import {
   Icon,
   Button,
   Img,
-  Divider,
   Link as ChakraLink,
-  Tfoot,
-  Select,
   Flex,
 } from "@chakra-ui/react";
 import {
@@ -26,9 +23,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import NProgress from "nprogress";
 import { useMemo, useState } from "react";
-import { tableData } from "../constant";
 import { PiLinkThin } from "react-icons/pi";
 import Link from "next/link";
 import { useProjects } from "../hooks";
@@ -247,7 +242,8 @@ const Table = ({ searchedProjects }: TableProps) => {
         <Text>
           {(
             info.row.original.content.fundingSources.data.reduce(
-              (accumulator, currentVal) =>
+              (accumulator: any, currentVal: any) =>
+                // @ts-expect-error index checking
                 +currentVal.amount * currencyScale[currentVal.currency] +
                 accumulator,
               0
@@ -259,14 +255,16 @@ const Table = ({ searchedProjects }: TableProps) => {
       sortingFn: (rowA, rowB) => {
         const columnAData: any =
           rowA.original.content.fundingSources.data.reduce(
-            (accumulator, currentVal) =>
+            (accumulator: any, currentVal: any) =>
+              // @ts-expect-error index checking
               +currentVal.amount * currencyScale[currentVal.currency] +
               accumulator,
             0
           ) / 1000;
         const columnBData: any =
           rowB.original.content.fundingSources.data.reduce(
-            (accumulator, currentVal) =>
+            (accumulator: any, currentVal: any) =>
+              // @ts-expect-error index checking
               +currentVal.amount * currencyScale[currentVal.currency] +
               accumulator,
             0
@@ -314,12 +312,12 @@ const Table = ({ searchedProjects }: TableProps) => {
       },
     }),
     columnHelper.accessor("tags", {
-      sortingFn: (rowA, rowB, columnId) => {
+      sortingFn: (rowA, rowB) => {
         const columnAData: any = rowA.original.content?.impactCategory;
         const columnBData: any = rowB.original.content?.impactCategory;
 
         const rowAMinValue: any = columnAData.reduce(
-          (min, categoryTitle) => {
+          (min: any, categoryTitle: any) => {
             const foundCategory = primaryCategories.find(
               (item) => item.title === categoryTitle.split("_").join(" ")
             );
@@ -330,7 +328,7 @@ const Table = ({ searchedProjects }: TableProps) => {
           )
         );
         const rowBMinValue: any = columnBData.reduce(
-          (min, categoryTitle) => {
+          (min: any, categoryTitle: any) => {
             const foundCategory = primaryCategories.find(
               (item) => item.title === categoryTitle.split("_").join(" ")
             );
@@ -346,7 +344,7 @@ const Table = ({ searchedProjects }: TableProps) => {
       header: "RetroPGF Tags",
       cell: (info) => (
         <HStack columnGap="4px" margin="0px !important">
-          {info.row.original.content?.impactCategory?.data.map((item) => {
+          {info.row.original.content?.impactCategory?.data.map((item: any) => {
             const value = primaryCategories.find(
               (pc) => pc.title === item.split("_").join(" ")
             );

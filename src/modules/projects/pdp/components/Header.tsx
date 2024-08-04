@@ -1,16 +1,5 @@
-import {
-  TbBookmarkFilled,
-  TbBookmarkPlus,
-  TbChevronRight,
-} from "react-icons/tb";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  Button,
-  Stack,
-} from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import { TbBookmarkFilled, TbBookmarkPlus } from "react-icons/tb";
+import { Button, Stack } from "@chakra-ui/react";
 import { useProjectData } from "../hooks";
 import {
   useAuthorization,
@@ -19,17 +8,13 @@ import {
 } from "@/hooks/bases";
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
-import Link from "next/link";
 import { BreadCrumb } from "./BreadCrumb";
 
 export const Header = () => {
   const dispatchSelectedProject = useDispatchSelectedProjects();
   const selectedProjects = useSelectedProjects();
-  const { query } = useRouter();
 
   const project = useProjectData();
-
-  const { name } = project;
 
   const { isConnected } = useAccount();
 

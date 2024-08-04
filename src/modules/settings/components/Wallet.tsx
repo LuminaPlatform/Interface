@@ -14,7 +14,6 @@ import {
   Spinner,
   Tag,
   TagLabel,
-  TagLeftIcon,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -24,7 +23,6 @@ import {
   TbEye,
   TbEyeOff,
   TbInfoCircleFilled,
-  TbPin,
   TbPinnedFilled,
   TbPlus,
 } from "react-icons/tb";
@@ -56,7 +54,7 @@ const WalletItem = ({
         },
       })
       .then(() => {
-        setPublic((prev) => !prev);
+        setPublic((prev: boolean) => !prev);
       })
       .finally(() => {
         setLoading(false);
@@ -169,7 +167,7 @@ export const Wallet = () => {
         </Button>
       </HStack>
       <VStack width="full" rowGap="16px">
-        {wallet.map((item, index) => (
+        {wallet.map((item: any) => (
           <WalletItem
             setPinnedWalletId={setPinnedWalletId}
             pinnedWalletId={pinnedWalletId}
