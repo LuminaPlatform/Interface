@@ -50,7 +50,9 @@ export const SetSelectedProjects =
   createContext<Dispatch<SetStateAction<Project[]>>>(undefined);
 
 interface SelectedProjectProviderProps extends PropsWithChildren {}
-export const SelectedProjectProvider = ({ children }: SelectedProjectProviderProps) => {
+export const SelectedProjectProvider = ({
+  children,
+}: SelectedProjectProviderProps) => {
   const [state, setState] = useState<Array<Project>>([]);
   return (
     <SelectedProjects.Provider value={state}>
@@ -74,9 +76,9 @@ export const AuthorizationProvider = ({
 }: AuthorizationProviderProps) => {
   const [user, setUser] = useState(data);
 
-  // useEffect(() => {
-  //   setUser(data);
-  // }, [data]);
+  useEffect(() => {
+    setUser(data);
+  }, [data]);
   return (
     <Authorization.Provider value={user}>
       <SetAuthorization.Provider value={setUser}>
@@ -136,7 +138,7 @@ export const GlobalUserProvider = ({
   const userBaseData = useAuthorization();
 
   useEffect(() => {
-    if (!userData && !!userBaseData) {
+    if (!!userBaseData) {
       getUserInformation(userBaseData.id.toString()).then((data) => {
         if (!!data) {
           setState({
@@ -147,6 +149,8 @@ export const GlobalUserProvider = ({
           });
         }
       });
+    } else {
+      setState(undefined);
     }
   }, [userBaseData, userData]);
 
