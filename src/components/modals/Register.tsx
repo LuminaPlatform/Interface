@@ -26,8 +26,9 @@ import {
 import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { useEmailSignUp } from "@/hooks/auth";
+import { useEmailSignUp, usePlatformLogin } from "@/hooks/auth";
 import { useCustomToast, useDispatchModalSteps } from "@/hooks/bases";
+import { apiKeys } from "@/api/apiKeys";
 
 const ChakraForm = chakra("form");
 
@@ -42,6 +43,9 @@ export const Register = ({}: WalletModalBodyProps) => {
   const { mutate } = useEmailSignUp();
   const [showPassword, setShowPassword] = useState(false);
   const toast = useCustomToast();
+  const handleGoogleLogin = usePlatformLogin(() => {
+    dispatchSteps(STEP_MODAL.setupWizard);
+  });
 
   return (
     <ChakraForm
@@ -242,6 +246,9 @@ export const Register = ({}: WalletModalBodyProps) => {
           height="48px"
           borderRadius="33px"
           width="full"
+          onClick={() => {
+            handleGoogleLogin(apiKeys["auth"]["login"]["google"]["req"]);
+          }}
         >
           <TbBrandGoogleFilled
             color="var(--chakra-colors-primary-50)"
