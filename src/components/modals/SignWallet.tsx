@@ -1,13 +1,17 @@
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import {
   useCustomToast,
+  useDispatchAuthorization,
   useDispatchModalSteps,
+  useGlobalUserData,
   useWalletModal,
 } from "@/hooks/bases";
 import { STEP_MODAL, WalletModalBodyProps } from "@/types";
 import { Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { AxiosError } from "axios";
+import { getCookie, setCookie } from "cookies-next";
 import { motion } from "framer-motion";
 
 interface SignWalletProps extends WalletModalBodyProps {}
@@ -18,28 +22,27 @@ import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 
 export const SignWallet = ({}: SignWalletProps) => {
   const dispatchSteps = useDispatchModalSteps();
-
+  const globalUser = useGlobalUserData();
   const { data: signMessageData, signMessage } = useSignMessage();
 
   const { onClose } = useWalletModal();
   const { isConnected, address } = useAccount();
   const { disconnect } = useDisconnect();
 
-  const [signMessageApi, setSignMessageApi] = useState("");
+  const dispatchAuthorization = useDispatchAuthorization();
+
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (isConnected && !signMessageData) {
-      console.log("render");
-    }
-  }, []);
+  const connectedWallet = globalUser?.wallet?.find(
+    (wallet: any) => wallet?.address == address
+  );
 
   useEffect(() => {
-    if (!!signMessageData) {
+    if (!!signMessageData || connectedWallet?.last_verified_signature) {
       onClose();
       dispatchSteps(STEP_MODAL.wallet);
     }
-  }, [signMessageData]);
+  }, [signMessageData, connectedWallet]);
 
   const toast = useCustomToast();
 
@@ -50,11 +53,58 @@ export const SignWallet = ({}: SignWalletProps) => {
           wallet: address,
           signature: signMessageData,
         })
+        .then((res) => {
+          const accessToken = res.data.access_token;
+          setCookie(ACCESS_TOKEN_COOKIE_KEY, accessToken);
+          return axiosClient.get(apiKeys.auth.isAuthorized, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+        })
+        .then(async (res) => {
+          const userBaseInfo = res.data;
+          console.log({ userBaseInfo });
+
+          await axiosClient
+            .post(
+              apiKeys.create,
+              {
+                "0": {
+                  model_name: "Wallet",
+                  params: {
+                    address,
+                    last_verified_signature: signMessageData,
+                  },
+                  id: userBaseInfo?.id,
+                },
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`,
+                },
+              }
+            )
+            .then(() => {
+              dispatchAuthorization(userBaseInfo);
+              console.log({ globalUser });
+            });
+        })
+        .then(() => {
+          console.log({ globa: globalUser });
+
+          return;
+        })
         .catch((error: AxiosError<{ error_message: string }>) => {
+          console.log(error);
+
           return toast({
             status: "error",
             description: error.response.data.error_message,
           });
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
   }, [signMessageData]);
@@ -101,18 +151,14 @@ export const SignWallet = ({}: SignWalletProps) => {
                 axiosClient
                   .get(`${apiKeys.getSignMessage}/${address}`)
                   .then((response) => {
-                    setSignMessageApi(response.data);
+                    return response.data;
                   })
-                  .then(() => {
+                  .then((msg: string) => {
                     signMessage({
-                      message: signMessageApi,
+                      message: msg,
                       account: address,
                     });
-                  })
-                  .then(() => {
-                    console.log({ signMessageData });
-                  })
-                  .finally(() => setIsLoading(false));
+                  });
               }}
               flex={1}
               variant="primary"
