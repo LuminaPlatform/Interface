@@ -30,6 +30,7 @@ import {
   useCustomToast,
   useDispatchAuthorization,
   useDispatchModalSteps,
+  useGlobalUserData,
   useModalSteps,
   useWalletModal,
 } from "@/hooks/bases";
@@ -204,15 +205,24 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
   const step = useModalSteps();
   const dispatchSteps = useDispatchModalSteps();
 
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { data: signMessageData } = useSignMessage();
 
+  const globalUserInfo = useGlobalUserData();
+
+  const connectedWallets = globalUserInfo?.wallet?.find(
+    (wallet: any) => wallet.address === address
+  );
+
+  console.log(globalUserInfo?.wallet, address);
+
+  // Todo should fix this condition
   useEffect(() => {
-    if (isConnected && !signMessageData) {
+    if (isConnected && address && !connectedWallets?.last_verified_signature) {
       dispatchSteps(STEP_MODAL.sign);
       onOpen();
     }
-  }, [isConnected, signMessageData]);
+  }, [isConnected, signMessageData, globalUserInfo?.wallet, address]);
 
   const modalBody = useMemo(
     () => ({
