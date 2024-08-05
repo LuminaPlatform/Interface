@@ -11,6 +11,7 @@ import { Project } from "./modules/projects/types";
 import { AuthenticationData, STEP_MODAL } from "./types";
 import { getUserInformation } from "./api";
 import { useAuthorization } from "./hooks/bases";
+import { useDisconnect } from "wagmi";
 
 export const IsSidebarOpen = createContext(true);
 export const DispatchIsSidebarOpen = createContext<
@@ -136,7 +137,7 @@ export const GlobalUserProvider = ({
   }>(userData ?? undefined);
 
   const userBaseData = useAuthorization();
-
+  const { disconnect } = useDisconnect();
   useEffect(() => {
     if (!!userBaseData) {
       getUserInformation(userBaseData.id.toString()).then((data) => {
@@ -151,6 +152,7 @@ export const GlobalUserProvider = ({
       });
     } else {
       setState(undefined);
+      disconnect();
     }
   }, [userBaseData, userData]);
 
