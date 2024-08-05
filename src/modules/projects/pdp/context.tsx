@@ -12,7 +12,7 @@ interface ProjectDetailProviderProps extends PropsWithChildren {
 }
 export const ProjectDetail =
   createContext<ProjectDetailProviderProps["project"]>(undefined);
-export const ProjectDetailDispatch = createContext((arg: any) => {});
+export const ProjectDetailDispatch = createContext(undefined);
 
 export const ProjectDetailProvider = ({
   project,

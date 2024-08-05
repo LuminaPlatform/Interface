@@ -1,29 +1,25 @@
 import { ModalBase } from "@/components/ModalBase";
 import { textTruncator } from "@/utils";
 import {
-  Box,
   Button,
   Code,
   HStack,
-  Img,
   Link,
   Stack,
   Text,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
-import { UsersModal } from "./UsersModal";
-import { Avatar, AvatarText } from "@/components/AvatarText";
 import { useGlobalUserData } from "@/hooks/bases";
 import { useDispatchUserProfile, useUserProfile } from "../hooks";
 import { ACCESS_TOKEN_COOKIE_KEY, xDomain } from "@/constant";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { getCookie } from "cookies-next";
+import { useState } from "react";
+import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
+import { UsersModal } from "./UsersModal";
+import { Avatar } from "@/components/AvatarText";
 
 const ModalHeader = ({ text }: { text: string }) => (
   <Text
@@ -41,10 +37,8 @@ const ModalHeader = ({ text }: { text: string }) => (
     {text}
   </Text>
 );
-const hasBadge = true;
 
 export const UserInfo = () => {
-  const params = useParams<{ username: string }>();
   const {
     isOpen: followersIsOpen,
     onOpen: followersOnOpen,
@@ -58,7 +52,11 @@ export const UserInfo = () => {
 
   const dispatchProfile = useDispatchUserProfile();
   const userInfo = useUserProfile();
-  const [isLoading, setLoading] = useState(false);
+  const [
+    ,
+    // isLoading
+    setLoading,
+  ] = useState(false);
 
   const hasWallet = !!userInfo.wallet;
 
@@ -182,13 +180,15 @@ export const UserInfo = () => {
                         },
                         {
                           headers: {
-                            Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`,
+                            Authorization: `Bearer ${getCookie(
+                              ACCESS_TOKEN_COOKIE_KEY
+                            )}`,
                           },
                         }
                       )
                       .then((res) => {
                         const filteredFollowers = userInfo.followers.filter(
-                          (item) => item.id !== res.data[0].id
+                          (item: any) => item.id !== res.data[0].id
                         );
                         dispatchProfile({
                           ...userInfo,

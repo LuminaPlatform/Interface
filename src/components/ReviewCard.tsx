@@ -12,7 +12,6 @@ import { reviewStatuses } from "@/constant";
 import { ModalBase } from "./ModalBase";
 import { ReviewDetail } from "@/modules/reviews/components/ReviewDetail";
 import { Project, Review } from "@/modules/projects/types";
-import { useProjectData } from "@/modules/projects/pdp/hooks";
 
 interface ReviewCardProps {
   review: Review;

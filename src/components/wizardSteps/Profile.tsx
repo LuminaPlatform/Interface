@@ -7,17 +7,15 @@ import {
   GridItem,
   Img,
   Input,
-  Stack,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useForm, useFormContext, useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { WizardContentBase } from "./Base";
 import { TbCameraPlus, TbRestore } from "react-icons/tb";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { InputError } from "../InputError";
 import { SetupWizardForm } from "@/types";
-import { fileLimitation } from "@/config/fileLimitation";
 
 const ChakraForm = chakra("form");
 interface ProfileProps {

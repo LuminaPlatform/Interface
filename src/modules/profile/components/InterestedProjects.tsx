@@ -1,10 +1,6 @@
-import { Button, HStack, Text, VStack } from "@chakra-ui/react";
-import Link from "next/link";
+import { HStack, Text, VStack } from "@chakra-ui/react";
 import { useUserProfile } from "../hooks";
 
-const projects = Array(2)
-  .fill("")
-  .map((_, index) => index);
 export const InterestedProjects = () => {
   const { userProjectsCategories } = useUserProfile();
 
@@ -21,7 +17,7 @@ export const InterestedProjects = () => {
         Projects Interests
       </Text>
       <HStack gap="8px" width="full" flexWrap="wrap">
-        {userProjectsCategories?.map((item) => (
+        {userProjectsCategories?.map((item: any) => (
           <Text
             borderRadius="12px"
             color="primary.400"

@@ -7,7 +7,7 @@ interface ProjectLinkProps {
   description: string;
   count?: string;
   url: string;
-  type?: string;
+  type?: "CONTRACT_ADDRESS" | "OTHER" | "GITHUB_REPO";
 }
 
 export const ProjectLink = ({
@@ -17,7 +17,9 @@ export const ProjectLink = ({
   url,
   type,
 }: ProjectLinkProps) => {
-  const icons = useMemo(
+  const icons: {
+    [key in "CONTRACT_ADDRESS" | "OTHER" | "GITHUB_REPO"]: JSX.Element;
+  } = useMemo(
     () => ({
       CONTRACT_ADDRESS: (
         <TbMap color="var(--chakra-colors-gray-80)" fontSize="20px" />

@@ -1,5 +1,4 @@
 import { Box, HStack, Text, VStack } from "@chakra-ui/react";
-import { useState } from "react";
 import { TbChevronRight, TbConfetti, TbTrash } from "react-icons/tb";
 
 interface NotificationItemProps {
@@ -13,10 +12,10 @@ export const NotificationItem = ({
   isSeen,
   title,
   message,
-  cta,
+  // cta,
   ctaText,
 }: NotificationItemProps) => {
-  const [isSeenState, setIsSeenState] = useState(isSeen);
+  // const [isSeenState, setIsSeenState] = useState(isSeen);
   return (
     <VStack borderRadius="lg" p="12px" bg="gray.700" columnGap={2} width="full">
       <HStack justifyContent="space-between" width="full">

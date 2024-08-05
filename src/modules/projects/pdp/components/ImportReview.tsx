@@ -11,7 +11,6 @@ import {
   UseDisclosureProps,
   VStack,
 } from "@chakra-ui/react";
-import { StatusesProps } from "../types";
 import { useForm } from "react-hook-form";
 import { InputError } from "@/components/InputError";
 import { useMemo, useState } from "react";
@@ -156,7 +155,7 @@ export const ImportReview = ({ onClose }: ImportReviewProps) => {
 
   return (
     <VStack
-      onSubmit={handleSubmit((values) => {})}
+      onSubmit={handleSubmit(() => {})}
       as="form"
       rowGap="16px"
       maxWidth="600px"

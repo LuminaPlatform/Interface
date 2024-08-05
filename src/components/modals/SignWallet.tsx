@@ -12,22 +12,14 @@ import { motion } from "framer-motion";
 
 interface SignWalletProps extends WalletModalBodyProps {}
 
-import { useEffect, useRef, useState } from "react";
-import { recoverMessageAddress } from "viem";
+import { useEffect, useState } from "react";
+
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 
 export const SignWallet = ({}: SignWalletProps) => {
   const dispatchSteps = useDispatchModalSteps();
 
-  const recoveredAddress = useRef<string>();
-  const {
-    data: signMessageData,
-    error,
-    signMessage,
-    variables,
-    submittedAt,
-    ...other
-  } = useSignMessage();
+  const { data: signMessageData, signMessage } = useSignMessage();
 
   const { onClose } = useWalletModal();
   const { isConnected, address } = useAccount();
@@ -35,7 +27,6 @@ export const SignWallet = ({}: SignWalletProps) => {
 
   const [signMessageApi, setSignMessageApi] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [timestamp, setTimestamp] = useState("");
 
   useEffect(() => {
     if (isConnected && !signMessageData) {
@@ -43,6 +34,12 @@ export const SignWallet = ({}: SignWalletProps) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (!!signMessageData) {
+      onClose();
+      dispatchSteps(STEP_MODAL.wallet);
+    }
+  }, [signMessageData]);
 
   const toast = useCustomToast();
 

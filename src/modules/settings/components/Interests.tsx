@@ -1,6 +1,5 @@
 import { ModalBase } from "@/components/ModalBase";
 import {
-  Box,
   Button,
   CloseButton,
   HStack,
@@ -10,76 +9,12 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { TbPlus } from "react-icons/tb";
 import { InterestModalBody } from "../types";
 import { CategoryModal } from "./modals/CategoryModal";
 import { SettingsModalsHeader } from "./SettingsModalHeader";
-import { axiosClient } from "@/config/axios";
-import { apiKeys } from "@/api/apiKeys";
 
-const interests = [
-  {
-    id: 0,
-    title: "Metaverse",
-  },
-  {
-    id: 0,
-    title: "Lend & Borrow",
-  },
-];
-const projectData = [
-  {
-    id: 0,
-    title: "DeFi",
-  },
-  {
-    id: 1,
-    title: "DeFi1",
-  },
-  {
-    id: 2,
-    title: "DeFi2",
-  },
-  {
-    id: 3,
-    title: "DeFi3",
-  },
-  {
-    id: 4,
-    title: "DeFi4",
-  },
-  {
-    id: 5,
-    title: "DeFi5",
-  },
-];
-const peopleData = [
-  {
-    id: 0,
-    title: "DeFi",
-  },
-  {
-    id: 1,
-    title: "DeFi1",
-  },
-  {
-    id: 2,
-    title: "DeFi2",
-  },
-  {
-    id: 3,
-    title: "DeFi3",
-  },
-  {
-    id: 4,
-    title: "DeFi4",
-  },
-  {
-    id: 5,
-    title: "DeFi5",
-  },
-];
 export const Interests = () => {
   const [projects, setProjects] = useState([]);
   const [selectedPeoples, setSelectedPeoples] = useState([]);

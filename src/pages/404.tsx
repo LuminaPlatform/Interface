@@ -1,5 +1,4 @@
-import { Box, Button, Img, ImgProps, Text, VStack } from "@chakra-ui/react";
-import Link from "next/link";
+import { Button, Img, ImgProps, Text, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
 
@@ -42,8 +41,8 @@ const NotFound = () => {
           color="gray.0"
           fontWeight="500"
         >
-          Whoops! We&apos;ve searched high and low but can&apos;t find the page you&apos;re
-          looking for.
+          Whoops! We&apos;ve searched high and low but can&apos;t find the page
+          you&apos;re looking for.
         </Text>
         <Button onClick={() => router.replace("/")} variant="primary">
           Back to Home

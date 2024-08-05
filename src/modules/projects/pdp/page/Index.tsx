@@ -1,12 +1,4 @@
-import {
-  Box,
-  GridItem,
-  HStack,
-  SimpleGrid,
-  Text,
-  useDisclosure,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 import { Header } from "../components/Header";
 import { Hero } from "../components/Hero";
 import dynamic from "next/dynamic";

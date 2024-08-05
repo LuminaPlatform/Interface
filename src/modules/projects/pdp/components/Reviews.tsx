@@ -8,7 +8,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useProjectData, useProjectReviews } from "../hooks";
-import { useAuthorization, useGlobalUserData } from "@/hooks/bases";
 import { TbEdit, TbMessagePlus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
 import { ImportReview } from "./ImportReview";
@@ -16,7 +15,7 @@ import { ImportReview } from "./ImportReview";
 interface EmptyStateProps extends UseDisclosureProps {}
 const EmptyState = ({ onOpen }: EmptyStateProps) => {
   const project = useProjectData();
-  const hasAccessWriteReview = !!project.userRole.find((role) =>
+  const hasAccessWriteReview = !!project.userRole.find((role: any) =>
     role.name.includes("BETA_USER")
   );
 

@@ -1,14 +1,12 @@
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
-import { tableData } from "@/modules/projects/constant";
 import {
   ProjectDetailProvider,
   ProjectReviewsProvider,
 } from "@/modules/projects/pdp/context";
 import { Index } from "@/modules/projects/pdp/page/Index";
 import { Project, Review } from "@/modules/projects/types";
-import { FetchObject } from "@/types";
 
 const ProjectDetail = ({
   project,
@@ -23,7 +21,6 @@ const ProjectDetail = ({
   userViewpoint: any;
   userRole: any;
 }) => {
-
   return (
     <ProjectDetailProvider
       project={{ ...project, viewpoints, userViewpoint, userRole }}
@@ -107,7 +104,6 @@ export const getServerSideProps = async (ctx: any) => {
       model: "Project",
       model_id: "None",
       limit: 10,
-      orders: [],
       graph: {
         fetch_fields: [
           {
@@ -143,7 +139,6 @@ export const getServerSideProps = async (ctx: any) => {
     1: {
       model: "Project.reviews",
       model_id: projectId,
-      orders: [],
       graph: {
         fetch_fields: [
           {

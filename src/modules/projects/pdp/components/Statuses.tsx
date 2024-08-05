@@ -1,8 +1,6 @@
 import { Badge } from "@/components/Badge";
 import { reviewStatuses } from "@/constant";
-import { ReviewStatus } from "@/types";
 import { HStack } from "@chakra-ui/react";
-import { Dispatch, SetStateAction } from "react";
 import { StatusesProps } from "../types";
 
 export const Statuses = ({ status, setStatus }: StatusesProps) => {

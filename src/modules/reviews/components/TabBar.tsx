@@ -6,7 +6,6 @@ import { StringParam, useQueryParams } from "use-query-params";
 import TabBody from "./TabBody";
 import { UnAuthorized } from "./UnAuthorized";
 import { useAuthorization } from "@/hooks/bases";
-import { useRouter } from "next/router";
 
 const TabBar = () => {
   const [query, setQuery] = useQueryParams({

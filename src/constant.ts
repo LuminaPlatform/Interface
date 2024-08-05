@@ -1,10 +1,6 @@
 import {
   TbHeartFilled,
   TbMoodAngry,
-  TbMoodConfuzedFilled,
-  TbMoodHappyFilled,
-  TbMoodSadFilled,
-  TbMoodSmileFilled,
   TbThumbDownFilled,
   TbThumbUpFilled,
 } from "react-icons/tb";

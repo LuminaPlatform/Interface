@@ -8,9 +8,6 @@ import {
   useState,
 } from "react";
 import { Project } from "./modules/projects/types";
-import { useAccount } from "wagmi";
-import { ACCESS_TOKEN_COOKIE_KEY } from "./constant";
-import { getCookie } from "cookies-next";
 import { AuthenticationData, STEP_MODAL } from "./types";
 import { getUserInformation } from "./api";
 import { useAuthorization } from "./hooks/bases";
@@ -53,7 +50,9 @@ export const SetSelectedProjects =
   createContext<Dispatch<SetStateAction<Project[]>>>(undefined);
 
 interface SelectedProjectProviderProps extends PropsWithChildren {}
-export const SelectedProjectProvider = ({ children }: PropsWithChildren) => {
+export const SelectedProjectProvider = ({
+  children,
+}: SelectedProjectProviderProps) => {
   const [state, setState] = useState<Array<Project>>([]);
   return (
     <SelectedProjects.Provider value={state}>
@@ -77,9 +76,9 @@ export const AuthorizationProvider = ({
 }: AuthorizationProviderProps) => {
   const [user, setUser] = useState(data);
 
-  // useEffect(() => {
-  //   setUser(data);
-  // }, [data]);
+  useEffect(() => {
+    setUser(data);
+  }, [data]);
   return (
     <Authorization.Provider value={user}>
       <SetAuthorization.Provider value={setUser}>
@@ -139,7 +138,7 @@ export const GlobalUserProvider = ({
   const userBaseData = useAuthorization();
 
   useEffect(() => {
-    if (!userData && !!userBaseData) {
+    if (!!userBaseData) {
       getUserInformation(userBaseData.id.toString()).then((data) => {
         if (!!data) {
           setState({
@@ -150,6 +149,8 @@ export const GlobalUserProvider = ({
           });
         }
       });
+    } else {
+      setState(undefined);
     }
   }, [userBaseData, userData]);
 

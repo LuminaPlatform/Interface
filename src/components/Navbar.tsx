@@ -15,17 +15,14 @@ import {
   Popover,
   PopoverArrow,
   PopoverBody,
-  PopoverCloseButton,
   PopoverContent,
-  PopoverFooter,
-  PopoverHeader,
   PopoverTrigger,
   Portal,
   Text,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ConnectModal } from "./modals/Connect";
 import {
   useAuthorization,
@@ -39,13 +36,10 @@ import {
   TbSettings2,
   TbUserCircle,
 } from "react-icons/tb";
-import { useAccount } from "wagmi";
 import Link from "next/link";
 import { BadgeModal } from "./modals/badges/Badge";
 import { Badges } from "@/types";
 import { Logout } from "./modals/Logout";
-import { axiosClient } from "@/config/axios";
-import { apiKeys } from "@/api/apiKeys";
 import { NotificationItem } from "./NotificationItem";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -53,8 +47,6 @@ const ProfileBox = () => {
   const userData = useGlobalUserData();
   const user = userData?.user;
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const baseUserData = useAuthorization();
 
   if (!user) {
     return null;
@@ -76,7 +68,15 @@ const ProfileBox = () => {
               }
               alt="user"
             />
-            <Text color="gray.10" fontSize="md" fontWeight="200">
+            <Text
+              width="100px"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              color="gray.10"
+              fontSize="md"
+              fontWeight="200"
+            >
               {user.display_name ?? user.email}
             </Text>
           </HStack>
@@ -107,6 +107,10 @@ const ProfileBox = () => {
               color="gray.0"
               fontSize="xl"
               fontWeight="600"
+              width="full"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
             >
               {user.display_name ?? user.email}
             </Text>
@@ -250,11 +254,7 @@ const Navbar = () => {
   const [search, setSearch] = useState("");
   const [messages, setMessages] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
-  const {
-    isOpen: badgeIsOpen,
-    onClose: badgeOnClose,
-    onOpen: badgeOnOpen,
-  } = useDisclosure();
+  const { isOpen: badgeIsOpen, onClose: badgeOnClose } = useDisclosure();
 
   const { isOpen, onClose, onOpen } = useWalletModal();
 

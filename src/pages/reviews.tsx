@@ -1,14 +1,11 @@
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
-import { useDispatchAuthorization } from "@/hooks/bases";
 import { Review } from "@/modules/projects/types";
 import { ReviewsProvider } from "@/modules/reviews/context";
 import Index from "@/modules/reviews/page/Index";
 import { AuthenticationData } from "@/types";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-
+import { GetServerSidePropsContext } from "next";
 interface ReviewsProps {
   userData: AuthenticationData;
   reviews: Review[];
@@ -23,7 +20,7 @@ const Reviews = (props: ReviewsProps) => {
 
 export default Reviews;
 
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const query = ctx.query;
   const tab = query.tab;
 

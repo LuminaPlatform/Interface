@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   HStack,
   Text,
   useDisclosure,
@@ -10,10 +9,8 @@ import { UnAuthorized } from "../components/UnAuthorized";
 import { EmptyState } from "../components/EmptyState";
 import { ProjectList } from "../components/ProjectList";
 import { useMemo, useState } from "react";
-import { TbBookmarkPlus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
 import { AddProjects } from "../components/AddProjects";
-import { useAccount } from "wagmi";
 import { useAuthorization, useSelectedProjects } from "@/hooks/bases";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import { distributeTabs } from "../constants";

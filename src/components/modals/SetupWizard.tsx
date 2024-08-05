@@ -3,14 +3,9 @@ import {
   Box,
   Button,
   Stepper as ChakraStepper,
-  GridItem,
   HStack,
-  Img,
-  Link,
-  SimpleGrid,
   Stack,
   Step,
-  StepDescription,
   StepIcon,
   StepIndicator,
   StepSeparator,
@@ -21,23 +16,19 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import {
-  Dispatch,
-  PropsWithChildren,
-  SetStateAction,
-  useMemo,
-  useState,
-} from "react";
-import { ActionCard } from "../ActionCard";
-import { TbBrandXFilled, TbChevronLeft, TbChevronsLeft } from "react-icons/tb";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { TbChevronsLeft } from "react-icons/tb";
 import { useWalletModal } from "@/hooks/bases";
-import { axiosClient } from "@/config/axios";
 import { ConnectSocial } from "../wizardSteps/ConnectSocial";
 import { Profile } from "../wizardSteps/Profile";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { Interests } from "../wizardSteps/Interests";
 
-const Stepper = ({ activeStep, setActiveStep }) => {
+interface StepperProps {
+  activeStep: number;
+  setActiveStep: Dispatch<SetStateAction<number>>;
+}
+const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
   const {
     formState: { errors },
   } = useFormContext<SetupWizardForm>();
@@ -47,22 +38,22 @@ const Stepper = ({ activeStep, setActiveStep }) => {
 
   const { onClose } = useWalletModal();
 
-  const handleSubmit = {
-    0: () => {
+  const handleSubmit = [
+    () => {
       setActiveStep((prev) => prev + 1);
     },
-    1: () => {
+    () => {
       setActiveStep((prev) => prev + 1);
     },
-    2: () => {},
-  };
+    () => {},
+  ];
 
   const stepsComponent = useMemo(() => {
-    return {
-      0: <ConnectSocial setConnect={setConnect} isConnect={isConnect} />,
-      1: <Profile editMode={editMode} setEditMode={setEditMode} />,
-      2: <Interests />,
-    };
+    return [
+      <ConnectSocial key={0} setConnect={setConnect} isConnect={isConnect} />,
+      <Profile key={1} editMode={editMode} setEditMode={setEditMode} />,
+      <Interests key={2} />,
+    ];
   }, [editMode, isConnect]);
 
   return (
@@ -96,7 +87,7 @@ const Stepper = ({ activeStep, setActiveStep }) => {
               </StepIndicator>
               <Box flexShrink="0">
                 <StepTitle
-                  // @ts-expect-error
+                  // @ts-expect-error not define fontSize
                   fontSize="lg"
                   fontWeight={index === activeStep ? "700" : "400"}
                   color={index === activeStep ? "primary.50" : "gray.60"}
@@ -106,7 +97,7 @@ const Stepper = ({ activeStep, setActiveStep }) => {
               </Box>
             </VStack>
             <StepSeparator
-              // @ts-expect-error
+              // @ts-expect-error not define _horizontal
               _horizontal={{
                 alignSelf: "flex-start",
                 borderRadius: "50%",
@@ -190,7 +181,6 @@ export const SetupWizard = ({}: SetupWizardProps) => {
     index: 0,
     count: steps.length,
   });
-  const activeStepText = steps[activeStep].title;
   const methods = useForm<SetupWizardForm>({
     defaultValues: {
       profile: null,

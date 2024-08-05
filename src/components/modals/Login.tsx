@@ -25,7 +25,7 @@ import {
 import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { useEmailLogin } from "@/hooks/auth";
+import { useEmailLogin, usePlatformLogin } from "@/hooks/auth";
 import {
   useCustomToast,
   useDispatchAuthorization,
@@ -54,35 +54,9 @@ export const Login = ({}: WalletModalBodyProps) => {
   const dispatchAuthorization = useDispatchAuthorization();
   const dispatchSteps = useDispatchModalSteps();
 
-  const handleGoogleLogin = async () => {
-    axiosClient
-      .get(apiKeys["auth"]["login"]["google"]["req"])
-      .then((response) => {
-        const openedWindow = window.open(
-          response.data.url,
-          "_blank",
-          "width=500,height=600"
-        );
-        const pollTimer = window.setInterval(function () {
-          try {
-            if (openedWindow.location.href.includes("https://lumina.credit/")) {
-              window.clearInterval(pollTimer);
-              openedWindow.close();
-
-              const urlParams = new URLSearchParams(
-                openedWindow.location.search
-              );
-              const authorizationCode = urlParams.get("code");
-
-
-              window.location.href = "/welcome";
-            }
-          } catch (e) {
-            console.log("Error:", e);
-          }
-        }, 1000);
-      });
-  };
+  const handleGoogleLogin = usePlatformLogin(() => {
+    onClose();
+  });
 
   return (
     <ChakraForm
@@ -273,7 +247,9 @@ export const Login = ({}: WalletModalBodyProps) => {
           height="48px"
           borderRadius="33px"
           width="full"
-          onClick={handleGoogleLogin}
+          onClick={() => {
+            handleGoogleLogin(apiKeys["auth"]["login"]["google"]["req"]);
+          }}
         >
           <TbBrandGoogleFilled
             color="var(--chakra-colors-primary-50)"

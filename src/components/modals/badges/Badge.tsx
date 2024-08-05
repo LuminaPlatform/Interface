@@ -1,4 +1,4 @@
-import { useDisclosure, UseDisclosureProps } from "@chakra-ui/react";
+import { UseDisclosureProps } from "@chakra-ui/react";
 import { ModalBase } from "../../ModalBase";
 import { BasicBadge } from "./BasicBadge";
 import { Badges } from "@/types";

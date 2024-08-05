@@ -14,7 +14,6 @@ import {
   Td,
   Tr,
   Tbody,
-  Icon,
   Box,
   Text,
   Th,
@@ -22,7 +21,6 @@ import {
   Img,
   Link,
   FormLabel,
-  Stack,
   Flex,
 } from "@chakra-ui/react";
 import {
@@ -48,7 +46,7 @@ export const AddProjectTable = ({
 
   const data = useMemo<any>(() => {
     if (search) {
-      return tableData.filter((project) =>
+      return tableData.filter((project: any) =>
         project.name.toLowerCase().includes(search.toLowerCase())
       );
     }
@@ -127,15 +125,18 @@ export const AddProjectTable = ({
               variant="primary"
               isChecked={
                 !!selectedProjects.find(
-                  (rows) => rows.id === info.row.original.id
+                  (rows: any) => rows.id === info.row.original.id
                 )
               }
               onChange={(event) => {
                 if (event.target.checked) {
-                  setSelectedProjects((prev) => [...prev, info.row.original]);
+                  setSelectedProjects((prev: any) => [
+                    ...prev,
+                    info.row.original,
+                  ]);
                 } else {
-                  setSelectedProjects((prev) =>
-                    prev.filter((item) => item.id !== info.row.original.id)
+                  setSelectedProjects((prev: any) =>
+                    prev.filter((item: any) => item.id !== info.row.original.id)
                   );
                 }
               }}
@@ -160,7 +161,7 @@ export const AddProjectTable = ({
   });
 
   return (
-    <Flex width="full" height="480px" overflowY='auto' >
+    <Flex width="full" height="480px" overflowY="auto">
       <ChakraTable
         height="480px"
         overflowY="auto"

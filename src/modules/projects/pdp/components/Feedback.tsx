@@ -1,7 +1,5 @@
 import {
   Button,
-  Divider,
-  HStack,
   Text,
   useDisclosure,
   UseDisclosureProps,
@@ -13,7 +11,6 @@ import { TbEdit, TbMessage2Plus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
 import WriteFeedback from "./WriteFeedback";
 import { FeedbackResult } from "./FeedbackResult";
-import { useGlobalUserData } from "@/hooks/bases";
 import {
   useProjectData,
   useProjectDataDispatch,
@@ -50,7 +47,7 @@ export const Feedback = ({
       )?.name ?? undefined
   );
 
-  const hasAccessWriteReview = !!project.userRole.find((role) =>
+  const hasAccessWriteReview = !!project.userRole.find((role: any) =>
     role.name.includes("BETA_USER")
   );
 

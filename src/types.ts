@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import { IconType } from "react-icons";
 
 export enum STEP_MODAL {

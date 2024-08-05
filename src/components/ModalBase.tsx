@@ -1,5 +1,4 @@
 import {
-  Button,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -46,7 +45,7 @@ export const ModalBase = ({
           fontFamily="satoshi"
           bg="gray.900"
           padding="16px"
-          position='relative'
+          position="relative"
         >
           {modalHeader && <ModalHeader pb="0">{modalHeader}</ModalHeader>}
           {showCloseButton && (

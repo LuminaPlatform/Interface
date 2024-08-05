@@ -37,7 +37,7 @@ type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
-function commonLayout(page) {
+function commonLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 }
 export default function App({
@@ -99,12 +99,16 @@ export default function App({
     </>
   );
 }
-App.getInitialProps = async ({ ctx }) => {
+
+//TODO should fix this type
+
+App.getInitialProps = async ({ ctx }: { ctx: any }) => {
   const cookies = ctx.req?.cookies;
 
   if (!!cookies) {
     const accessToken = cookies[ACCESS_TOKEN_COOKIE_KEY];
     if (!accessToken) {
+      // @ts-expect-error fix type
       return { baseUserData: undefined };
     }
     try {
@@ -188,7 +192,9 @@ App.getInitialProps = async ({ ctx }) => {
           },
         };
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error);
+
       return { baseUserData: undefined };
     }
   }
