@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --check --ignore-path .gitignore .",
-    "format:fix": "prettier --write --ignore-path .gitignore ."
+    "format:fix": "prettier --write --ignore-path .gitignore .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@chakra-ui/next-js": "^2.2.0",
@@ -55,6 +56,7 @@
     "eslint-plugin-security": "1.4.0",
     "eslint-plugin-simple-import-sort": "7.0.0",
     "eslint-plugin-sonarjs": "0.12.0",
+    "husky": "^9.1.4",
     "prettier": "^3.3.3",
     "typescript": "^5"
   }
