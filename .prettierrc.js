@@ -1,5 +1,5 @@
-{
-  "arrowParens": "always",
+module.exports = {
+"arrowParens": "always",
   "bracketSameLine": false,
   "bracketSpacing": true,
   "semi": true,
@@ -18,4 +18,4 @@
   "tabWidth": 2,
   "useTabs": false,
   "embeddedLanguageFormatting": "auto"
-}
+};
