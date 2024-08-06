@@ -180,6 +180,18 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
             ],
           },
         },
+        4: {
+          model: "User.pined_wallet",
+          model_id: response.data.id,
+          orders: [],
+          graph: {
+            fetch_fields: [
+              {
+                name: "id",
+              },
+            ],
+          },
+        },
       });
       if (response.status === 200) {
         return {
@@ -189,6 +201,7 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
             wallet: userAllDataResponse.data[1],
             followers: userAllDataResponse.data[2],
             followings: userAllDataResponse.data[3],
+            pinnedWalletId: userAllDataResponse.data[4][0]?.id,
           },
         };
       }

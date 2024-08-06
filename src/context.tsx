@@ -109,6 +109,7 @@ export const GlobalUser = createContext<{
   wallet: any;
   followers: any;
   followings: any;
+  pinnedWalletId: any;
 }>(undefined);
 export const SetGlobalUser = createContext<
   Dispatch<
@@ -117,6 +118,7 @@ export const SetGlobalUser = createContext<
       wallet: any;
       followers: any;
       followings: any;
+      pinnedWalletId: any;
     }>
   >
 >(undefined);
@@ -134,6 +136,7 @@ export const GlobalUserProvider = ({
     wallet: any;
     followers: any;
     followings: any;
+    pinnedWalletId: any;
   }>(userData ?? undefined);
 
   const userBaseData = useAuthorization();
@@ -147,6 +150,7 @@ export const GlobalUserProvider = ({
             wallet: data[1],
             followers: data[2],
             followings: data[3],
+            pinnedWalletId: data[4][0]?.id,
           });
         }
       });

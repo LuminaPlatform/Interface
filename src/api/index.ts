@@ -66,6 +66,18 @@ export const getUserInformation = async (id: string) => {
           ],
         },
       },
+      4: {
+        model: "User.pined_wallet",
+        model_id: id,
+        orders: [],
+        graph: {
+          fetch_fields: [
+            {
+              name: "id",
+            },
+          ],
+        },
+      },
     })
     .then((response) => {
       return response.data;

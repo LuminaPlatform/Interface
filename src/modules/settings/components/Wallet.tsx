@@ -1,6 +1,8 @@
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
 import {
+  useCustomToast,
+  useDispatchGlobalUserData,
   useDispatchModalSteps,
   useGlobalUserData,
   useWalletModal,
@@ -17,8 +19,9 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { AxiosError } from "axios";
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   TbEye,
   TbEyeOff,
@@ -28,18 +31,23 @@ import {
 } from "react-icons/tb";
 
 interface WalletItemProps {
-  pinnedWalletId: number;
   wallet: any;
-  setPinnedWalletId: Dispatch<SetStateAction<number>>;
 }
-const WalletItem = ({
-  pinnedWalletId,
-  setPinnedWalletId,
-  wallet,
-}: WalletItemProps) => {
+const WalletItem = ({ wallet }: WalletItemProps) => {
   const [isPublic, setPublic] = useState(wallet.public);
+
   const [isHover, setHover] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const [pinLoading, setPinLoading] = useState(false);
+
+  const globalUser = useGlobalUserData();
+  const dispatchGlobalUser = useDispatchGlobalUserData();
+
+  const toast = useCustomToast();
+
+  const isPinned = useMemo(() => {
+    return globalUser.pinnedWalletId === wallet.id;
+  }, [globalUser.pinnedWalletId]);
 
   const handleStatusChange = () => {
     setLoading(true);
@@ -50,7 +58,7 @@ const WalletItem = ({
           params: {
             public: !isPublic,
           },
-          id: 1,
+          id: globalUser?.user?.id,
         },
       })
       .then(() => {
@@ -86,19 +94,50 @@ const WalletItem = ({
       >
         <Box width="24px">
           <AnimatePresence>
-            {(isHover || pinnedWalletId === wallet.id) && (
+            {(isHover || isPinned) && (
               <Box
                 initial={{ opacity: 0 }}
                 exit={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 as={motion.div}
               >
-                <TbPinnedFilled
-                  fontSize="24px"
-                  onClick={() => {
-                    setPinnedWalletId(wallet.id);
-                  }}
-                />
+                {pinLoading ? (
+                  <Spinner size="xs" color="primary.300" />
+                ) : (
+                  <TbPinnedFilled
+                    fontSize="24px"
+                    onClick={() => {
+                      setPinLoading(true);
+                      axiosClient
+                        .post(apiKeys.update, {
+                          "0": {
+                            model_name: "User",
+                            params: {
+                              pined_wallet_id: isPinned ? null : wallet?.id,
+                            },
+                            id: globalUser?.user?.id,
+                          },
+                        })
+                        .then(() => {
+                          dispatchGlobalUser({
+                            ...globalUser,
+                            pinnedWalletId: isPinned ? null : wallet?.id,
+                          });
+                        })
+                        .catch(
+                          (error: AxiosError<{ error_message: string }>) => {
+                            toast({
+                              status: "error",
+                              description: error.response.data.error_message,
+                            });
+                          }
+                        )
+                        .finally(() => {
+                          setPinLoading(false);
+                        });
+                    }}
+                  />
+                )}
               </Box>
             )}
           </AnimatePresence>
@@ -138,8 +177,9 @@ const WalletItem = ({
 };
 
 export const Wallet = () => {
-  const [pinnedWalletId, setPinnedWalletId] = useState(undefined);
-  const { wallet } = useGlobalUserData();
+  const globalUser = useGlobalUserData();
+  const wallet = globalUser?.wallet;
+
   const { onOpen } = useWalletModal();
   const dispatch = useDispatchModalSteps();
 
@@ -168,12 +208,7 @@ export const Wallet = () => {
       </HStack>
       <VStack width="full" rowGap="16px">
         {wallet.map((item: any) => (
-          <WalletItem
-            setPinnedWalletId={setPinnedWalletId}
-            pinnedWalletId={pinnedWalletId}
-            key={item.id}
-            wallet={item}
-          />
+          <WalletItem key={item.id} wallet={item} />
         ))}
       </VStack>
     </VStack>
