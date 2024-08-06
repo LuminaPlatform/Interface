@@ -17,29 +17,30 @@ interface SettingsProps {
   profileImage: any;
 }
 const Settings = ({ user, profileImage }: SettingsProps) => {
-  const userBaseData = useAuthorization();
-  const userInfo = useGlobalUserData();
-  const dispatchUserInfo = useDispatchGlobalUserData();
-  const {
-    0: [userData],
-    1: wallet,
-  } = user;
+  // const userBaseData = useAuthorization();
+  // const userInfo = useGlobalUserData();
+  // const dispatchUserInfo = useDispatchGlobalUserData();
+  // const {
+  //   0: [userData],
+  //   1: wallet,
+  // } = user;
 
-  const router = useRouter();
+  // const router = useRouter();
 
-  useEffect(() => {
-    if (!userInfo && !!userBaseData) {
-      dispatchUserInfo({
-        user: userData,
-        wallet,
-        // TODO shoud get from api
-        followers: [],
-        followings: [],
-      });
-    } else if (!userBaseData) {
-      router.replace("/projects");
-    }
-  }, [userBaseData]);
+  // useEffect(() => {
+  //   if (!userInfo && !!userBaseData) {
+  //     dispatchUserInfo({
+  //       user: userData,
+  //       wallet,
+  //       // TODO shoud get from api
+  //       followers: [],
+  //       followings: [],
+  //       pinnedWalletId: null,
+  //     });
+  //   } else if (!userBaseData) {
+  //     router.replace("/projects");
+  //   }
+  // }, [userBaseData]);
   return <Index profileImage={profileImage} />;
 };
 
