@@ -4,11 +4,13 @@ import {
   AlertIcon,
   Box,
   Button,
+  Collapse,
   HStack,
   Img,
   Input,
   InputGroup,
   InputLeftElement,
+  InputRightElement,
   Menu,
   MenuButton,
   MenuList,
@@ -18,6 +20,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Portal,
+  Stack,
   Text,
   useDisclosure,
   VStack,
@@ -31,10 +34,15 @@ import {
 } from "@/hooks/bases";
 import {
   TbBell,
+  TbChevronRight,
+  TbFiles,
   TbLogout,
+  TbMessage,
   TbSearch,
   TbSettings2,
   TbUserCircle,
+  TbUsers,
+  TbX,
 } from "react-icons/tb";
 import Link from "next/link";
 import { BadgeModal } from "./modals/badges/Badge";
@@ -42,6 +50,9 @@ import { Badges } from "@/types";
 import { Logout } from "./modals/Logout";
 import { NotificationItem } from "./NotificationItem";
 import { AnimatePresence, motion } from "framer-motion";
+import PeopleCard from "./globalSearch/PeopleCard";
+import ProjectCard from "./globalSearch/ProjectCard";
+import ReviewCard from "./globalSearch/ReviewCard";
 
 const ProfileBox = () => {
   const userData = useGlobalUserData();
@@ -282,40 +293,204 @@ const Navbar = () => {
         columnGap="24px"
         width="full"
       >
-        <InputGroup
-          display={{ base: "none", md: "inline-block" }}
-          width="311px"
-          height="40ox"
-        >
-          <InputLeftElement>
-            <TbSearch size={24} color="var(--chakra-colors-gray-100)" />
-          </InputLeftElement>
-          <Input
-            px="16px"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            bg="gray.600"
-            border="1px solid"
-            borderColor="gray.200"
-            _hover={{
-              borderColor: "gray.300",
-            }}
-            _active={{ borderColor: "gray.400" }}
-            _focus={{ borderColor: "gray.400" }}
-            boxShadow="none !important"
-            outline="none"
-            fontFamily="satoshi"
-            fontSize="md"
-            color="gray.100"
-            fontWeight="regular"
-            _placeholder={{
-              fontWeight: "regular",
-              color: "gray.100",
-            }}
-            borderRadius="27px"
-            placeholder="Search"
-          />
-        </InputGroup>
+        <VStack position="relative">
+          <InputGroup
+            display={{ base: "none", md: "inline-block" }}
+            width="395px"
+            height="40ox"
+          >
+            <InputLeftElement>
+              <TbSearch
+                size={24}
+                color={
+                  search == ""
+                    ? "var(--chakra-colors-gray-100)"
+                    : "var(--chakra-colors-gray-40)"
+                }
+              />
+            </InputLeftElement>
+            <Input
+              px="16px"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              bg="gray.700"
+              border={search == "" ? "1px solid" : 0}
+              borderColor="gray.200"
+              _hover={{
+                borderColor: "gray.300",
+              }}
+              _active={{ borderColor: "gray.400" }}
+              _focus={{ borderColor: "gray.400" }}
+              boxShadow="none !important"
+              outline="none"
+              fontFamily="satoshi"
+              fontSize="md"
+              color="gray.20"
+              fontWeight="regular"
+              _placeholder={{
+                fontWeight: "regular",
+                color: "gray.100",
+              }}
+              borderRadius="27px"
+              borderBottomRadius={search == "" ? "27px" : "0"}
+              placeholder="Search"
+            />
+            {search != "" && (
+              <InputRightElement
+                onClick={() => {
+                  setSearch("");
+                }}
+              >
+                <TbX size={20} color="var(--chakra-colors-gray-80)" />
+              </InputRightElement>
+            )}
+          </InputGroup>
+
+          {search != "" && (
+            <Box w="90%" h="1px" bg="gray.400" mt="-8px" zIndex="300" />
+          )}
+
+          <Collapse in={search != ""}>
+            <VStack
+              width="395px"
+              maxH="580px"
+              bg="gray.700"
+              zIndex="200"
+              position="absolute"
+              mt="-9px"
+              left="0"
+              borderBottomRadius="27px"
+              p="16px"
+              pt="12px"
+              overflowY="auto"
+              pr="12px"
+              css={{
+                "&::-webkit-scrollbar": {
+                  width: "4px",
+                  height: "50px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "rgba(67, 67, 70, 1)",
+                  borderRadius: "8px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  backgroundColor: "transparent",
+                },
+              }}
+              boxSizing="border-box"
+            >
+              <VStack w="100%" gap="16px">
+                <VStack w="100%" gap="12px" alignItems={"start"}>
+                  <HStack w="100%" justifyContent="space-between">
+                    <HStack gap="6px">
+                      <TbUsers color="var(--chakra-colors-gray-80)" />
+                      <Text color="gray.80" fontSize="12px" fontWeight="700">
+                        People
+                      </Text>
+                    </HStack>
+                    <Link href="">
+                      <HStack gap="4px" mr="-4px">
+                        <Text color="gray.60" fontSize="12px">
+                          Show All
+                        </Text>
+                        <TbChevronRight color="var(--chakra-colors-gray-60)" />
+                      </HStack>
+                    </Link>
+                  </HStack>
+
+                  <HStack
+                    w={"100%"}
+                    gap="8px"
+                    overflow="auto"
+                    whiteSpace={"nowrap"}
+                    pb={"4px"}
+                  >
+                    <PeopleCard name="payam" />
+                    <PeopleCard name="haj popol" />
+                  </HStack>
+                </VStack>
+
+                <Box w="100%" h="1px" bg="gray.400" zIndex="300" />
+
+                <VStack w="100%" gap="12px" alignItems={"start"}>
+                  <HStack w="100%" justifyContent="space-between">
+                    <HStack gap="6px">
+                      <TbFiles color="var(--chakra-colors-gray-80)" />
+                      <Text color="gray.80" fontSize="12px" fontWeight="700">
+                        Projects
+                      </Text>
+                    </HStack>
+                    <Link href="">
+                      <HStack gap="4px" mr="-4px">
+                        <Text color="gray.60" fontSize="12px" fontWeight="700">
+                          Show All
+                        </Text>
+                        <TbChevronRight color="var(--chakra-colors-gray-60)" />
+                      </HStack>
+                    </Link>
+                  </HStack>
+
+                  <HStack
+                    w={"100%"}
+                    gap="8px"
+                    overflow="auto"
+                    whiteSpace={"nowrap"}
+                    pb={"4px"}
+                  >
+                    <ProjectCard name="Protocol Guild" />
+                    <ProjectCard name="Solidity" />
+                  </HStack>
+                </VStack>
+
+                <Box w="100%" h="1px" bg="gray.400" zIndex="300" />
+                <VStack w="100%" gap="12px" alignItems={"start"}>
+                  <HStack w="100%" justifyContent="space-between">
+                    <HStack gap="6px">
+                      <TbMessage color="var(--chakra-colors-gray-80)" />
+                      <Text color="gray.80" fontSize="12px" fontWeight="700">
+                        Reviews
+                      </Text>
+                    </HStack>
+                    <Link href="">
+                      <HStack gap="4px" mr="-4px">
+                        <Text color="gray.60" fontSize="12px" fontWeight="700">
+                          Show All
+                        </Text>
+                        <TbChevronRight color="var(--chakra-colors-gray-60)" />
+                      </HStack>
+                    </Link>
+                  </HStack>
+                  <VStack w="100%" gap="12px">
+                    <ReviewCard
+                      title="Preview Title"
+                      text={
+                        "Reprehenderit eu sint veniam eu esse. Do non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. "
+                      }
+                      date="2024-02-26, 14:05"
+                      name="NickName"
+                    />
+                    <ReviewCard
+                      title="Preview Title"
+                      text={
+                        "Reprehenderit eu sint veniam eu esse. Do non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. "
+                      }
+                      date="2024-02-26, 14:05"
+                      name="NickName"
+                    />
+                    <ReviewCard
+                      title="Preview Title"
+                      text={
+                        "Reprehenderit eu sint veniam eu esse. Do non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. "
+                      }
+                      date="2024-02-26, 14:05"
+                      name="NickName"
+                    />
+                  </VStack>
+                </VStack>
+              </VStack>
+            </VStack>
+          </Collapse>
+        </VStack>
         {!!authorization && (
           <Box cursor="pointer" onClick={() => {}} position="relative">
             {true && (
