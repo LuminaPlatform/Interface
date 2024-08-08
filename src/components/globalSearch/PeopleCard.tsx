@@ -1,4 +1,4 @@
-import { HStack, Img, Stack, Text } from "@chakra-ui/react";
+import { HStack, Img, Text } from "@chakra-ui/react";
 import React from "react";
 
 interface PeopleCardProps {
