@@ -8,7 +8,7 @@ export enum STEP_MODAL {
   "connectors" = "connectors",
   "setupWizard" = "setupWizard",
   "sign" = "sign",
-  "verified" = "verified",
+  "verified" = "verified"
 }
 
 export interface WalletModalBodyProps {}
@@ -49,7 +49,7 @@ export type SetupWizardForm = {
 export enum Badges {
   "BASE" = "BASE",
   "USER" = "USER",
-  "HOLDER" = "HOLDER",
+  "HOLDER" = "HOLDER"
 }
 
 export type FetchObject = {
@@ -58,9 +58,9 @@ export type FetchObject = {
   limit: number;
   orders: [];
   graph: {
-    fetch_fields: {}[];
+    fetch_fields: any;
   };
-  condition: {};
+  condition: any;
 };
 
 export type AuthenticationData = {

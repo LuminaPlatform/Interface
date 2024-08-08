@@ -6,10 +6,10 @@ import {
   Stack,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
-import { useProjectData } from "../../hooks";
 import { TbLink } from "react-icons/tb";
+import { useProjectData } from "../../hooks";
 import { Feedback } from "../Feedback";
 
 export const ProjectReviewDetail = () => {

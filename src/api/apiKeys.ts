@@ -3,27 +3,27 @@ export const apiKeys = {
     login: {
       google: {
         req: "/auth/login/google/request",
-        cb: "/auth/login/google",
+        cb: "/auth/login/google"
       },
       twitter: "",
       email: "/auth/login/email",
-      wallet: "/auth/login/wallet",
+      wallet: "/auth/login/wallet"
     },
     signup: {
       google: "",
       twitter: "",
-      email: "/auth/signup/email/request",
+      email: "/auth/signup/email/request"
     },
     isAuthorized: "/auth/me",
     otp: "/auth/signup/email/verify",
     wallet: {
-      add: "/auth/wallet/add",
+      add: "/auth/wallet/add"
     },
 
     resetPassword: {
       verify: "/auth/password/reset/verify",
-      otp: "/auth/password/reset/request",
-    },
+      otp: "/auth/password/reset/request"
+    }
   },
   fetch: "/read/fetch",
   viewpoint: "/read/viewpoints",
@@ -34,6 +34,6 @@ export const apiKeys = {
   file: "/file/file",
   relation: {
     remove: "/remove-relations",
-    add: "/add-relations",
-  },
+    add: "/add-relations"
+  }
 };

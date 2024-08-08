@@ -5,7 +5,7 @@ interface NotificationItemProps {
   isSeen: boolean;
   title: string;
   message: string;
-  cta?: () => void;
+  // cta?: () => void;
   ctaText?: string;
 }
 export const NotificationItem = ({
@@ -13,7 +13,7 @@ export const NotificationItem = ({
   title,
   message,
   // cta,
-  ctaText,
+  ctaText
 }: NotificationItemProps) => {
   // const [isSeenState, setIsSeenState] = useState(isSeen);
   return (

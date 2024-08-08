@@ -1,4 +1,3 @@
-
 export type settingsFormType = {
   profile: FileList[0];
   username: string;
@@ -11,11 +10,11 @@ export enum SettingsModalBody {
   emailOTP = "emailOTP",
   setPassword = "setPassword",
   changePassword = "changePassword",
-  passwordOTP = "passwordOTP",
+  passwordOTP = "passwordOTP"
 }
 export enum InterestModalBody {
   projects = "projects",
-  people = "people",
+  people = "people"
 }
 
 export type SettingsModalsForm = {

@@ -3,20 +3,18 @@ import { axiosClient } from "@/config/axios";
 import {
   useCustomToast,
   useDispatchModalSteps,
-  useWalletModal,
+  useWalletModal
 } from "@/hooks/bases";
-import { STEP_MODAL, WalletModalBodyProps } from "@/types";
+import { STEP_MODAL } from "@/types";
 import { Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { motion } from "framer-motion";
-
-interface SignWalletProps extends WalletModalBodyProps {}
 
 import { useEffect, useState } from "react";
 
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 
-export const SignWallet = ({}: SignWalletProps) => {
+export const SignWallet = () => {
   const dispatchSteps = useDispatchModalSteps();
 
   const { data: signMessageData, signMessage } = useSignMessage();
@@ -53,7 +51,7 @@ export const SignWallet = ({}: SignWalletProps) => {
   }, [isConnected]);
 
   useEffect(() => {
-    if (!!signMessageData) {
+    if (signMessageData) {
       onClose();
       dispatchSteps(STEP_MODAL.wallet);
     }
@@ -66,12 +64,12 @@ export const SignWallet = ({}: SignWalletProps) => {
       axiosClient
         .post(apiKeys.auth.login.wallet, {
           wallet: address,
-          signature: signMessageData,
+          signature: signMessageData
         })
         .catch((error: AxiosError<{ error_message: string }>) => {
           return toast({
             status: "error",
-            description: error.response.data.error_message,
+            description: error.response.data.error_message
           });
         });
     }
@@ -81,7 +79,7 @@ export const SignWallet = ({}: SignWalletProps) => {
     <VStack
       as={motion.div}
       exit={{
-        opacity: 0,
+        opacity: 0
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -117,7 +115,7 @@ export const SignWallet = ({}: SignWalletProps) => {
               onClick={() => {
                 signMessage({
                   message: signMessageApi,
-                  account: address,
+                  account: address
                 });
               }}
               flex={1}

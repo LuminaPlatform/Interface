@@ -3,12 +3,12 @@ import {
   HStack,
   Text,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
-import { ModalBase } from "../ModalBase";
-import { ModalHeader } from "../ModalHeader";
 import { useDispatchModalSteps, useLogout } from "@/hooks/bases";
 import { STEP_MODAL } from "@/types";
+import { ModalBase } from "../ModalBase";
+import { ModalHeader } from "../ModalHeader";
 
 interface LogoutBodyProps {
   onClose: UseDisclosureProps["onClose"];
@@ -42,7 +42,7 @@ const LogoutBody = ({ onClose }: LogoutBodyProps) => {
     </VStack>
   );
 };
-interface LogoutProps extends UseDisclosureProps {}
+type LogoutProps = UseDisclosureProps;
 export const Logout = ({ isOpen, onClose }: LogoutProps) => {
   return (
     <ModalBase

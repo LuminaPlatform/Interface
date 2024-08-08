@@ -1,7 +1,7 @@
 import { chakra, Text, VStack } from "@chakra-ui/react";
-import { UserInfoEditable } from "../components/UserInfoEditable";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { UserInfoEditable } from "../components/UserInfoEditable";
 import { Wallet } from "../components/Wallet";
 import { AccountSecurity } from "../components/AccountSecurity";
 import { Interests } from "../components/Interests";
@@ -19,8 +19,8 @@ export const Index = ({ profileImage }: SettingsProps) => {
   const { ...methods } = useForm<settingsFormType>({
     mode: "onChange",
     defaultValues: {
-      profile: null,
-    },
+      profile: null
+    }
   });
 
   return (

@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
-import { WizardContentBase } from "./Base";
 import { GridItem, HStack, Img, Link, Text, VStack } from "@chakra-ui/react";
-import { ActionCard } from "../ActionCard";
 import { TbBrandXFilled } from "react-icons/tb";
+import { WizardContentBase } from "./Base";
+import { ActionCard } from "../ActionCard";
 
 interface ConnectSocialProps {
   isConnect: boolean;
@@ -10,7 +10,7 @@ interface ConnectSocialProps {
 }
 export const ConnectSocial = ({
   isConnect,
-  setConnect,
+  setConnect
 }: ConnectSocialProps) => {
   return (
     <WizardContentBase>
@@ -58,8 +58,8 @@ export const ConnectSocial = ({
               handleClick: () => {
                 setConnect(true);
               },
-              isConnect: isConnect,
-              showConnect: true,
+              isConnect,
+              showConnect: true
             }}
           />
         </VStack>

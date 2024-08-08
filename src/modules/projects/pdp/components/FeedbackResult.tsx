@@ -7,7 +7,7 @@ import { useProjectData } from "../hooks";
 export const FeedbackResult = ({
   hasAccessWriteReview,
   setStatus,
-  status,
+  status
 }: {
   status: string;
   hasAccessWriteReview: boolean;
@@ -38,7 +38,7 @@ export const FeedbackResult = ({
             cursor: "pointer",
             onClick: () => {
               setStatus(result.name);
-            },
+            }
           })}
         >
           <Box
@@ -64,15 +64,15 @@ export const FeedbackResult = ({
               width: `${percentageCalculator(+viewpoints[result.name])}%`,
               height: "full",
               bg: `${result.colorScheme}.300`,
-              zIndex: 0,
+              zIndex: 0
             }}
             {...((!hasAccessWriteReview || status === result.name) && {
-              outlineColor: `${result.colorScheme}.300`,
+              outlineColor: `${result.colorScheme}.300`
             })}
             {...(hasAccessWriteReview && {
               _hover: {
-                outlineColor: `${result.colorScheme}.300`,
-              },
+                outlineColor: `${result.colorScheme}.300`
+              }
             })}
           >
             <Text

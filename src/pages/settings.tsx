@@ -5,7 +5,7 @@ import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import {
   useAuthorization,
   useDispatchGlobalUserData,
-  useGlobalUserData,
+  useGlobalUserData
 } from "@/hooks/bases";
 import { Index } from "@/modules/settings/page/Index";
 import { GetServerSidePropsContext } from "next";
@@ -22,7 +22,7 @@ const Settings = ({ user, profileImage }: SettingsProps) => {
   const dispatchUserInfo = useDispatchGlobalUserData();
   const {
     0: [userData],
-    1: wallet,
+    1: wallet
   } = user;
 
   const router = useRouter();
@@ -34,7 +34,7 @@ const Settings = ({ user, profileImage }: SettingsProps) => {
         wallet,
         // TODO shoud get from api
         followers: [],
-        followings: [],
+        followings: []
       });
     } else if (!userBaseData) {
       router.replace("/projects");
@@ -51,15 +51,15 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       redirect: {
         permanent: false,
-        destination: "/projects",
-      },
+        destination: "/projects"
+      }
     };
   }
   try {
     const userBaseData = await axiosClient.get(apiKeys.auth.isAuthorized, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
     const userInformation = await getUserInformation(userBaseData.data.id);
 
@@ -72,11 +72,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           graph: {
             fetch_fields: [
               {
-                name: "*",
-              },
-            ],
-          },
-        },
+                name: "*"
+              }
+            ]
+          }
+        }
       })
       .then((res) => {
         return res.data[0][0] ?? null;
@@ -85,21 +85,19 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       return {
         redirect: {
           permanent: false,
-          destination: "/projects",
-        },
+          destination: "/projects"
+        }
       };
     }
     return {
-      props: { user: userInformation, profileImage },
+      props: { user: userInformation, profileImage }
     };
   } catch (error) {
-    console.log(error);
-
     return {
       redirect: {
         permanent: false,
-        destination: "/projects",
-      },
+        destination: "/projects"
+      }
     };
   }
 };

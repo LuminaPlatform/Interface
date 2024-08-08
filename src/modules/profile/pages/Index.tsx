@@ -1,13 +1,13 @@
 import { VStack } from "@chakra-ui/react";
-import { UserInfo } from "../components/UserInfo";
-import { InterestedProjects } from "../components/InterestedProjects";
-import { UserActivities } from "../components/UserActivities";
-import { useDispatchUserProfile, useUserProfile } from "../hooks";
 import { useRouter } from "next/router";
 import { useAuthorization, useGlobalUserData } from "@/hooks/bases";
 import { useEffect } from "react";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
+import { useDispatchUserProfile, useUserProfile } from "../hooks";
+import { UserActivities } from "../components/UserActivities";
+import { InterestedProjects } from "../components/InterestedProjects";
+import { UserInfo } from "../components/UserInfo";
 
 export const Index = () => {
   const { userProjectsCategories } = useUserProfile();
@@ -18,7 +18,7 @@ export const Index = () => {
   const profileDispatch = useDispatchUserProfile();
   const userProfile = useUserProfile();
   useEffect(() => {
-    if (!!selfUserData) {
+    if (selfUserData) {
       axiosClient
         .post(apiKeys.fetch, {
           0: {
@@ -28,17 +28,17 @@ export const Index = () => {
             graph: {
               fetch_fields: [
                 {
-                  name: "*",
-                },
-              ],
+                  name: "*"
+                }
+              ]
             },
             condition: {
               field: "id",
               operator: "EQ",
               value: query?.userId,
-              __type__: "SimpleFetchCondition",
-            },
-          },
+              __type__: "SimpleFetchCondition"
+            }
+          }
         })
         .then((res) => {
           const id = res.data[0][0]?.id;
@@ -46,7 +46,7 @@ export const Index = () => {
 
           profileDispatch({
             ...userProfile,
-            isCurrentProfileFollowed: isFollowed,
+            isCurrentProfileFollowed: isFollowed
           });
         });
     }

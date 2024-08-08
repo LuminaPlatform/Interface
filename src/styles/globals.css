@@ -7,5 +7,5 @@
 
 #nprogress .bar {
   background: var(--chakra-colors-primary-300) !important;
-  height:3px !important
-  }
+  height: 3px !important;
+}
