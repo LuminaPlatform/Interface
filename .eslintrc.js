@@ -39,6 +39,13 @@ module.exports = {
   ],
 
   rules: {
+    "sonarjs/no-identical-functions": "warn",
+    "sonarjs/no-collapsible-if": "warn",
+    "sonarjs/cognitive-complexity": "warn",
+    "max-classes-per-file": "warn",
+    "sonarjs/no-duplicate-string": "off",
+    "react/prop-types": "off",
+    "react/require-default-props": "off",
     "no-console": "error",
     "no-extra-boolean-cast": "warn",
     "@typescript-eslint/no-empty-function": "off",
