@@ -47,7 +47,7 @@ export enum VIEW_POINT {
   "ADVOCATE" = "ADVOCATE",
   "ABSTAINER" = "ABSTAINER",
   "OPPOSER" = "OPPOSER",
-  "USER" = "USER",
+  "USER" = "USER"
 }
 
 export type Review = {

@@ -1,7 +1,6 @@
 import { getUserInformation } from "@/api";
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
-import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { UserProfileProvider } from "@/modules/profile/context";
 import { Index } from "@/modules/profile/pages/Index";
 import { GetServerSidePropsContext } from "next";
@@ -21,7 +20,7 @@ const Profile = ({
   activities,
   userProjectsCategories,
   followers,
-  followings,
+  followings
 }: ProfileProps) => {
   return (
     <UserProfileProvider
@@ -31,7 +30,7 @@ const Profile = ({
         activities,
         userProjectsCategories,
         followers,
-        followings,
+        followings
       }}
     >
       <Index />
@@ -41,20 +40,11 @@ const Profile = ({
 export default Profile;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const params = ctx.params;
+  const { params } = ctx;
   const userId = params.userId as string;
-  const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
 
-  const userBaseInfo = accessToken
-    ? await axiosClient.get(apiKeys.auth.isAuthorized, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-    : null;
-  const selfUserData = (await userBaseInfo?.data) ?? null;
   const fetchPlan = await axiosClient
-    .post(apiKeys["fetch"], {
+    .post(apiKeys.fetch, {
       0: {
         model: "Review",
         model_id: "None",
@@ -62,61 +52,58 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         graph: {
           fetch_fields: [
             {
-              name: "*",
+              name: "*"
             },
             {
               name: "project",
               graph: {
                 fetch_fields: [
                   {
-                    name: "*",
-                  },
-                ],
-              },
+                    name: "*"
+                  }
+                ]
+              }
             },
             {
               name: "files",
               graph: {
                 fetch_fields: [
                   {
-                    name: "*",
-                  },
-                ],
-              },
+                    name: "*"
+                  }
+                ]
+              }
             },
             {
               name: "user",
               graph: {
                 fetch_fields: [
                   {
-                    name: "display_name",
+                    name: "display_name"
                   },
                   {
-                    name: "id",
+                    name: "id"
                   },
                   {
-                    name: "profile_id",
-                  },
-                ],
-              },
-            },
-          ],
+                    name: "profile_id"
+                  }
+                ]
+              }
+            }
+          ]
         },
         condition: {
           field: "user_id",
           operator: "EQ",
           value: userId,
-          __type__: "SimpleFetchCondition",
-        },
-      },
+          __type__: "SimpleFetchCondition"
+        }
+      }
     })
     .then((response) => response.data);
 
   const userActivities = await fetchPlan[0];
   const userProfileData = await getUserInformation(userId);
-
-  if (!!selfUserData) {
-  }
 
   const followers = await axiosClient
     .post(apiKeys.fetch, {
@@ -127,11 +114,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         graph: {
           fetch_fields: [
             {
-              name: "*",
-            },
-          ],
-        },
-      },
+              name: "*"
+            }
+          ]
+        }
+      }
     })
     .then((res) => {
       return res.data[0];
@@ -145,11 +132,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         graph: {
           fetch_fields: [
             {
-              name: "*",
-            },
-          ],
-        },
-      },
+              name: "*"
+            }
+          ]
+        }
+      }
     })
     .then((res) => {
       return res.data[0];
@@ -163,16 +150,16 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         graph: {
           fetch_fields: [
             {
-              name: "*",
-            },
-          ],
-        },
-      },
+              name: "*"
+            }
+          ]
+        }
+      }
     })
     .then((res) => res.data[0]);
   if (!userProfileData) {
     return {
-      notFound: true,
+      notFound: true
     };
   }
   try {
@@ -183,11 +170,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         activities: userActivities,
         userProjectsCategories,
         followers,
-        followings,
-      },
+        followings
+      }
     };
   } catch (error: any) {
-    console.log(error);
     return {
       props: {
         user: userProfileData[0][0],
@@ -195,8 +181,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         activities: userActivities,
         userProjectsCategories,
         followers,
-        followings,
-      },
+        followings
+      }
     };
   }
 };

@@ -3,7 +3,7 @@ import { axiosClient } from "@/config/axios";
 import {
   useDispatchModalSteps,
   useGlobalUserData,
-  useWalletModal,
+  useWalletModal
 } from "@/hooks/bases";
 import { STEP_MODAL } from "@/types";
 import { textTruncator } from "@/utils";
@@ -15,7 +15,7 @@ import {
   Tag,
   TagLabel,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -24,7 +24,7 @@ import {
   TbEyeOff,
   TbInfoCircleFilled,
   TbPinnedFilled,
-  TbPlus,
+  TbPlus
 } from "react-icons/tb";
 
 interface WalletItemProps {
@@ -35,7 +35,7 @@ interface WalletItemProps {
 const WalletItem = ({
   pinnedWalletId,
   setPinnedWalletId,
-  wallet,
+  wallet
 }: WalletItemProps) => {
   const [isPublic, setPublic] = useState(wallet.public);
   const [isHover, setHover] = useState(false);
@@ -48,10 +48,10 @@ const WalletItem = ({
         0: {
           model_name: "Wallet",
           params: {
-            public: !isPublic,
+            public: !isPublic
           },
-          id: 1,
-        },
+          id: 1
+        }
       })
       .then(() => {
         setPublic((prev: boolean) => !prev);
@@ -71,7 +71,7 @@ const WalletItem = ({
       borderRadius="12px"
       justifyContent="space-between"
       _hover={{
-        bg: "#00000040",
+        bg: "#00000040"
       }}
     >
       <HStack

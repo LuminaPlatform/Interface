@@ -6,14 +6,14 @@ import {
   InputGroup,
   InputLeftElement,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { TbMail } from "react-icons/tb";
-import { SettingsModalFooter } from "../EmailFooter";
 import { useFormContext } from "react-hook-form";
 import { InputError } from "@/components/InputError";
-import { SettingsModalBody, SettingsModalsForm } from "../../types";
 import { Dispatch, SetStateAction, useState } from "react";
+import { SettingsModalBody, SettingsModalsForm } from "../../types";
+import { SettingsModalFooter } from "../EmailFooter";
 
 interface EmailVerifyModalProps extends UseDisclosureProps {
   setModalBody: Dispatch<SetStateAction<SettingsModalBody>>;
@@ -21,13 +21,13 @@ interface EmailVerifyModalProps extends UseDisclosureProps {
 
 const ChakraForm = chakra("form");
 export const EmailVerifyModal = ({
-  onClose,
+  onClose
   // setModalBody,
 }: EmailVerifyModalProps) => {
   const {
     formState: { errors },
     handleSubmit,
-    register,
+    register
   } = useFormContext<SettingsModalsForm>();
 
   const [isLoading] = useState(false);
@@ -51,12 +51,12 @@ export const EmailVerifyModal = ({
             {...register("email", {
               required: {
                 value: true,
-                message: "Email is a required field",
+                message: "Email is a required field"
               },
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Enter a valid Email",
-              },
+                message: "Enter a valid Email"
+              }
             })}
           />
         </InputGroup>

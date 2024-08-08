@@ -1,11 +1,11 @@
 import { Button, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
-import { AddProjectTable } from "./AddProjectTable";
-import { ProjectSearch } from "./ProjectSearch";
 import {
   useDispatchSelectedProjects,
-  useSelectedProjects,
+  useSelectedProjects
 } from "@/hooks/bases";
+import { AddProjectTable } from "./AddProjectTable";
+import { ProjectSearch } from "./ProjectSearch";
 
 interface AddProjectsProps {
   onClose: () => void;

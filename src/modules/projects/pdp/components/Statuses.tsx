@@ -21,8 +21,8 @@ export const Statuses = ({ status, setStatus }: StatusesProps) => {
             borderColor: "gray.80",
             bg: "transparent",
             iconsProps: {
-              color: "gray.200",
-            },
+              color: "gray.200"
+            }
           })}
         />
       ))}

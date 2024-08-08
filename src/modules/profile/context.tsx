@@ -3,14 +3,14 @@ import { createContext, PropsWithChildren, useState } from "react";
 export const UserProfile = createContext(undefined);
 export const SetUserProfile = createContext(undefined);
 
-interface UserProfileProvider extends PropsWithChildren {
+interface UserProfileProviderProps extends PropsWithChildren {
   // TODO should fix type
   data: any;
 }
 export const UserProfileProvider = ({
   children,
-  data,
-}: UserProfileProvider) => {
+  data
+}: UserProfileProviderProps) => {
   const [state, setState] = useState(data);
 
   return (

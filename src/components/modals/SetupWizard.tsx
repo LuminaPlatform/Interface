@@ -1,4 +1,4 @@
-import { SetupWizardForm, WalletModalBodyProps } from "@/types";
+import { SetupWizardForm } from "@/types";
 import {
   Box,
   Button,
@@ -13,24 +13,29 @@ import {
   StepTitle,
   Text,
   useSteps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { TbChevronsLeft } from "react-icons/tb";
 import { useWalletModal } from "@/hooks/bases";
 import { ConnectSocial } from "../wizardSteps/ConnectSocial";
 import { Profile } from "../wizardSteps/Profile";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { Interests } from "../wizardSteps/Interests";
 
+const steps = [
+  { title: "Social" },
+  { title: "Profile" },
+  { title: "Interests" }
+];
 interface StepperProps {
   activeStep: number;
   setActiveStep: Dispatch<SetStateAction<number>>;
 }
 const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
   const {
-    formState: { errors },
+    formState: { errors }
   } = useFormContext<SetupWizardForm>();
 
   const [isConnect, setConnect] = useState(false);
@@ -45,14 +50,14 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
     () => {
       setActiveStep((prev) => prev + 1);
     },
-    () => {},
+    () => {}
   ];
 
   const stepsComponent = useMemo(() => {
     return [
       <ConnectSocial key={0} setConnect={setConnect} isConnect={isConnect} />,
       <Profile key={1} editMode={editMode} setEditMode={setEditMode} />,
-      <Interests key={2} />,
+      <Interests key={2} />
     ];
   }, [editMode, isConnect]);
 
@@ -60,7 +65,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
     <Stack mt="4px" rowGap="16px" width="full">
       <ChakraStepper size="sm" index={activeStep} gap="0">
         {steps.map((step, index) => (
-          <Step style={{ columnGap: 0 }} key={index}>
+          <Step style={{ columnGap: 0 }} key={step.title}>
             <VStack justifyContent="flex-start">
               <StepIndicator
                 bg="gray.80"
@@ -72,11 +77,11 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
                     outline: "1px dashed",
                     outlineColor: "primary.300",
                     outlineOffset: "2px",
-                    bg: "primary.300",
+                    bg: "primary.300"
                   },
                   "[data-status=complete] &": {
-                    bg: "primary.300",
-                  },
+                    bg: "primary.300"
+                  }
                 }}
               >
                 <StepStatus
@@ -104,12 +109,12 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
                 mt: "12px",
                 backgroundColor: "gray.60",
                 "[data-status=complete] &": {
-                  bg: "primary.300",
-                },
+                  bg: "primary.300"
+                }
               }}
               style={{
                 marginInline: "4px",
-                height: "2px",
+                height: "2px"
               }}
             />
           </Step>
@@ -168,31 +173,23 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
   );
 };
 
-const steps = [
-  { title: "Social" },
-  { title: "Profile" },
-  { title: "Interests" },
-];
-
-interface SetupWizardProps extends WalletModalBodyProps {}
-
-export const SetupWizard = ({}: SetupWizardProps) => {
+export const SetupWizard = () => {
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
-    count: steps.length,
+    count: steps.length
   });
   const methods = useForm<SetupWizardForm>({
     defaultValues: {
       profile: null,
-      interests: [],
-    },
+      interests: []
+    }
   });
 
   return (
     <VStack
       as={motion.div}
       exit={{
-        opacity: 0,
+        opacity: 0
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}

@@ -8,7 +8,7 @@ import {
   TagLabel,
   Text,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
@@ -24,7 +24,7 @@ export const CategoryModal = ({
   setData,
   onClose,
   selectedData,
-  type,
+  type
 }: CategoryModalProps) => {
   const [interests, setInterests] = useState([]);
   const [selectors, setSelector] = useState(selectedData);
@@ -42,11 +42,11 @@ export const CategoryModal = ({
             graph: {
               fetch_fields: [
                 {
-                  name: "*",
-                },
-              ],
-            },
-          },
+                  name: "*"
+                }
+              ]
+            }
+          }
         })
         .then((res) => {
           setInterests(res.data[0]);
@@ -65,11 +65,11 @@ export const CategoryModal = ({
             graph: {
               fetch_fields: [
                 {
-                  name: "*",
-                },
-              ],
-            },
-          },
+                  name: "*"
+                }
+              ]
+            }
+          }
         })
         .then((res) => {
           setInterests(res.data[0]);

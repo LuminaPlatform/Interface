@@ -13,7 +13,7 @@ import {
   Button,
   Img,
   Link as ChakraLink,
-  Flex,
+  Flex
 } from "@chakra-ui/react";
 import {
   createColumnHelper,
@@ -21,15 +21,15 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   SortingState,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { PiLinkThin } from "react-icons/pi";
 import Link from "next/link";
-import { useProjects } from "../hooks";
 import { currencyScale, primaryCategories } from "@/constant";
 import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
 import { useRouter } from "next/router";
+import { useProjects } from "../hooks";
 
 const CheckMarkIcon = () => (
   <svg
@@ -143,7 +143,7 @@ const Table = ({ searchedProjects }: TableProps) => {
   const columns = [
     columnHelper.accessor("id", {
       cell: (info) => info.getValue(),
-      header: () => "#",
+      header: () => "#"
     }),
     columnHelper.accessor("project", {
       cell: (info) => (
@@ -234,7 +234,7 @@ const Table = ({ searchedProjects }: TableProps) => {
         const columnBData: any = rowB.original.name;
 
         return columnAData < columnBData ? 1 : -1;
-      },
+      }
     }),
     columnHelper.accessor("allocated", {
       header: () => "Allocated",
@@ -271,7 +271,7 @@ const Table = ({ searchedProjects }: TableProps) => {
           ) / 1000;
 
         return columnAData < columnBData ? 1 : -1;
-      },
+      }
     }),
     columnHelper.accessor("inBallots", {
       header: "In Ballots",
@@ -280,8 +280,8 @@ const Table = ({ searchedProjects }: TableProps) => {
           sx={{
             svg: {
               width: "16px",
-              height: "16px",
-            },
+              height: "16px"
+            }
           }}
           margin="0px !important"
         >
@@ -294,7 +294,7 @@ const Table = ({ searchedProjects }: TableProps) => {
         const columnBData: any = rowB.original.content.includedInBallots;
 
         return columnAData < columnBData ? 1 : -1;
-      },
+      }
     }),
     columnHelper.accessor("inLists", {
       header: "In List",
@@ -309,7 +309,7 @@ const Table = ({ searchedProjects }: TableProps) => {
         const columnBData: any = rowB.original.content.lists;
 
         return columnAData < columnBData ? 1 : -1;
-      },
+      }
     }),
     columnHelper.accessor("tags", {
       sortingFn: (rowA, rowB) => {
@@ -369,8 +369,8 @@ const Table = ({ searchedProjects }: TableProps) => {
             return null;
           })}
         </HStack>
-      ),
-    }),
+      )
+    })
   ];
 
   const table = useReactTable({
@@ -378,10 +378,10 @@ const Table = ({ searchedProjects }: TableProps) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     state: {
-      sorting,
+      sorting
     },
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel()
   });
 
   const router = useRouter();
@@ -439,8 +439,8 @@ const Table = ({ searchedProjects }: TableProps) => {
             <Tr
               _last={{
                 td: {
-                  border: "none",
-                },
+                  border: "none"
+                }
               }}
               key={row.id}
             >

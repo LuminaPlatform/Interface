@@ -5,14 +5,14 @@ import {
   Text,
   useDisclosure,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
-import { useProjectData, useProjectReviews } from "../hooks";
 import { TbEdit, TbMessagePlus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
+import { useProjectData, useProjectReviews } from "../hooks";
 import { ImportReview } from "./ImportReview";
 
-interface EmptyStateProps extends UseDisclosureProps {}
+type EmptyStateProps = UseDisclosureProps;
 const EmptyState = ({ onOpen }: EmptyStateProps) => {
   const project = useProjectData();
   const hasAccessWriteReview = !!project.userRole.find((role: any) =>
@@ -22,7 +22,7 @@ const EmptyState = ({ onOpen }: EmptyStateProps) => {
   const {
     onClose: onCloseImportReview,
     onOpen: onOpenImportReview,
-    isOpen: isOpenImportReview,
+    isOpen: isOpenImportReview
   } = useDisclosure();
   return (
     <VStack maxW="421px" height="full" justifyContent="center">
@@ -77,7 +77,7 @@ const EmptyState = ({ onOpen }: EmptyStateProps) => {
   );
 };
 
-interface ReviewsProps extends UseDisclosureProps {}
+type ReviewsProps = UseDisclosureProps;
 
 export const Reviews = ({ isOpen, onClose, onOpen }: ReviewsProps) => {
   const reviews = useProjectReviews();

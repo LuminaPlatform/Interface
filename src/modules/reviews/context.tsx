@@ -9,7 +9,7 @@ interface ReviewsProviderProps extends PropsWithChildren {
 }
 export const ReviewsProvider = ({
   children,
-  reviews,
+  reviews
 }: ReviewsProviderProps) => {
   return (
     <ReviewsData.Provider value={reviews}>{children}</ReviewsData.Provider>

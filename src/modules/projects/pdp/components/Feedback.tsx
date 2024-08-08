@@ -3,22 +3,22 @@ import {
   Text,
   useDisclosure,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ReviewStatus } from "@/types";
 import { TbEdit, TbMessage2Plus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
+import { reviewStatuses } from "@/constant";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
 import WriteFeedback from "./WriteFeedback";
 import { FeedbackResult } from "./FeedbackResult";
 import {
   useProjectData,
   useProjectDataDispatch,
-  useProjectReviews,
+  useProjectReviews
 } from "../hooks";
-import { reviewStatuses } from "@/constant";
-import { axiosClient } from "@/config/axios";
-import { apiKeys } from "@/api/apiKeys";
 import { ImportReview } from "./ImportReview";
 
 interface FeedbackProps extends UseDisclosureProps {
@@ -28,7 +28,7 @@ export const Feedback = ({
   headerTitle,
   isOpen,
   onClose,
-  onOpen,
+  onOpen
 }: FeedbackProps) => {
   const userViewpoint = useProjectData()?.userViewpoint;
   const project = useProjectData();
@@ -38,13 +38,12 @@ export const Feedback = ({
   const {
     onClose: onCloseImportReview,
     onOpen: onOpenImportReview,
-    isOpen: isOpenImportReview,
+    isOpen: isOpenImportReview
   } = useDisclosure();
   const [status, setStatus] = useState<ReviewStatus["name"]>(
     () =>
-      reviewStatuses.find(
-        (item) => item.name === userViewpoint?.[0]?.["viewpoint"]
-      )?.name ?? undefined
+      reviewStatuses.find((item) => item.name === userViewpoint?.[0]?.viewpoint)
+        ?.name ?? undefined
   );
 
   const hasAccessWriteReview = !!project.userRole.find((role: any) =>
@@ -62,19 +61,19 @@ export const Feedback = ({
                   model_name: "ViewPoint",
                   params: {
                     project_id: project.id,
-                    viewpoint: status,
+                    viewpoint: status
                   },
-                  id: userViewpoint[0]?.id,
-                },
+                  id: userViewpoint[0]?.id
+                }
               }
             : {
                 0: {
                   model_name: "ViewPoint",
                   params: {
                     project_id: project.id,
-                    viewpoint: status,
-                  },
-                },
+                    viewpoint: status
+                  }
+                }
               }
         )
         .then((response) => {
@@ -82,7 +81,7 @@ export const Feedback = ({
             dispatchProjectData({
               ...project,
               userViewpoint: [response.data[0]],
-              viewpoints: res.data.viewpoints,
+              viewpoints: res.data.viewpoints
             });
           });
         });

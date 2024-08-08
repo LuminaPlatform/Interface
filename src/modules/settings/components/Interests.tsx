@@ -7,7 +7,7 @@ import {
   TagLabel,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { TbPlus } from "react-icons/tb";
@@ -36,7 +36,7 @@ export const Interests = () => {
           title="Choose categories that align with your interests to discover projects you’ll love to follow and participate in!"
         />
       ),
-      header: "Project",
+      header: "Project"
     },
     [InterestModalBody.people]: {
       component: (
@@ -49,8 +49,8 @@ export const Interests = () => {
         This way, you connect with the right crowd!"
         />
       ),
-      header: "People",
-    },
+      header: "People"
+    }
   };
 
   return (
