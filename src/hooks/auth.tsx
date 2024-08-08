@@ -22,7 +22,7 @@ export const useEmailSignUp = () => {
       axiosClient.post<any, { data: string }, UseEmailSignUpInputs>(
         apiKeys["auth"]["signup"]["email"],
         { email, password }
-      ),
+      )
   });
 };
 
@@ -45,7 +45,7 @@ export const useEmailLogin = () => {
         `${process.env.NEXT_PUBLIC_BASE_API_URL}${apiKeys["auth"]["login"]["email"]}`,
         formData
       );
-    },
+    }
   });
 };
 
@@ -59,7 +59,7 @@ export const useOTPVerification = () => {
       axiosClient.post<any, { data: string }, UseOTPInputs>(
         apiKeys["auth"]["otp"],
         { email, code }
-      ),
+      )
   });
 };
 
@@ -73,16 +73,16 @@ export const usePlatformLogin = (callback: () => void) => {
       axiosClient
         .get(apiKeys.auth.login.google.cb, {
           params: {
-            code: authorizationCode,
-          },
+            code: authorizationCode
+          }
         })
         .then((res) => {
           setCookie(ACCESS_TOKEN_COOKIE_KEY, res.data.access_token);
           axiosClient
             .get(apiKeys.auth.isAuthorized, {
               headers: {
-                Authorization: `Bearer ${res.data.access_token}`,
-              },
+                Authorization: `Bearer ${res.data.access_token}`
+              }
             })
             .then((userDataResponse) => userDataResponse.data)
             .then((user) => {
@@ -90,7 +90,7 @@ export const usePlatformLogin = (callback: () => void) => {
               callback();
               return toast({
                 description: "You are logged in",
-                status: "success",
+                status: "success"
               });
             });
         });
@@ -106,6 +106,63 @@ export const usePlatformLogin = (callback: () => void) => {
       const pollTimer = window.setInterval(function () {
         try {
           if (openedWindow.location.href.includes("callback")) {
+            window.clearInterval(pollTimer);
+            const urlParams = new URLSearchParams(openedWindow.location.search);
+            setAuthorizationCode(urlParams.get("code"));
+            openedWindow.close();
+          }
+        } catch (e) {
+          console.log("Error:", e);
+        }
+      }, 1000);
+    });
+};
+
+export const useTwitterLogin = (callback: () => void) => {
+  const [authorizationCode, setAuthorizationCode] = useState(undefined);
+  const toast = useCustomToast();
+  const dispatchAuthorization = useDispatchAuthorization();
+
+  useEffect(() => {
+    if (authorizationCode) {
+      axiosClient
+        .get(apiKeys.auth.login.google.cb, {
+          params: {
+            code: authorizationCode
+          }
+        })
+        .then((res) => {
+          setCookie(ACCESS_TOKEN_COOKIE_KEY, res.data.access_token);
+          axiosClient
+            .get(apiKeys.auth.isAuthorized, {
+              headers: {
+                Authorization: `Bearer ${res.data.access_token}`
+              }
+            })
+            .then((userDataResponse) => userDataResponse.data)
+            .then((user) => {
+              dispatchAuthorization(user);
+              callback();
+              return toast({
+                description: "You are logged in",
+                status: "success"
+              });
+            });
+        });
+    }
+  }, [authorizationCode]);
+  return (url: string) =>
+    axiosClient.get(url).then((response) => {
+      const openedWindow = window.open(
+        "http://localhost:3000",
+        "_blank",
+        "width=500,height=600"
+      );
+      const pollTimer = window.setInterval(function () {
+        console.log("render");
+        try {
+          if (openedWindow.location.href.includes("callback")) {
+
             window.clearInterval(pollTimer);
             const urlParams = new URLSearchParams(openedWindow.location.search);
             setAuthorizationCode(urlParams.get("code"));

@@ -5,7 +5,7 @@ import {
   Img,
   Text,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { ModalBase } from "../ModalBase";
 import { LuWallet } from "react-icons/lu";
@@ -17,7 +17,7 @@ import {
   ModalForm,
   OTPFormType,
   STEP_MODAL,
-  WalletModalBodyProps,
+  WalletModalBodyProps
 } from "@/types";
 import { Login } from "./Login";
 import { MethodSeparator } from "../MethodSeparator";
@@ -31,7 +31,7 @@ import {
   useDispatchAuthorization,
   useDispatchModalSteps,
   useModalSteps,
-  useWalletModal,
+  useWalletModal
 } from "@/hooks/bases";
 import { useEmailLogin, useOTPVerification } from "@/hooks/auth";
 import { SetupWizard } from "./SetupWizard";
@@ -67,7 +67,7 @@ const OTPContainer = ({}: OTPContainerProps) => {
               return toast({
                 title: error.response.data.error_message,
                 description: error.response.data.error_detail,
-                status: "error",
+                status: "error"
               });
             },
             onSuccess: () => {
@@ -82,8 +82,8 @@ const OTPContainer = ({}: OTPContainerProps) => {
                     return axiosClient
                       .get(apiKeys.auth.isAuthorized, {
                         headers: {
-                          Authorization: `Bearer ${loginData.data.access_token}`,
-                        },
+                          Authorization: `Bearer ${loginData.data.access_token}`
+                        }
                       })
                       .then((userDataResponse) => userDataResponse.data)
                       .then((user) => {
@@ -91,13 +91,13 @@ const OTPContainer = ({}: OTPContainerProps) => {
                         dispatchSteps(STEP_MODAL.verified);
                         return toast({
                           description: "You are logged in",
-                          status: "success",
+                          status: "success"
                         });
                       });
-                  },
+                  }
                 }
               );
-            },
+            }
           }
         );
       }}
@@ -116,10 +116,10 @@ export const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
     <Button
       bg="gray.700"
       _hover={{
-        bg: "gray.800",
+        bg: "gray.800"
       }}
       _active={{
-        bg: "gray.900",
+        bg: "gray.900"
       }}
       height="48px"
       px="12px"
@@ -155,7 +155,7 @@ const ModalBody = ({}: WalletModalBodyProps) => {
     <VStack
       as={motion.div}
       exit={{
-        opacity: 0,
+        opacity: 0
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -198,7 +198,7 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
   const { onOpen } = useWalletModal();
   const methods = useForm<ModalForm>({
     mode: "all",
-    reValidateMode: "onChange",
+    reValidateMode: "onChange"
   });
 
   const step = useModalSteps();
@@ -223,17 +223,17 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
       [STEP_MODAL.otp]: <OTPContainer />,
       [STEP_MODAL.setupWizard]: <SetupWizard />,
       [STEP_MODAL.sign]: <SignWallet />,
-      [STEP_MODAL.verified]: <VerifiedAccount />,
+      [STEP_MODAL.verified]: <VerifiedAccount />
     }),
     []
   );
   return (
     <ModalBase
-      isOpen={isOpen}
+      isOpen={true}
       onClose={onClose}
       modalBody={
         <AnimatePresence>
-          <FormProvider {...methods}>{modalBody[step]}</FormProvider>
+          <FormProvider {...methods}>{modalBody["setupWizard"]}</FormProvider>
         </AnimatePresence>
       }
       {...((STEP_MODAL.setupWizard === step ||
@@ -243,8 +243,8 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
         showCloseButton: false,
 
         ...(STEP_MODAL.setupWizard === step && {
-          size: { base: "lg", md: "2xl", lg: "3xl" },
-        }),
+          size: { base: "lg", md: "2xl", lg: "3xl" }
+        })
       })}
     />
   );

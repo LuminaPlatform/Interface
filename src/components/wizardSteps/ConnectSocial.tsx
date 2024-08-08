@@ -1,8 +1,11 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { WizardContentBase } from "./Base";
 import { GridItem, HStack, Img, Link, Text, VStack } from "@chakra-ui/react";
 import { ActionCard } from "../ActionCard";
 import { TbBrandXFilled } from "react-icons/tb";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import { useTwitterLogin } from "@/hooks/auth";
 
 interface ConnectSocialProps {
   isConnect: boolean;
@@ -10,8 +13,35 @@ interface ConnectSocialProps {
 }
 export const ConnectSocial = ({
   isConnect,
-  setConnect,
+  setConnect
 }: ConnectSocialProps) => {
+  const [isLoadig, setLoading] = useState(false);
+
+  const handleConnectX = async () => {
+    axiosClient.get(apiKeys.auth.login.twitter.req).then((res) => {
+      const { url } = res.data;
+      console.log({ url });
+
+      const openedWindow = window.open(url, "_blank", "width=500,height=600");
+      const pollTimer = window.setInterval(function () {
+        try {
+          if (openedWindow.location.href.includes("callback")) {
+            console.log(openedWindow.location.href);
+            window.clearInterval(pollTimer);
+            const urlParams = new URLSearchParams(openedWindow.location.search);
+            // console.log(urlParams.get("code"), urlParams.get("state"));
+
+            // setAuthorizationCode(urlParams.get("code"));
+            openedWindow.close();
+          }
+        } catch (e) {
+          console.log("Error:", e);
+        }
+      }, 500);
+    });
+  };
+  const handleTwitterLogin = useTwitterLogin(() => {});
+
   return (
     <WizardContentBase>
       <GridItem>
@@ -56,10 +86,10 @@ export const ConnectSocial = ({
             connect={{
               buttonText: "Connect",
               handleClick: () => {
-                setConnect(true);
+                handleTwitterLogin(apiKeys.auth.login.twitter.req);
               },
               isConnect: isConnect,
-              showConnect: true,
+              showConnect: true
             }}
           />
         </VStack>
