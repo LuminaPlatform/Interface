@@ -1,7 +1,7 @@
 import { UseDisclosureProps } from "@chakra-ui/react";
+import { Badges } from "@/types";
 import { ModalBase } from "../../ModalBase";
 import { BasicBadge } from "./BasicBadge";
-import { Badges } from "@/types";
 
 interface BadgeModalProps extends UseDisclosureProps {
   badgeType: Badges;

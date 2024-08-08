@@ -50,7 +50,6 @@ export const ConnectSocial = ({
             </Text>
           </HStack>
           <ActionCard
-            actionCardId={0}
             text={isConnect ? "@twitter_username" : "Connect X"}
             logo={TbBrandXFilled}
             connect={{

@@ -2,8 +2,8 @@ import { VStack } from "@chakra-ui/react";
 
 import EmptyPage from "@/components/EmptyPage";
 import { ReviewCard } from "@/components/ReviewCard";
-import { useReviewsData } from "../hooks";
 import { useRouter } from "next/router";
+import { useReviewsData } from "../hooks";
 
 const TabBody = () => {
   const reviews = useReviewsData();
