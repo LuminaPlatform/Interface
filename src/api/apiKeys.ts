@@ -32,6 +32,7 @@ export const apiKeys = {
   distribute: "/distribution/distribute",
   getSignMessage: "/auth/wallet/get-message",
   file: "/file/file",
+  twitter: "/read/tweets",
   relation: {
     remove: "/remove-relations",
     add: "/add-relations"
