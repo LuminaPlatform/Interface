@@ -4,18 +4,22 @@ import {
   Text,
   useDisclosure,
   VStack,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel
 } from "@chakra-ui/react";
+import { useMemo, useState } from "react";
+import { ModalBase } from "@/components/ModalBase";
+import { useAuthorization, useSelectedProjects } from "@/hooks/bases";
+import { StringParam, useQueryParams } from "use-query-params";
 import { UnAuthorized } from "../components/UnAuthorized";
 import { EmptyState } from "../components/EmptyState";
 import { ProjectList } from "../components/ProjectList";
-import { useMemo, useState } from "react";
-import { ModalBase } from "@/components/ModalBase";
 import { AddProjects } from "../components/AddProjects";
-import { useAuthorization, useSelectedProjects } from "@/hooks/bases";
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import { distributeTabs } from "../constants";
 // import { PopularProjectsPanel } from "../components/PopularProjectsPanel";
-import { StringParam, useQueryParams } from "use-query-params";
 import { ProjectSearch } from "../components/ProjectSearch";
 
 const Index = () => {
@@ -36,7 +40,7 @@ const Index = () => {
   }, [selectedProject, userData, search]);
 
   const [query, setQuery] = useQueryParams({
-    tab: StringParam,
+    tab: StringParam
   });
   const activeTab = useMemo(
     () =>

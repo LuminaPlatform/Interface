@@ -20,7 +20,7 @@ export const useEmailSignUp = () => {
   >({
     mutationFn: ({ email, password }) =>
       axiosClient.post<any, { data: string }, UseEmailSignUpInputs>(
-        apiKeys["auth"]["signup"]["email"],
+        apiKeys.auth.signup.email,
         { email, password }
       )
   });
@@ -42,7 +42,7 @@ export const useEmailLogin = () => {
       formData.append("password", password);
 
       return axios.post<any, { data: { access_token: string } }>(
-        `${process.env.NEXT_PUBLIC_BASE_API_URL}${apiKeys["auth"]["login"]["email"]}`,
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}${apiKeys.auth.login.email}`,
         formData
       );
     }
@@ -56,10 +56,10 @@ type UseOTPInputs = {
 export const useOTPVerification = () => {
   return useMutation<{ data: string }, AxiosError<ApiErrorType>, UseOTPInputs>({
     mutationFn: ({ email, code }) =>
-      axiosClient.post<any, { data: string }, UseOTPInputs>(
-        apiKeys["auth"]["otp"],
-        { email, code }
-      )
+      axiosClient.post<any, { data: string }, UseOTPInputs>(apiKeys.auth.otp, {
+        email,
+        code
+      })
   });
 };
 
@@ -112,7 +112,7 @@ export const usePlatformLogin = (callback: () => void) => {
             openedWindow.close();
           }
         } catch (e) {
-          console.log("Error:", e);
+          throw new Error("error");
         }
       }, 1000);
     });
@@ -152,24 +152,23 @@ export const useTwitterLogin = (callback: () => void) => {
     }
   }, [authorizationCode]);
   return (url: string) =>
-    axiosClient.get(url).then((response) => {
+    axiosClient.get(url).then(() => {
       const openedWindow = window.open(
         "http://localhost:3000",
         "_blank",
         "width=500,height=600"
       );
       const pollTimer = window.setInterval(function () {
-        console.log("render");
+        // console.log("render");
         try {
           if (openedWindow.location.href.includes("callback")) {
-
             window.clearInterval(pollTimer);
             const urlParams = new URLSearchParams(openedWindow.location.search);
             setAuthorizationCode(urlParams.get("code"));
             openedWindow.close();
           }
         } catch (e) {
-          console.log("Error:", e);
+          // console.log("Error:", e);
         }
       }, 1000);
     });

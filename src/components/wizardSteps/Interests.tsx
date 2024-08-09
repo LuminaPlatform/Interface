@@ -5,13 +5,13 @@ import {
   Tag,
   TagLabel,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
-import { WizardContentBase } from "./Base";
 import { interestsFakeData } from "@/constant";
 import { useFormContext, useWatch } from "react-hook-form";
 import { SetupWizardForm } from "@/types";
 import { useEffect } from "react";
+import { WizardContentBase } from "./Base";
 import { InputError } from "../InputError";
 
 export const Interests = () => {
@@ -20,7 +20,7 @@ export const Interests = () => {
     clearErrors,
     setValue,
     control,
-    formState: { errors },
+    formState: { errors }
   } = useFormContext<SetupWizardForm>();
 
   const { interests } = useWatch({ control });

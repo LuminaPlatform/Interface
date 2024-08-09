@@ -9,18 +9,18 @@ import {
   Text,
   useBoolean,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
-import { SettingsModalBody, SettingsModalsForm } from "../../types";
 import { TbEye, TbEyeOff } from "react-icons/tb";
 import { InputError } from "@/components/InputError";
-import { SettingsModalFooter } from "../EmailFooter";
 import { Dispatch, SetStateAction, useState } from "react";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { useCustomToast, useGlobalUserData } from "@/hooks/bases";
 import { AxiosError } from "axios";
+import { SettingsModalFooter } from "../EmailFooter";
+import { SettingsModalBody, SettingsModalsForm } from "../../types";
 
 interface ChangePasswordModalProps extends UseDisclosureProps {
   setModalBody: Dispatch<SetStateAction<SettingsModalBody>>;
@@ -28,13 +28,13 @@ interface ChangePasswordModalProps extends UseDisclosureProps {
 
 export const ChangePasswordModal = ({
   onClose,
-  setModalBody,
+  setModalBody
 }: ChangePasswordModalProps) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-    control,
+    control
   } = useFormContext<SettingsModalsForm>();
 
   const [isLoading, setLoading] = useState(false);
@@ -51,28 +51,28 @@ export const ChangePasswordModal = ({
         "0": {
           model_name: "User",
           params: {
-            password: values.password,
+            password: values.password
           },
-          id: userInfo?.user.id,
-        },
+          id: userInfo?.user.id
+        }
       })
       .then(() => {
         return toast({
           status: "success",
-          description: "Your password is changed.",
+          description: "Your password is changed."
         });
       })
       .catch((error: AxiosError<{ error_message: string }>) => {
         return toast({
           status: "error",
-          description: error.response.data?.error_message,
+          description: error.response.data?.error_message
         });
       })
       .finally(() => {
         setLoading(false);
       });
   };
-  const email = userInfo.user.email;
+  const { email } = userInfo.user;
   return (
     <VStack rowGap="16px" width="full">
       <FormControl pb="32px">
@@ -108,12 +108,12 @@ export const ChangePasswordModal = ({
             {...register("currentPassword", {
               required: {
                 value: true,
-                message: "Current password is a required field",
+                message: "Current password is a required field"
               },
               minLength: {
                 value: 8,
-                message: "Current password must contain at least 8 characters",
-              },
+                message: "Current password must contain at least 8 characters"
+              }
             })}
           />
         </InputGroup>
@@ -154,12 +154,12 @@ export const ChangePasswordModal = ({
             {...register("password", {
               required: {
                 value: true,
-                message: "Password is a required field",
+                message: "Password is a required field"
               },
               minLength: {
                 value: 8,
-                message: "Password must contain at least 8 characters",
-              },
+                message: "Password must contain at least 8 characters"
+              }
             })}
           />
         </InputGroup>
@@ -200,17 +200,18 @@ export const ChangePasswordModal = ({
             {...register("rePassword", {
               required: {
                 value: true,
-                message: "Password is a required field",
+                message: "Password is a required field"
               },
               minLength: {
                 value: 8,
-                message: "Password must contain at least 8 characters",
+                message: "Password must contain at least 8 characters"
               },
               validate: (value) => {
                 if (value !== password) {
                   return "Your password must match with its confirmation ";
                 }
-              },
+                return null;
+              }
             })}
           />
         </InputGroup>
@@ -230,7 +231,7 @@ export const ChangePasswordModal = ({
               .catch((error: AxiosError<{ error_message: string }>) => {
                 toast({
                   status: "error",
-                  description: error.response.data.error_message,
+                  description: error.response.data.error_message
                 });
               });
           }}

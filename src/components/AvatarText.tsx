@@ -4,7 +4,7 @@ import {
   ImageProps,
   Img,
   Text,
-  TextProps,
+  TextProps
 } from "@chakra-ui/react";
 
 type AvatarTextProps = {
@@ -23,7 +23,7 @@ export const Avatar = ({
   hasBadge,
   src,
   imageStyle,
-  badgeSize,
+  badgeSize
 }: AvatarProps) => {
   return (
     <Box
@@ -33,7 +33,7 @@ export const Avatar = ({
       {...(hasBadge && {
         outline: "1px solid red",
         outlineOffset: "1px",
-        position: "relative",
+        position: "relative"
       })}
     >
       <Img
@@ -63,7 +63,7 @@ export const AvatarText = ({
   hasBadge,
   name,
   badgeSize,
-  src,
+  src
 }: AvatarTextProps) => {
   return (
     <HStack>

@@ -1,30 +1,9 @@
-import {
-  Button,
-  HStack,
-  Icon,
-  Img,
-  Text,
-  UseDisclosureProps,
-  VStack
-} from "@chakra-ui/react";
-import { ModalBase } from "../ModalBase";
+import { Img, Text, UseDisclosureProps, VStack } from "@chakra-ui/react";
 import { LuWallet } from "react-icons/lu";
-import { IconType } from "react-icons";
 import { MdOutlineMailOutline } from "react-icons/md";
-import { FaArrowRightLong } from "react-icons/fa6";
 import { useEffect, useMemo } from "react";
-import {
-  ModalForm,
-  OTPFormType,
-  STEP_MODAL,
-  WalletModalBodyProps
-} from "@/types";
-import { Login } from "./Login";
-import { MethodSeparator } from "../MethodSeparator";
-import { Register } from "./Register";
+import { ModalForm, OTPFormType, STEP_MODAL } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
-import { Connectors } from "./Connectors";
-import { OTP } from "./OTP";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import {
   useCustomToast,
@@ -34,17 +13,23 @@ import {
   useWalletModal
 } from "@/hooks/bases";
 import { useEmailLogin, useOTPVerification } from "@/hooks/auth";
-import { SetupWizard } from "./SetupWizard";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { setCookie } from "cookies-next";
-import { SignWallet } from "./SignWallet";
 import { useAccount, useSignMessage } from "wagmi";
 import { VerifiedAccount } from "@/modules/settings/components/modals/VerifiedAccount";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
+import { Login } from "./Login";
+import { MethodSeparator } from "../MethodSeparator";
+import { Register } from "./Register";
+import { Connectors } from "./Connectors";
+import { OTP } from "./OTP";
+import { SetupWizard } from "./SetupWizard";
+import { SignWallet } from "./SignWallet";
+import { IconButton } from "./IconButton";
+import { ModalBase } from "../ModalBase";
 
-interface OTPContainerProps extends WalletModalBodyProps {}
-const OTPContainer = ({}: OTPContainerProps) => {
+const OTPContainer = () => {
   const dispatchSteps = useDispatchModalSteps();
 
   const { getValues } = useFormContext<ModalForm>();
@@ -105,51 +90,13 @@ const OTPContainer = ({}: OTPContainerProps) => {
     />
   );
 };
-interface IconButtonProps {
-  onClick: () => void;
-  icon?: IconType | string;
-  text: string;
-}
-
-export const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
-  return (
-    <Button
-      bg="gray.700"
-      _hover={{
-        bg: "gray.800"
-      }}
-      _active={{
-        bg: "gray.900"
-      }}
-      height="48px"
-      px="12px"
-      width="full"
-      justifyContent="space-between"
-      onClick={onClick}
-      display="flex"
-    >
-      <HStack>
-        {icon &&
-          (typeof icon === "string" ? (
-            <Img width="30px" src={icon} />
-          ) : (
-            <Icon fontSize={21} color="gray.0" as={icon} />
-          ))}
-        <Text color="gray.40" fontSize="md" fontWeight="700">
-          {text}
-        </Text>
-      </HStack>
-      <FaArrowRightLong color="var(--chakra-colors-gray-0)" />
-    </Button>
-  );
-};
 
 interface ConnectProps {
   onClose: UseDisclosureProps["onClose"];
   isOpen: UseDisclosureProps["isOpen"];
 }
 
-const ModalBody = ({}: WalletModalBodyProps) => {
+const ModalBody = () => {
   const dispatchSteps = useDispatchModalSteps();
   return (
     <VStack
@@ -229,11 +176,11 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
   );
   return (
     <ModalBase
-      isOpen={true}
+      isOpen={isOpen}
       onClose={onClose}
       modalBody={
         <AnimatePresence>
-          <FormProvider {...methods}>{modalBody["setupWizard"]}</FormProvider>
+          <FormProvider {...methods}>{modalBody[step]}</FormProvider>
         </AnimatePresence>
       }
       {...((STEP_MODAL.setupWizard === step ||

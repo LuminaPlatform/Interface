@@ -10,7 +10,7 @@ export const ImportedReviewBoxContent = () => {
           <Avatar
             hasBadge={false}
             imageStyle={{
-              boxSize: "36px",
+              boxSize: "36px"
             }}
             badgeSize={0}
             src="/assets/images/default-avatar.png"
@@ -32,11 +32,10 @@ export const ImportedReviewBoxContent = () => {
   );
 };
 
-interface ImportedReviewBoxProps {
-  isChild: boolean;
-}
-export const ImportedReviewBox = ({}: // isChild
-ImportedReviewBoxProps) => {
+// interface ImportedReviewBoxProps {
+//   isChild: boolean;
+// }
+export const ImportedReviewBox = () => {
   return (
     <VStack rowGap="16px">
       <VStack

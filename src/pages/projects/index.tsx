@@ -28,34 +28,34 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       graph: {
         fetch_fields: [
           {
-            name: "id",
+            name: "id"
           },
           {
-            name: "name",
+            name: "name"
           },
           {
-            name: "logo_id",
+            name: "logo_id"
           },
           { name: "content.fundingSources" },
           { name: "content.includedInBallots" },
           { name: "content.lists.count" },
           { name: "content.profile" },
-          { name: "content.impactCategory" },
-        ],
+          { name: "content.impactCategory" }
+        ]
       },
       condition: {
         __type__: "SimpleFetchCondition",
         field: "id",
         operator: "GTE",
-        value: (page - 1) * pageThreshold,
-      },
-    },
+        value: (page - 1) * pageThreshold
+      }
+    }
   };
-  const response = await axiosClient.post(apiKeys["fetch"], postData);
+  const response = await axiosClient.post(apiKeys.fetch, postData);
   const projects = await response.data["0"];
   return {
     props: {
-      projects,
-    },
+      projects
+    }
   };
 };

@@ -3,7 +3,7 @@ import {
   useAuthorization,
   useDispatchIsOpenSidebar,
   useIsOpenSidebar,
-  useSelectedProjects,
+  useSelectedProjects
 } from "@/hooks/bases";
 import {
   Button,
@@ -14,7 +14,7 @@ import {
   Icon,
   Img,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -25,7 +25,7 @@ import {
   TbChevronsLeft,
   TbChevronsRight,
   TbMessage,
-  TbSettings2,
+  TbSettings2
 } from "react-icons/tb";
 
 const ChakraLink = chakra(Link, {
@@ -37,8 +37,8 @@ const ChakraLink = chakra(Link, {
     fontWeight: "bold",
     color: "gray.10",
     position: "relative",
-    pl: "24px",
-  },
+    pl: "24px"
+  }
 });
 
 export const Sidebar = () => {
@@ -60,7 +60,7 @@ export const Sidebar = () => {
           }
           as={TbChartBar}
         />
-      ),
+      )
     },
     {
       id: 1,
@@ -76,12 +76,12 @@ export const Sidebar = () => {
           }
           as={TbMessage}
         />
-      ),
+      )
     },
     {
       id: 2,
       href: "/distribute",
-      title: !!isAuthorized
+      title: isAuthorized
         ? `Distribute ${selectedProjects.length}`
         : "Distribute",
       icon: (isActive: boolean) => (
@@ -94,8 +94,8 @@ export const Sidebar = () => {
           }
           as={TbChartPie4}
         />
-      ),
-    },
+      )
+    }
   ];
   const router = useRouter();
 
@@ -175,8 +175,8 @@ export const Sidebar = () => {
                   top: "0",
                   height: "full",
                   width: "2px",
-                  backgroundColor: "primary.300",
-                },
+                  backgroundColor: "primary.300"
+                }
               })}
             >
               <HStack>
@@ -191,7 +191,7 @@ export const Sidebar = () => {
       </VStack>
       {!!authorization && (
         <ChakraLink
-          {...("settings" === router.pathname.split("/")[1] && {
+          {...(router.pathname.split("/")[1] === "settings" && {
             bg: "gray.800",
             _before: {
               content: "''",
@@ -200,8 +200,8 @@ export const Sidebar = () => {
               top: "0",
               height: "full",
               width: "2px",
-              backgroundColor: "primary.300",
-            },
+              backgroundColor: "primary.300"
+            }
           })}
           href="/settings"
         >
@@ -209,7 +209,7 @@ export const Sidebar = () => {
             <Icon
               fontSize="24px"
               color={
-                "setting" === router.pathname.split("/")[1]
+                router.pathname.split("/")[1] === "setting"
                   ? "var(--chakra-colors-primary-300)"
                   : "var(--chakra-colors-gray-10)"
               }

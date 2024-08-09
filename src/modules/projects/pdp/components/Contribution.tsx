@@ -1,16 +1,17 @@
 "use client";
+
 import {
   GridItem,
   HStack,
   SimpleGrid,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { TbChevronRight } from "react-icons/tb";
-import { useProjectData, useProjectReviews } from "../hooks";
 import { useEffect, useRef, useState } from "react";
+import { useProjectData, useProjectReviews } from "../hooks";
 import { Reviews } from "./Reviews";
 import { Feedback } from "./Feedback";
 import { ProjectLink } from "./ProjectLink";
@@ -24,8 +25,8 @@ export const Contribution = () => {
       contributionLinks,
       contributionDescription,
       impactDescription,
-      impactMetrics,
-    },
+      impactMetrics
+    }
   } = project;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -77,7 +78,7 @@ export const Contribution = () => {
       <SimpleGrid width="full" gap="24px" columns={{ base: 1, lg: 3 }}>
         <GridItem
           h={
-            !!project.userRole.find((role: any) =>
+            project.userRole.find((role: any) =>
               role.name.includes("BETA_USER")
             )
               ? "384px"

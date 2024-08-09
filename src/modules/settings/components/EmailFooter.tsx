@@ -13,7 +13,7 @@ export const SettingsModalFooter = ({
   submitHandler,
   mainButtonText,
   isDisabled,
-  isLoading,
+  isLoading
 }: SettingsModalFooterProps) => {
   return (
     <HStack width="full">

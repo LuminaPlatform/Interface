@@ -8,14 +8,14 @@ import {
   Img,
   Input,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
-import { WizardContentBase } from "./Base";
 import { TbCameraPlus, TbRestore } from "react-icons/tb";
 import { Dispatch, SetStateAction } from "react";
-import { InputError } from "../InputError";
 import { SetupWizardForm } from "@/types";
+import { InputError } from "../InputError";
+import { WizardContentBase } from "./Base";
 
 const ChakraForm = chakra("form");
 interface ProfileProps {
@@ -27,7 +27,7 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
     register,
     formState: { errors },
     setValue,
-    control,
+    control
   } = useFormContext<SetupWizardForm>();
 
   const { profile } = useWatch({ control });
@@ -83,7 +83,7 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
                 display="flex"
                 _hover={{
                   borderColor: "primary.300",
-                  color: "primary.300",
+                  color: "primary.300"
                 }}
               >
                 <TbCameraPlus />
@@ -158,8 +158,8 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
               {...register("username", {
                 required: {
                   value: true,
-                  message: "Username is a required field",
-                },
+                  message: "Username is a required field"
+                }
               })}
             />
             {!!errors.username && (
@@ -176,8 +176,8 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
               {...register("nickname", {
                 required: {
                   value: true,
-                  message: "Nickname is a required field",
-                },
+                  message: "Nickname is a required field"
+                }
               })}
             />
             {!!errors.nickname && (

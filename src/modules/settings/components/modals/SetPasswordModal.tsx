@@ -6,14 +6,14 @@ import {
   InputRightElement,
   useBoolean,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
-import { SettingsModalsForm } from "../../types";
 import { TbEye, TbEyeOff } from "react-icons/tb";
 import { InputError } from "@/components/InputError";
-import { SettingsModalFooter } from "../EmailFooter";
 import { Dispatch, SetStateAction, useState } from "react";
+import { SettingsModalFooter } from "../EmailFooter";
+import { SettingsModalsForm } from "../../types";
 
 interface SetPasswordModalProps extends UseDisclosureProps {
   setPassword: Dispatch<
@@ -25,13 +25,13 @@ interface SetPasswordModalProps extends UseDisclosureProps {
 
 export const SetPasswordModal = ({
   onClose,
-  setPassword,
+  setPassword
 }: SetPasswordModalProps) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-    control,
+    control
   } = useFormContext<SettingsModalsForm>();
 
   const [isShow, setShow] = useBoolean(false);
@@ -74,12 +74,12 @@ export const SetPasswordModal = ({
             {...register("password", {
               required: {
                 value: true,
-                message: "Password is a required field",
+                message: "Password is a required field"
               },
               minLength: {
                 value: 8,
-                message: "Password must contain at least 8 characters",
-              },
+                message: "Password must contain at least 8 characters"
+              }
             })}
           />
         </InputGroup>
@@ -120,17 +120,18 @@ export const SetPasswordModal = ({
             {...register("rePassword", {
               required: {
                 value: true,
-                message: "Password is a required field",
+                message: "Password is a required field"
               },
               minLength: {
                 value: 8,
-                message: "Password must contain at least 8 characters",
+                message: "Password must contain at least 8 characters"
               },
               validate: (value) => {
                 if (value !== password) {
                   return "Your password must match with its confirmation ";
                 }
-              },
+                return null;
+              }
             })}
           />
         </InputGroup>
@@ -145,7 +146,7 @@ export const SetPasswordModal = ({
         mainButtonText="Set Password"
         submitHandler={handleSubmit(() => {
           setPassword({
-            isSet: true,
+            isSet: true
           });
         })}
       />
