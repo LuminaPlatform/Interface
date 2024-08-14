@@ -17,9 +17,22 @@ import {
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import {
+  FormProvider,
+  useForm,
+  useFormContext,
+  useWatch
+} from "react-hook-form";
 import { TbChevronsLeft } from "react-icons/tb";
-import { useWalletModal } from "@/hooks/bases";
+import {
+  useDispatchGlobalUserData,
+  useGlobalUserData,
+  useWalletModal
+} from "@/hooks/bases";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { getCookie } from "cookies-next";
 import { ConnectSocial } from "../wizardSteps/ConnectSocial";
 import { Profile } from "../wizardSteps/Profile";
 import { Interests } from "../wizardSteps/Interests";
@@ -34,35 +47,130 @@ interface StepperProps {
   setActiveStep: Dispatch<SetStateAction<number>>;
 }
 const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
+  const globalUser = useGlobalUserData();
+
+  const dispatchGlobalUser = useDispatchGlobalUserData();
+  const [isLoading, setLoading] = useState(false);
   const {
-    formState: { errors }
+    formState: { errors },
+    control
   } = useFormContext<SetupWizardForm>();
 
-  const [
-    isConnect
-    //  setConnect
-  ] = useState(false);
+  const { nickname, username, profile } = useWatch({
+    control
+  });
+
   const [editMode, setEditMode] = useState(false);
 
   const { onClose } = useWalletModal();
 
   const handleSubmit = [
     () => {
-      setActiveStep((prev) => prev + 1);
+      setLoading(true);
+      axiosClient
+        .post(apiKeys.update, {
+          "0": {
+            model_name: "User",
+            params: {
+              x_username: globalUser.twitter?.data?.username
+            },
+            id: globalUser.user.id
+          }
+        })
+        .then(() => {
+          setActiveStep((prev) => prev + 1);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     },
     () => {
-      setActiveStep((prev) => prev + 1);
+      setLoading(true);
+      if (profile && typeof profile === "object") {
+        const formData = new FormData();
+        formData.append("file", profile);
+        formData.append(
+          "proposal",
+          JSON.stringify({
+            model: "User",
+            id: globalUser.user.id,
+            field: "profile_id"
+          })
+        );
+        axiosClient
+          .post(apiKeys.file, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+            }
+          })
+          .then((res) => {
+            axiosClient.post(apiKeys.update, {
+              "0": {
+                model_name: "User",
+                params: {
+                  username,
+                  display_name: nickname,
+                  profile_id: res.data.id
+                },
+                id: globalUser.user.id
+              }
+            });
+            return res.data.id;
+          })
+          .then((id) => {
+            setActiveStep((prev) => prev + 1);
+            dispatchGlobalUser({
+              ...globalUser,
+              user: {
+                ...globalUser.user,
+                display_name: nickname,
+                profile_id: id,
+                username
+              }
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        axiosClient
+          .post(apiKeys.update, {
+            "0": {
+              model_name: "User",
+              params: {
+                username,
+                display_name: nickname
+              },
+              id: globalUser.user.id
+            }
+          })
+          .then(() => {
+            setActiveStep((prev) => prev + 1);
+            dispatchGlobalUser({
+              ...globalUser,
+              user: {
+                ...globalUser.user,
+                display_name: nickname,
+                username
+              }
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
     },
-    () => {}
+    () => {
+      onClose();
+    }
   ];
+
+  const isConnect = useGlobalUserData().user.x_username;
 
   const stepsComponent = useMemo(() => {
     return [
-      <ConnectSocial
-        key={0}
-        // setConnect={setConnect}
-        isConnect={isConnect}
-      />,
+      <ConnectSocial key={0} />,
       <Profile key={1} editMode={editMode} setEditMode={setEditMode} />,
       <Interests key={2} />
     ];
@@ -164,6 +272,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
             Skip This Step
           </Button>
           <Button
+            isLoading={isLoading}
             onClick={handleSubmit[activeStep]}
             size="md"
             isDisabled={
