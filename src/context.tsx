@@ -108,6 +108,7 @@ export const GlobalUser = createContext<{
   wallet: any;
   followers: any;
   followings: any;
+  twitter?: any;
 }>(undefined);
 export const SetGlobalUser = createContext<
   Dispatch<
@@ -116,6 +117,7 @@ export const SetGlobalUser = createContext<
       wallet: any;
       followers: any;
       followings: any;
+      twitter?: any;
     }>
   >
 >(undefined);
@@ -133,6 +135,7 @@ export const GlobalUserProvider = ({
     wallet: any;
     followers: any;
     followings: any;
+    twitter?: any;
   }>(userData ?? undefined);
 
   const userBaseData = useContext(Authorization);
@@ -145,7 +148,8 @@ export const GlobalUserProvider = ({
             user: data[0][0],
             wallet: data[1],
             followers: data[2],
-            followings: data[3]
+            followings: data[3],
+            twitter: {}
           });
         }
       });
