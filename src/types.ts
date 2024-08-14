@@ -42,7 +42,7 @@ export type ApiErrorType = {
 export type SetupWizardForm = {
   username: string;
   nickname: string;
-  profile: FileList[0];
+  profile: FileList[0] | string;
   interests: Array<number>;
 };
 
