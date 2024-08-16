@@ -43,7 +43,7 @@ export type SetupWizardForm = {
   username: string;
   nickname: string;
   profile: FileList[0] | string;
-  interests: Array<number>;
+  interests: Array<{ id?: number; name?: string }>;
 };
 
 export enum Badges {
