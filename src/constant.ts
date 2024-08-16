@@ -51,33 +51,6 @@ export const reviewStatuses = [
   }
 ];
 
-export const interestsFakeData = [
-  {
-    id: 0,
-    title: "DeFi"
-  },
-  {
-    id: 1,
-    title: "Metaverse"
-  },
-  {
-    id: 2,
-    title: "NFT"
-  },
-  {
-    id: 3,
-    title: "Game"
-  },
-  {
-    id: 4,
-    title: "Tools"
-  },
-  {
-    id: 5,
-    title: "Social"
-  }
-];
-
 export const ACCESS_TOKEN_COOKIE_KEY = "access_token";
 export const TWITTER_INFO = "twitter_info";
 export const currencyScale = {
