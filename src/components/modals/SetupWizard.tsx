@@ -56,7 +56,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
     control
   } = useFormContext<SetupWizardForm>();
 
-  const { nickname, username, profile } = useWatch({
+  const { nickname, username, profile, interests } = useWatch({
     control
   });
 
@@ -84,8 +84,8 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
           setLoading(false);
         });
     },
-    () => {
-      setLoading(true);
+    async () => {
+      // setLoading(true);
       if (profile && typeof profile === "object") {
         const formData = new FormData();
         formData.append("file", profile);
@@ -134,35 +134,64 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
             setLoading(false);
           });
       } else {
-        axiosClient
-          .post(apiKeys.update, {
-            "0": {
-              model_name: "User",
-              params: {
-                username,
-                display_name: nickname
-              },
-              id: globalUser.user.id
-            }
-          })
-          .then(() => {
-            setActiveStep((prev) => prev + 1);
-            dispatchGlobalUser({
-              ...globalUser,
-              user: {
-                ...globalUser.user,
-                display_name: nickname,
-                username
-              }
-            });
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+        // console.log({ profile });
+        // const response = await axiosClient.get(profile as string, {
+        //   responseType: "blob"
+        // });
+        // const blob = response.data;
+        // const file = new File(
+        //   [blob],
+        //   globalUser.user.id + new Date().getTime().toString(),
+        //   { type: blob.type }
+        // );
+        // console.log({ file });
+        // const formData = new FormData();
+        // formData.append("file", file);
+        // axiosClient
+        //   .post(apiKeys.update, {
+        //     "0": {
+        //       model_name: "User",
+        //       params: {
+        //         username,
+        //         display_name: nickname
+        //       },
+        //       id: globalUser.user.id
+        //     }
+        //   })
+        //   .then(() => {
+        //     setActiveStep((prev) => prev + 1);
+        //     dispatchGlobalUser({
+        //       ...globalUser,
+        //       user: {
+        //         ...globalUser.user,
+        //         display_name: nickname,
+        //         username
+        //       }
+        //     });
+        //   })
+        //   .finally(() => {
+        //     setLoading(false);
+        //   });
       }
     },
     () => {
-      onClose();
+      setLoading(true);
+      axiosClient
+        .post(apiKeys.relation.add, {
+          "0": {
+            model_name: "User",
+            params: {
+              interested_categories: interests.map((item) => item.id)
+            },
+            id: globalUser.user.id
+          }
+        })
+        .then(() => {
+          onClose();
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   ];
 

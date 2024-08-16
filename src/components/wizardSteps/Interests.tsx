@@ -8,7 +8,6 @@ import {
   Text,
   VStack
 } from "@chakra-ui/react";
-import { interestsFakeData } from "@/constant";
 import { useFormContext, useWatch } from "react-hook-form";
 import { SetupWizardForm } from "@/types";
 import { useEffect, useState } from "react";
@@ -27,11 +26,7 @@ export const Interests = () => {
   } = useFormContext<SetupWizardForm>();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [
-    ,
-    // interestsData
-    setInterestsData
-  ] = useState([]);
+  const [interestsData, setInterestsData] = useState([]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -96,7 +91,7 @@ export const Interests = () => {
           {isLoading ? (
             <Spinner color="primary.300" />
           ) : (
-            interestsFakeData.map((item) => (
+            interestsData.map((item) => (
               <Tag
                 cursor="pointer"
                 onClick={() => {
@@ -105,17 +100,21 @@ export const Interests = () => {
                   if (index !== -1) {
                     setValue(
                       "interests",
-                      interests.filter((tag) => tag !== item.id)
+                      interests.filter((tag) => tag.id !== item.id)
                     );
                   } else {
-                    setValue("interests", [...interests, item.id]);
+                    setValue("interests", [...interests, item]);
                   }
                 }}
                 size="md"
-                variant={interests.includes(item.id) ? "lightOrange" : "dark"}
+                variant={
+                  interests.find((interest) => interest.id === item.id)
+                    ? "lightOrange"
+                    : "dark"
+                }
                 key={item.id}
               >
-                <TagLabel>{item.title}</TagLabel>
+                <TagLabel>{item.name}</TagLabel>
               </Tag>
             ))
           )}
