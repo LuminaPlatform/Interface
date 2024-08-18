@@ -12,8 +12,9 @@ import {
 } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { TbCameraPlus, TbRestore } from "react-icons/tb";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { SetupWizardForm } from "@/types";
+import { useGlobalUserData } from "@/hooks/bases";
 import { InputError } from "../InputError";
 import { WizardContentBase } from "./Base";
 
@@ -31,6 +32,21 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
   } = useFormContext<SetupWizardForm>();
 
   const { profile } = useWatch({ control });
+
+  const globalUser = useGlobalUserData();
+
+  useEffect(() => {
+    if (globalUser.twitter.data.username) {
+      setValue("username", globalUser.twitter.data.username);
+    }
+    if (globalUser.twitter.data.name) {
+      setValue("nickname", globalUser.twitter.data.name);
+    }
+    if (globalUser.twitter.data.profile_image_url) {
+      setValue("profile", globalUser.twitter.data.profile_image_url);
+    }
+  }, [globalUser.twitter]);
+
   return (
     <WizardContentBase>
       <GridItem justifyContent="center" as={VStack} rowGap="16px">
@@ -47,13 +63,15 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
             width="86px"
             height="86px"
             src={
-              profile
+              profile && typeof profile === "object"
                 ? URL.createObjectURL(profile)
-                : "/assets/images/default-img.png"
+                : typeof profile === "string"
+                  ? profile
+                  : "/assets/images/default-img.png"
             }
           />
           <Text color="gray.20" fontSize="md">
-            Your Nickname
+            {globalUser.twitter.data.name}
           </Text>
         </VStack>
         <Input
@@ -105,7 +123,10 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
                 leftIcon={<TbRestore />}
                 variant="outline"
                 onClick={() => {
-                  setEditMode(true);
+                  setValue(
+                    "profile",
+                    globalUser.twitter.data.profile_image_url
+                  );
                 }}
               >
                 Reset Photo

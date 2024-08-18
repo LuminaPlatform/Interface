@@ -5,7 +5,10 @@ export const apiKeys = {
         req: "/auth/login/google/request",
         cb: "/auth/login/google"
       },
-      twitter: "",
+      twitter: {
+        req: "/auth/authorize/twitter/request",
+        cb: "/auth/authorize/twitter"
+      },
       email: "/auth/login/email",
       wallet: "/auth/login/wallet"
     },
@@ -31,7 +34,10 @@ export const apiKeys = {
   update: "/update",
   distribute: "/distribution/distribute",
   getSignMessage: "/auth/wallet/get-message",
-  file: "/file/file",
+  file: {
+    file: "/file/file",
+    link: "/file/link"
+  },
   relation: {
     remove: "/remove-relations",
     add: "/add-relations"

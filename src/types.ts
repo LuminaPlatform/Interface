@@ -42,8 +42,8 @@ export type ApiErrorType = {
 export type SetupWizardForm = {
   username: string;
   nickname: string;
-  profile: FileList[0];
-  interests: Array<number>;
+  profile: FileList[0] | string;
+  interests: Array<{ id?: number; name?: string }>;
 };
 
 export enum Badges {

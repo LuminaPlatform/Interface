@@ -110,6 +110,7 @@ export const GlobalUser = createContext<{
   wallet: any;
   followers: any;
   followings: any;
+  twitter?: any;
   projectCategories: any;
   interestedExpertises: any;
 }>(undefined);
@@ -120,6 +121,7 @@ export const SetGlobalUser = createContext<
       wallet: any;
       followers: any;
       followings: any;
+      twitter?: any;
       projectCategories: any;
       interestedExpertises: any;
     }>
@@ -139,6 +141,7 @@ export const GlobalUserProvider = ({
     wallet: any;
     followers: any;
     followings: any;
+    twitter?: any;
     projectCategories: any;
     interestedExpertises: any;
   }>(userData ?? undefined);
@@ -179,7 +182,8 @@ export const GlobalUserProvider = ({
               followers: data[2],
               followings: data[3],
               projectCategories: data[4],
-              interestedExpertises: data[5]
+              interestedExpertises: data[5],
+              twitter: {}
             });
           }
         });
