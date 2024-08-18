@@ -34,7 +34,10 @@ export const apiKeys = {
   update: "/update",
   distribute: "/distribution/distribute",
   getSignMessage: "/auth/wallet/get-message",
-  file: "/file/file",
+  file: {
+    file: "/file/file",
+    link: "/file/link"
+  },
   relation: {
     remove: "/remove-relations",
     add: "/add-relations"

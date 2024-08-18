@@ -62,7 +62,7 @@ export const UserInfoEditable = ({
       })
     );
     axiosClient
-      .post(apiKeys.file, formData, {
+      .post(apiKeys.file.file, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`

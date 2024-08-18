@@ -116,7 +116,7 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
               );
               if (medias.length !== 0) {
                 return axiosClient
-                  .post(apiKeys.file, formData, {
+                  .post(apiKeys.file.file, formData, {
                     headers: { "Content-Type": "multipart/form-data" }
                   })
                   .then(() => {

@@ -98,7 +98,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
           })
         );
         axiosClient
-          .post(apiKeys.file, formData, {
+          .post(apiKeys.file.file, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
               Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
@@ -134,44 +134,43 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
             setLoading(false);
           });
       } else {
-        // console.log({ profile });
-        // const response = await axiosClient.get(profile as string, {
-        //   responseType: "blob"
-        // });
-        // const blob = response.data;
-        // const file = new File(
-        //   [blob],
-        //   globalUser.user.id + new Date().getTime().toString(),
-        //   { type: blob.type }
-        // );
-        // console.log({ file });
-        // const formData = new FormData();
-        // formData.append("file", file);
-        // axiosClient
-        //   .post(apiKeys.update, {
-        //     "0": {
-        //       model_name: "User",
-        //       params: {
-        //         username,
-        //         display_name: nickname
-        //       },
-        //       id: globalUser.user.id
-        //     }
-        //   })
-        //   .then(() => {
-        //     setActiveStep((prev) => prev + 1);
-        //     dispatchGlobalUser({
-        //       ...globalUser,
-        //       user: {
-        //         ...globalUser.user,
-        //         display_name: nickname,
-        //         username
-        //       }
-        //     });
-        //   })
-        //   .finally(() => {
-        //     setLoading(false);
-        //   });
+        const imageFile = await axiosClient
+          .post(apiKeys.file.link, {
+            url: profile,
+            proposal: {
+              model: "User",
+              id: globalUser.user.id,
+              field: "profile_id"
+            }
+          })
+          .then((res) => res.data);
+        axiosClient
+          .post(apiKeys.update, {
+            "0": {
+              model_name: "User",
+              params: {
+                username,
+                display_name: nickname,
+                profile_id: imageFile.id
+              },
+              id: globalUser.user.id
+            }
+          })
+          .then(() => {
+            setActiveStep((prev) => prev + 1);
+            dispatchGlobalUser({
+              ...globalUser,
+              user: {
+                ...globalUser.user,
+                display_name: nickname,
+                username
+              }
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+            onClose();
+          });
       }
     },
     () => {
