@@ -117,6 +117,7 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
           Authorization: `Bearer ${accessToken}`
         }
       });
+
       const userAllDataResponse = await axiosClient.post(apiKeys.fetch, {
         0: {
           model: "User",
@@ -179,8 +180,36 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
               }
             ]
           }
+        },
+        4: {
+          model: "User.interested_categories",
+          model_id: response.data.id,
+          orders: [],
+          graph: {
+            fetch_fields: [
+              {
+                name: "*"
+              }
+            ]
+          }
         }
       });
+      const userInterests = await axiosClient
+        .post(apiKeys.fetch, {
+          0: {
+            model: "User.interested_expertises",
+            model_id: response.data.id,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*"
+                }
+              ]
+            }
+          }
+        })
+        .then((res) => res.data[0] ?? []);
       if (response.status === 200) {
         return {
           baseUserData: response.data,
@@ -188,7 +217,9 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
             user: userAllDataResponse.data[0][0],
             wallet: userAllDataResponse.data[1],
             followers: userAllDataResponse.data[2],
-            followings: userAllDataResponse.data[3]
+            followings: userAllDataResponse.data[3],
+            projectCategories: userAllDataResponse.data[4],
+            interestedExpertises: userInterests ?? []
           }
         };
       }

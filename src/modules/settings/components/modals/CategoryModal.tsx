@@ -1,5 +1,6 @@
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
+import { useDispatchGlobalUserData, useGlobalUserData } from "@/hooks/bases";
 import {
   Button,
   HStack,
@@ -10,18 +11,16 @@ import {
   UseDisclosureProps,
   VStack
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CategoryModalProps {
   title: string;
-  setData: Dispatch<SetStateAction<any[]>>;
   onClose: UseDisclosureProps["onClose"];
   selectedData: any[];
   type: "CATEGORIES" | "PEOPLE";
 }
 export const CategoryModal = ({
   title,
-  setData,
   onClose,
   selectedData,
   type
@@ -29,6 +28,10 @@ export const CategoryModal = ({
   const [interests, setInterests] = useState([]);
   const [selectors, setSelector] = useState(selectedData);
   const [isLoading, setLoading] = useState(false);
+  const [isFetchingLoading, setFetchingLoading] = useState(false);
+
+  const globalUser = useGlobalUserData();
+  const dispatchGlobalUser = useDispatchGlobalUserData();
 
   useEffect(() => {
     setLoading(true);
@@ -115,10 +118,14 @@ export const CategoryModal = ({
                 }
               }}
               size="md"
-              variant={selectors.includes(item.id) ? "lightOrange" : "dark"}
+              variant={
+                selectors.find((selector) => selector.id === item.id)
+                  ? "lightOrange"
+                  : "dark"
+              }
               key={item.id}
             >
-              <TagLabel>{item.title}</TagLabel>
+              <TagLabel>{item.name}</TagLabel>
             </Tag>
           ))}
         </HStack>
@@ -126,7 +133,6 @@ export const CategoryModal = ({
       <HStack justifyContent="flex-end" width="full">
         <Button
           onClick={() => {
-            setSelector([]);
             onClose();
           }}
           variant="outline"
@@ -135,9 +141,73 @@ export const CategoryModal = ({
           Cancel
         </Button>
         <Button
+          isLoading={isFetchingLoading}
+          isDisabled={isFetchingLoading}
           onClick={() => {
-            setData(selectors);
-            onClose();
+            const params = {
+              [type === "CATEGORIES"
+                ? "interested_categories"
+                : "interested_expertises"]: selectors
+                .filter((item) => {
+                  if (type === "CATEGORIES") {
+                    return !globalUser.projectCategories.some(
+                      (category: { id: number; name: string }) =>
+                        category.id === item.id
+                    );
+                  }
+                  return !globalUser.interestedExpertises.some(
+                    (category: { id: number; name: string }) =>
+                      category.id === item.id
+                  );
+                })
+                .map((item) => item.id)
+            };
+            setFetchingLoading(true);
+            axiosClient
+              .post(apiKeys.relation.add, {
+                "0": {
+                  model_name: "User",
+                  params,
+                  id: globalUser.user.id
+                }
+              })
+              .then(() => {
+                if (type === "CATEGORIES") {
+                  const data = [
+                    ...selectors.filter((item) => {
+                      return !globalUser.projectCategories.some(
+                        (category: { id: number; name: string }) =>
+                          category.id === item.id
+                      );
+                    }),
+                    ...globalUser.projectCategories
+                  ];
+                  dispatchGlobalUser({
+                    ...globalUser,
+                    projectCategories: data
+                  });
+                  setSelector(data);
+                } else {
+                  const data = [
+                    ...selectors.filter((item) => {
+                      return !globalUser.interestedExpertises.some(
+                        (category: { id: number; name: string }) =>
+                          category.id === item.id
+                      );
+                    }),
+                    ...globalUser.interestedExpertises
+                  ];
+                  dispatchGlobalUser({
+                    ...globalUser,
+                    interestedExpertises: data
+                  });
+                  setSelector(data);
+                }
+              })
+              .finally(() => {
+                onClose();
+                setFetchingLoading(false);
+              });
           }}
           variant="primary"
         >
