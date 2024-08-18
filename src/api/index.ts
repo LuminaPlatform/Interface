@@ -65,6 +65,18 @@ export const getUserInformation = async (id: string) => {
             }
           ]
         }
+      },
+      4: {
+        model: "User.interested_categories",
+        model_id: id,
+        orders: [],
+        graph: {
+          fetch_fields: [
+            {
+              name: "*"
+            }
+          ]
+        }
       }
     })
     .then((response) => {

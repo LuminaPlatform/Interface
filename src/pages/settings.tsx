@@ -34,7 +34,9 @@ const Settings = ({ user, profileImage }: SettingsProps) => {
         wallet,
         // TODO shoud get from api
         followers: [],
-        followings: []
+        followings: [],
+        projectCategories: [],
+        interestedExpertises: []
       });
     } else if (!userBaseData) {
       router.replace("/projects");
@@ -61,6 +63,22 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         Authorization: `Bearer ${accessToken}`
       }
     });
+    const userInterests = await axiosClient
+      .post(apiKeys.fetch, {
+        0: {
+          model: "User.interested_expertises",
+          model_id: userBaseData.data.id,
+          orders: [],
+          graph: {
+            fetch_fields: [
+              {
+                name: "*"
+              }
+            ]
+          }
+        }
+      })
+      .then((res) => res.data[0] ?? []);
     const userInformation = await getUserInformation(userBaseData.data.id);
 
     const profileImage = await axiosClient
@@ -90,7 +108,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       };
     }
     return {
-      props: { user: userInformation, profileImage }
+      props: {
+        user: { ...userInformation, interestedExpertises: userInterests },
+        profileImage
+      }
     };
   } catch (error) {
     return {

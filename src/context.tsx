@@ -11,6 +11,8 @@ import {
 import { Project } from "./modules/projects/types";
 import { AuthenticationData, STEP_MODAL } from "./types";
 import { getUserInformation } from "./api";
+import { axiosClient } from "./config/axios";
+import { apiKeys } from "./api/apiKeys";
 
 export const IsSidebarOpen = createContext(true);
 export const DispatchIsSidebarOpen = createContext<
@@ -108,6 +110,8 @@ export const GlobalUser = createContext<{
   wallet: any;
   followers: any;
   followings: any;
+  projectCategories: any;
+  interestedExpertises: any;
 }>(undefined);
 export const SetGlobalUser = createContext<
   Dispatch<
@@ -116,6 +120,8 @@ export const SetGlobalUser = createContext<
       wallet: any;
       followers: any;
       followings: any;
+      projectCategories: any;
+      interestedExpertises: any;
     }>
   >
 >(undefined);
@@ -133,22 +139,50 @@ export const GlobalUserProvider = ({
     wallet: any;
     followers: any;
     followings: any;
+    projectCategories: any;
+    interestedExpertises: any;
   }>(userData ?? undefined);
 
   const userBaseData = useContext(Authorization);
 
   useEffect(() => {
     if (userBaseData) {
-      getUserInformation(userBaseData.id.toString()).then((data) => {
-        if (data) {
-          setState({
-            user: data[0][0],
-            wallet: data[1],
-            followers: data[2],
-            followings: data[3]
-          });
-        }
-      });
+      getUserInformation(userBaseData.id.toString())
+        .then(async (data) => {
+          const expertises = await axiosClient
+            .post(apiKeys.fetch, {
+              0: {
+                model: "User.interested_expertises",
+                model_id: userBaseData.id.toString(),
+                orders: [],
+                graph: {
+                  fetch_fields: [
+                    {
+                      name: "*"
+                    }
+                  ]
+                }
+              }
+            })
+            .then((res) => res.data[0]);
+
+          return {
+            ...data,
+            5: expertises
+          };
+        })
+        .then((data) => {
+          if (data) {
+            setState({
+              user: data[0][0],
+              wallet: data[1],
+              followers: data[2],
+              followings: data[3],
+              projectCategories: data[4],
+              interestedExpertises: data[5]
+            });
+          }
+        });
     } else {
       setState(undefined);
     }
