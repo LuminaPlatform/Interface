@@ -1,6 +1,6 @@
 import {
   TbHeartFilled,
-  TbMoodAngry,
+  TbMoodSadFilled,
   TbThumbDownFilled,
   TbThumbUpFilled
 } from "react-icons/tb";
@@ -47,7 +47,7 @@ export const reviewStatuses = [
     id: 3,
     name: VIEW_POINT.OPPOSER,
     colorScheme: "red",
-    icon: TbMoodAngry
+    icon: TbMoodSadFilled
   }
 ];
 
