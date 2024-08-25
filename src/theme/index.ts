@@ -149,7 +149,7 @@ export const theme = extendTheme({
             fontSize: "md",
             border: "0.5px solid",
             borderRadius: "12px",
-            color: "gray.100",
+            color: "gray.40",
             borderColor: "gray.100",
             _hover: {
               color: "gray.100",
