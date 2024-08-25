@@ -113,6 +113,7 @@ export const GlobalUser = createContext<{
   twitter?: any;
   projectCategories: any;
   interestedExpertises: any;
+  userRole: any;
 }>(undefined);
 export const SetGlobalUser = createContext<
   Dispatch<
@@ -124,6 +125,7 @@ export const SetGlobalUser = createContext<
       twitter?: any;
       projectCategories: any;
       interestedExpertises: any;
+      userRole: any;
     }>
   >
 >(undefined);
@@ -144,6 +146,7 @@ export const GlobalUserProvider = ({
     twitter?: any;
     projectCategories: any;
     interestedExpertises: any;
+    userRole: any;
   }>(userData ?? undefined);
 
   const userBaseData = useContext(Authorization);
@@ -168,10 +171,21 @@ export const GlobalUserProvider = ({
               }
             })
             .then((res) => res.data[0]);
-
+          const userRole = await axiosClient
+            .post(apiKeys.fetch, {
+              "0": {
+                model: "User.roles",
+                model_id: userBaseData.id.toString(),
+                orders: [],
+                graph: { fetch_fields: [{ name: "*" }] },
+                condition: {}
+              }
+            })
+            .then((res) => res.data[0] ?? []);
           return {
             ...data,
-            5: expertises
+            5: expertises,
+            6: userRole
           };
         })
         .then((data) => {
@@ -183,7 +197,8 @@ export const GlobalUserProvider = ({
               followings: data[3],
               projectCategories: data[4],
               interestedExpertises: data[5],
-              twitter: {}
+              twitter: {},
+              userRole: data[6]
             });
           }
         });

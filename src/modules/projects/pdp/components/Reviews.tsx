@@ -9,14 +9,21 @@ import {
 } from "@chakra-ui/react";
 import { TbEdit, TbMessagePlus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
+import { useMemo } from "react";
+import { useGlobalUserData } from "@/hooks/bases";
 import { useProjectData, useProjectReviews } from "../hooks";
 import { ImportReview } from "./ImportReview";
 
 type EmptyStateProps = UseDisclosureProps;
 const EmptyState = ({ onOpen }: EmptyStateProps) => {
-  const project = useProjectData();
-  const hasAccessWriteReview = !!project.userRole.find((role: any) =>
-    role.name.includes("BETA_USER")
+  const globalUser = useGlobalUserData();
+
+  const hasAccessWriteReview = useMemo(
+    () =>
+      !!globalUser?.userRole.find((role: any) =>
+        role.name.includes("BETA_USER")
+      ),
+    [globalUser]
   );
 
   const {

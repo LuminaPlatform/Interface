@@ -210,6 +210,17 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
           }
         })
         .then((res) => res.data[0] ?? []);
+      const userRole = await axiosClient
+        .post(apiKeys.fetch, {
+          "0": {
+            model: "User.roles",
+            model_id: response.data.id,
+            orders: [],
+            graph: { fetch_fields: [{ name: "*" }] },
+            condition: {}
+          }
+        })
+        .then((res) => res.data[0] ?? []);
       if (response.status === 200) {
         return {
           baseUserData: response.data,
@@ -219,7 +230,8 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
             followers: userAllDataResponse.data[2],
             followings: userAllDataResponse.data[3],
             projectCategories: userAllDataResponse.data[4],
-            interestedExpertises: userInterests ?? []
+            interestedExpertises: userInterests ?? [],
+            userRole
           }
         };
       }

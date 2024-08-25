@@ -12,19 +12,15 @@ const ProjectDetail = ({
   project,
   reviews,
   viewpoints,
-  userViewpoint,
-  userRole
+  userViewpoint
 }: {
   project: Project;
   reviews: Review[];
   viewpoints: any;
   userViewpoint: any;
-  userRole: any;
 }) => {
   return (
-    <ProjectDetailProvider
-      project={{ ...project, viewpoints, userViewpoint, userRole }}
-    >
+    <ProjectDetailProvider project={{ ...project, viewpoints, userViewpoint }}>
       <ProjectReviewsProvider reviews={reviews}>
         <Index />
       </ProjectReviewsProvider>
@@ -184,27 +180,13 @@ export const getServerSideProps = async (ctx: any) => {
   const project = projectResponse.data["0"];
   const reviews = projectResponse.data["1"];
 
-  let userRole;
-  if (userInfo?.data) {
-    userRole = await axiosClient.post(apiKeys.fetch, {
-      "0": {
-        model: "User.roles",
-        model_id: userInfo.data.id,
-        orders: [],
-        graph: { fetch_fields: [{ name: "*" }] },
-        condition: {}
-      }
-    });
-  }
-
   if (project) {
     return {
       props: {
         project: project[0],
         reviews,
         viewpoints,
-        userViewpoint: userViewpoint ?? [],
-        userRole: (await userRole?.data[0]) ?? []
+        userViewpoint: userViewpoint ?? []
       }
     };
   }

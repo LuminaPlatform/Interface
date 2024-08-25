@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { TbChevronRight } from "react-icons/tb";
 import { useEffect, useRef, useState } from "react";
+import { useGlobalUserData } from "@/hooks/bases";
 import { useProjectData, useProjectReviews } from "../hooks";
 import { Reviews } from "./Reviews";
 import { Feedback } from "./Feedback";
@@ -46,6 +47,8 @@ export const Contribution = () => {
     setImpactHeight(impactRef?.current?.clientHeight);
   }, [impactRef?.current?.clientHeight]);
 
+  const globalUser = useGlobalUserData();
+
   return (
     <VStack width="full">
       <HStack justifyContent="space-between" width="full">
@@ -78,7 +81,7 @@ export const Contribution = () => {
       <SimpleGrid width="full" gap="24px" columns={{ base: 1, lg: 3 }}>
         <GridItem
           h={
-            project.userRole.find((role: any) =>
+            globalUser?.userRole.find((role: any) =>
               role.name.includes("BETA_USER")
             )
               ? "384px"

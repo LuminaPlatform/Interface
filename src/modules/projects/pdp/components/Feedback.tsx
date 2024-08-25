@@ -5,13 +5,14 @@ import {
   UseDisclosureProps,
   VStack
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ReviewStatus } from "@/types";
 import { TbEdit, TbMessage2Plus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
 import { reviewStatuses } from "@/constant";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
+import { useGlobalUserData } from "@/hooks/bases";
 import WriteFeedback from "./WriteFeedback";
 import { FeedbackResult } from "./FeedbackResult";
 import {
@@ -34,6 +35,8 @@ export const Feedback = ({
   const project = useProjectData();
   const reviews = useProjectReviews();
 
+  const globalUser = useGlobalUserData();
+
   const dispatchProjectData = useProjectDataDispatch();
   const {
     onClose: onCloseImportReview,
@@ -46,8 +49,12 @@ export const Feedback = ({
         ?.name ?? undefined
   );
 
-  const hasAccessWriteReview = !!project.userRole.find((role: any) =>
-    role.name.includes("BETA_USER")
+  const hasAccessWriteReview = useMemo(
+    () =>
+      !!globalUser?.userRole.find((role: any) =>
+        role.name.includes("BETA_USER")
+      ),
+    [globalUser]
   );
 
   useEffect(() => {
