@@ -5,14 +5,12 @@
 /* eslint-disable no-shadow */
 import { Controller, useForm, useWatch } from "react-hook-form";
 import {
-  Box,
   Button,
   chakra,
   FormControl,
   FormLabel,
   FormLabelProps,
   HStack,
-  Img,
   Input,
   Text,
   Tooltip,
@@ -20,7 +18,6 @@ import {
   VStack
 } from "@chakra-ui/react";
 import { TbInfoCircleFilled, TbPhotoPlus } from "react-icons/tb";
-import { IoMdCloseCircle } from "react-icons/io";
 import { fileLimitation } from "@/config/fileLimitation";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
@@ -37,9 +34,9 @@ import {
   useProjectDataDispatch,
   useProjectReviewsDispatch
 } from "../hooks";
+import { PreviewSelectedMedia } from "./PreviewSelectedMedia";
 
 const labelProps: FormLabelProps = {
-  color: "gray.60",
   fontSize: "xs",
   fontWeight: "500"
 };
@@ -117,7 +114,10 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
               if (medias.length !== 0) {
                 return axiosClient
                   .post(apiKeys.file.file, formData, {
-                    headers: { "Content-Type": "multipart/form-data" }
+                    headers: {
+                      "Content-Type": "multipart/form-data",
+                      Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                    }
                   })
                   .then(() => {
                     return axiosClient.post(apiKeys.fetch, {
@@ -234,6 +234,14 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
   };
   const { description, medias } = useWatch<ReviewFormType>({ control });
 
+  const handleRemoveMedia = (media: File) => {
+    const filteredMedias = medias.filter(
+      (item) =>
+        item.type + item.name + item.size !==
+        media.type + media.name + media.size
+    );
+    setValue("medias", filteredMedias);
+  };
   return (
     <ChakraForm
       display="flex"
@@ -242,7 +250,11 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
       onSubmit={handleSubmit(onSubmit)}
       width="full"
     >
-      <FormControl isInvalid={!!errors.title}>
+      <FormControl
+        isInvalid={!!errors.title}
+        _focusWithin={{ color: "gray.40" }}
+        color="gray.60"
+      >
         <FormLabel {...labelProps}>Title *</FormLabel>
         <Input
           variant="outline"
@@ -260,7 +272,11 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
           </Text>
         )}
       </FormControl>
-      <FormControl isInvalid={!!errors.description}>
+      <FormControl
+        _focusWithin={{ color: "gray.40" }}
+        color="gray.60"
+        isInvalid={!!errors.description}
+      >
         <FormLabel {...labelProps}>Describe your experience *</FormLabel>
         <Controller
           control={control}
@@ -286,14 +302,7 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
             />
           )}
         />
-        <HStack
-          width="full"
-          justifyContent={
-            (!!errors.description && errors.description.type) === "maxLength"
-              ? "space-between"
-              : "flex-end"
-          }
-        >
+        <HStack width="full" justifyContent="space-between">
           {!!errors.description && (
             <Text fontSize="xs" color="red.200">
               {errors.description.message}
@@ -301,12 +310,13 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
           )}
           <Text
             color={
-              (!!errors.description && errors.description.type) === "maxLength"
+              !!errors.description && errors.description.type === "maxLength"
                 ? "red.200"
                 : "gray.80"
             }
             fontSize="xs"
             fontWeight="500"
+            ml="auto"
           >
             {description.length}/{descriptionThreshold}
           </Text>
@@ -349,9 +359,17 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
               width="124px"
               height="70px"
               justifyContent="center"
+              color="gray.200"
+              _hover={{
+                borderColor: "primary.200",
+                color: "primary.200",
+                svg: {
+                  color: "var(--chakra-colors-primary-200) !important"
+                }
+              }}
             >
               <TbPhotoPlus color="var(--chakra-colors-gray-200)" />
-              <Text color="gray.200" fontSize="xs" fontWeight="700">
+              <Text fontSize="xs" fontWeight="700">
                 Upload images
               </Text>
             </VStack>
@@ -387,36 +405,10 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
             )}
           </FormControl>
           {medias.map((media) => (
-            <Box position="relative" key={media.type + media.name + media.size}>
-              <IoMdCloseCircle
-                fontSize="20px"
-                style={{
-                  top: "-8px",
-                  left: "-8px",
-                  position: "absolute",
-                  cursor: "pointer"
-                }}
-                onClick={() => {
-                  const filteredMedias = medias.filter(
-                    (item) =>
-                      item.type + item.name + item.size !==
-                      media.type + media.name + media.size
-                  );
-                  setValue("medias", filteredMedias);
-                }}
-                color="var(--chakra-colors-red-200)"
-              />
-              <Img
-                margin={0}
-                borderRadius="8px"
-                minW="124px"
-                minH="70px"
-                w="124px"
-                h="70px"
-                objectFit="cover"
-                src={URL.createObjectURL(media)}
-              />
-            </Box>
+            <PreviewSelectedMedia
+              media={media}
+              handleRemoveMedia={handleRemoveMedia}
+            />
           ))}
         </HStack>
       </VStack>

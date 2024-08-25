@@ -40,7 +40,7 @@ export const ModalBase = ({
         isOpen={isOpen}
         onClose={onClose}
       >
-        <ModalOverlay />
+        <ModalOverlay bg="rgba(38, 38, 41,0.6)" />
         <ModalContent
           minWidth="fit-content"
           fontFamily="satoshi"

@@ -9,10 +9,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ReviewStatus } from "@/types";
 import { TbEdit, TbMessage2Plus } from "react-icons/tb";
 import { ModalBase } from "@/components/ModalBase";
-import { reviewStatuses } from "@/constant";
+import { ACCESS_TOKEN_COOKIE_KEY, reviewStatuses } from "@/constant";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { useGlobalUserData } from "@/hooks/bases";
+import { getCookie } from "cookies-next";
 import WriteFeedback from "./WriteFeedback";
 import { FeedbackResult } from "./FeedbackResult";
 import {
@@ -81,7 +82,12 @@ export const Feedback = ({
                     viewpoint: status
                   }
                 }
-              }
+              },
+          {
+            headers: {
+              Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+            }
+          }
         )
         .then((response) => {
           axiosClient.get(`${apiKeys.viewpoint}/${project.id}`).then((res) => {
