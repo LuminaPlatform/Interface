@@ -36,7 +36,9 @@ const Settings = ({ user, profileImage }: SettingsProps) => {
         followers: [],
         followings: [],
         projectCategories: [],
-        interestedExpertises: []
+        interestedExpertises: [],
+        userRole: [],
+        twitter: ""
       });
     } else if (!userBaseData) {
       router.replace("/projects");
