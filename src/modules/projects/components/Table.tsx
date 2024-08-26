@@ -128,7 +128,7 @@ export const ArrowDown = () => (
 
 const Table = () => {
   const router = useRouter();
-  const page = Number(router.query?.page) ?? 1;
+  const page = router.query?.page ?? 1;
   const projectsData = useProjects();
   // const networkThreshold = 7;
 
@@ -139,7 +139,7 @@ const Table = () => {
   const columns = [
     columnHelper.accessor("id", {
       cell: (info) => {
-        return info.row.index + 1 + (page - 1) * pageThreshold;
+        return info.row.index + 1 + (Number(page) - 1) * pageThreshold;
       },
       header: () => "#"
     }),
