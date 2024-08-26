@@ -14,19 +14,15 @@ interface ReviewsProps {
   reviews: Review[];
   viewpoints: any;
   userViewpoint: any;
-  userRole: any;
 }
 const Reviews = ({
   reviews,
   project,
   viewpoints,
-  userViewpoint,
-  userRole
+  userViewpoint
 }: ReviewsProps) => {
   return (
-    <ProjectDetailProvider
-      project={{ ...project, viewpoints, userViewpoint, userRole }}
-    >
+    <ProjectDetailProvider project={{ ...project, viewpoints, userViewpoint }}>
       <ProjectReviewsProvider reviews={reviews}>
         <PageBase />
       </ProjectReviewsProvider>

@@ -3,12 +3,19 @@ import { useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
+// import { StringParam, useQueryParams } from "use-query-params";
 import Table from "../components/Table";
+import { useProjects, useProjectsDispatch } from "../hooks";
+import { EmptyState } from "../components/EmptyState";
 
 const Index = () => {
   const [search, setSearch] = useState("");
+  const dispatchProjects = useProjectsDispatch();
 
-  const [searchedProjects, setSearchedProjects] = useState([]);
+  const projects = useProjects();
+  // const [, setQuery] = useQueryParams({
+  //   page: StringParam
+  // });
 
   const handleSearchProjects = useMemo(
     () =>
@@ -46,7 +53,9 @@ const Index = () => {
             }
           })
           .then((res) => {
-            setSearchedProjects(res.data[0]);
+            // setQuery({ page: 1 });
+
+            dispatchProjects(res.data[0]);
           });
       }, 1000),
     []
@@ -74,7 +83,7 @@ const Index = () => {
         px="16px"
         value={search}
         onChange={(e) => {
-          const value = e.target.value.replace(/^\s+|\s+$/g, "");
+          const { value } = e.target;
           setSearch(value);
           handleSearchProjects(value);
         }}
@@ -101,7 +110,7 @@ const Index = () => {
         placeholder="Search Project"
       />
       <Box width="full" overflow="auto">
-        <Table searchedProjects={searchedProjects} />
+        {projects.length === 0 ? <EmptyState /> : <Table />}
       </Box>
     </VStack>
   );

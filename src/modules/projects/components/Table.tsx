@@ -23,10 +23,10 @@ import {
   SortingState,
   useReactTable
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { PiLinkThin } from "react-icons/pi";
 import Link from "next/link";
-import { currencyScale, primaryCategories } from "@/constant";
+import { currencyScale, pageThreshold, primaryCategories } from "@/constant";
 import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
 import { useRouter } from "next/router";
 import { useProjects } from "../hooks";
@@ -126,23 +126,21 @@ export const ArrowDown = () => (
   </svg>
 );
 
-interface TableProps {
-  searchedProjects: any[];
-}
-const Table = ({ searchedProjects }: TableProps) => {
+const Table = () => {
+  const router = useRouter();
+  const page = Number(router.query?.page) ?? 1;
   const projectsData = useProjects();
   // const networkThreshold = 7;
 
   const [sorting, setSorting] = useState<SortingState>([]);
-  const data = useMemo(
-    () => (searchedProjects.length !== 0 ? searchedProjects : projectsData),
-    [projectsData, searchedProjects]
-  );
+
   const columnHelper = createColumnHelper<any>();
 
   const columns = [
     columnHelper.accessor("id", {
-      cell: (info) => info.getValue(),
+      cell: (info) => {
+        return info.row.index + 1 + (page - 1) * pageThreshold;
+      },
       header: () => "#"
     }),
     columnHelper.accessor("project", {
@@ -374,7 +372,7 @@ const Table = ({ searchedProjects }: TableProps) => {
   ];
 
   const table = useReactTable({
-    data,
+    data: projectsData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     state: {
@@ -383,11 +381,6 @@ const Table = ({ searchedProjects }: TableProps) => {
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel()
   });
-
-  const router = useRouter();
-  const { query } = router;
-
-  const page = query.page || 1;
 
   return (
     <Box pb="16px" fontFamily="satoshi" pt="16px" width="full">
@@ -460,7 +453,7 @@ const Table = ({ searchedProjects }: TableProps) => {
           ))}
         </Tbody>
       </ChakraTable>
-      {searchedProjects.length === 0 && (
+      {projectsData.length !== 0 && (
         <HStack alignItems="center" width="full" justifyContent="center">
           <Flex columnGap="10px" alignItems="center">
             <Button
