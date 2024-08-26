@@ -3,12 +3,12 @@ import {
   Dispatch,
   PropsWithChildren,
   SetStateAction,
-  useState,
+  useState
 } from "react";
 import { Project, Review } from "../types";
 
 interface ProjectDetailProviderProps extends PropsWithChildren {
-  project: Project & { viewpoints: any; userViewpoint: any; userRole: any };
+  project: Project & { viewpoints: any; userViewpoint: any };
 }
 export const ProjectDetail =
   createContext<ProjectDetailProviderProps["project"]>(undefined);
@@ -16,7 +16,7 @@ export const ProjectDetailDispatch = createContext(undefined);
 
 export const ProjectDetailProvider = ({
   project,
-  children,
+  children
 }: ProjectDetailProviderProps) => {
   const [state, setState] =
     useState<ProjectDetailProviderProps["project"]>(project);
@@ -38,7 +38,7 @@ interface ProjectReviewsProviderProps extends PropsWithChildren {
 
 export const ProjectReviewsProvider = ({
   children,
-  reviews,
+  reviews
 }: ProjectReviewsProviderProps) => {
   const [state, setState] = useState<Review[]>(reviews);
   return (

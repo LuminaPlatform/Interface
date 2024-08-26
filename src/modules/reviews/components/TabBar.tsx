@@ -1,15 +1,16 @@
 "use client";
+
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import { tabs } from "../constants";
 import { useMemo } from "react";
 import { StringParam, useQueryParams } from "use-query-params";
+import { useAuthorization } from "@/hooks/bases";
+import { tabs } from "../constants";
 import TabBody from "./TabBody";
 import { UnAuthorized } from "./UnAuthorized";
-import { useAuthorization } from "@/hooks/bases";
 
 const TabBar = () => {
   const [query, setQuery] = useQueryParams({
-    tab: StringParam,
+    tab: StringParam
   });
   const activeTab = useMemo(
     () =>
@@ -20,7 +21,6 @@ const TabBar = () => {
   );
 
   const isAuthorized = useAuthorization();
-
 
   return (
     <Tabs index={activeTab} width="full">

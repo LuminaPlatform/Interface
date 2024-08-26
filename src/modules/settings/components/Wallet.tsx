@@ -5,7 +5,7 @@ import {
   useDispatchGlobalUserData,
   useDispatchModalSteps,
   useGlobalUserData,
-  useWalletModal,
+  useWalletModal
 } from "@/hooks/bases";
 import { STEP_MODAL } from "@/types";
 import { textTruncator } from "@/utils";
@@ -17,7 +17,7 @@ import {
   Tag,
   TagLabel,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { AnimatePresence, motion } from "framer-motion";
@@ -27,7 +27,7 @@ import {
   TbEyeOff,
   TbInfoCircleFilled,
   TbPinnedFilled,
-  TbPlus,
+  TbPlus
 } from "react-icons/tb";
 
 interface WalletItemProps {
@@ -56,10 +56,10 @@ const WalletItem = ({ wallet }: WalletItemProps) => {
         0: {
           model_name: "Wallet",
           params: {
-            public: !isPublic,
+            public: !isPublic
           },
-          id: globalUser?.user?.id,
-        },
+          id: globalUser?.user?.id
+        }
       })
       .then(() => {
         setPublic((prev: boolean) => !prev);
@@ -79,7 +79,7 @@ const WalletItem = ({ wallet }: WalletItemProps) => {
       borderRadius="12px"
       justifyContent="space-between"
       _hover={{
-        bg: "#00000040",
+        bg: "#00000040"
       }}
     >
       <HStack
@@ -113,22 +113,22 @@ const WalletItem = ({ wallet }: WalletItemProps) => {
                           "0": {
                             model_name: "User",
                             params: {
-                              pined_wallet_id: isPinned ? null : wallet?.id,
+                              pined_wallet_id: isPinned ? null : wallet?.id
                             },
-                            id: globalUser?.user?.id,
-                          },
+                            id: globalUser?.user?.id
+                          }
                         })
                         .then(() => {
                           dispatchGlobalUser({
                             ...globalUser,
-                            pinnedWalletId: isPinned ? null : wallet?.id,
+                            pinnedWalletId: isPinned ? null : wallet?.id
                           });
                         })
                         .catch(
                           (error: AxiosError<{ error_message: string }>) => {
                             toast({
                               status: "error",
-                              description: error.response.data.error_message,
+                              description: error.response.data.error_message
                             });
                           }
                         )

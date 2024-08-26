@@ -4,23 +4,25 @@ import {
   Dispatch,
   PropsWithChildren,
   SetStateAction,
+  useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
+import { useDisconnect } from "wagmi";
 import { Project } from "./modules/projects/types";
 import { AuthenticationData, STEP_MODAL } from "./types";
 import { getUserInformation } from "./api";
-import { useAuthorization } from "./hooks/bases";
-import { useDisconnect } from "wagmi";
+import { axiosClient } from "./config/axios";
+import { apiKeys } from "./api/apiKeys";
 
 export const IsSidebarOpen = createContext(true);
 export const DispatchIsSidebarOpen = createContext<
   Dispatch<SetStateAction<boolean>>
 >(() => {});
 
-interface IsSidebarOpenProviderProps extends PropsWithChildren {}
+type IsSidebarOpenProviderProps = PropsWithChildren;
 export const IsSidebarOpenProvider = ({
-  children,
+  children
 }: IsSidebarOpenProviderProps) => {
   const [state, setState] = useState(true);
   return (
@@ -34,9 +36,9 @@ export const IsSidebarOpenProvider = ({
 
 export const WalletConnectData = createContext<UseDisclosureProps>({});
 
-interface WalletConnectProviderProps extends PropsWithChildren {}
+type WalletConnectProviderProps = PropsWithChildren;
 export const WalletConnectProvider = ({
-  children,
+  children
 }: WalletConnectProviderProps) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   return (
@@ -50,9 +52,9 @@ export const SelectedProjects = createContext<Array<Project>>([]);
 export const SetSelectedProjects =
   createContext<Dispatch<SetStateAction<Project[]>>>(undefined);
 
-interface SelectedProjectProviderProps extends PropsWithChildren {}
+type SelectedProjectProviderProps = PropsWithChildren;
 export const SelectedProjectProvider = ({
-  children,
+  children
 }: SelectedProjectProviderProps) => {
   const [state, setState] = useState<Array<Project>>([]);
   return (
@@ -73,7 +75,7 @@ interface AuthorizationProviderProps extends PropsWithChildren {
 }
 export const AuthorizationProvider = ({
   children,
-  data,
+  data
 }: AuthorizationProviderProps) => {
   const [user, setUser] = useState(data);
 
@@ -92,7 +94,7 @@ export const AuthorizationProvider = ({
 export const ModalSteps = createContext<STEP_MODAL>(STEP_MODAL.wallet);
 export const SetModalSteps =
   createContext<Dispatch<SetStateAction<STEP_MODAL>>>(undefined);
-interface ModalStepsProviderProps extends PropsWithChildren {}
+type ModalStepsProviderProps = PropsWithChildren;
 export const ModalStepsProvider = ({ children }: ModalStepsProviderProps) => {
   const [state, setState] = useState(STEP_MODAL.wallet);
   return (
@@ -109,6 +111,10 @@ export const GlobalUser = createContext<{
   wallet: any;
   followers: any;
   followings: any;
+  twitter?: any;
+  projectCategories: any;
+  interestedExpertises: any;
+  userRole: any;
   pinnedWalletId: any;
 }>(undefined);
 export const SetGlobalUser = createContext<
@@ -118,6 +124,10 @@ export const SetGlobalUser = createContext<
       wallet: any;
       followers: any;
       followings: any;
+      twitter?: any;
+      projectCategories: any;
+      interestedExpertises: any;
+      userRole: any;
       pinnedWalletId: any;
     }>
   >
@@ -129,31 +139,92 @@ interface GlobalUserProviderProps extends PropsWithChildren {
 
 export const GlobalUserProvider = ({
   children,
-  userData,
+  userData
 }: GlobalUserProviderProps) => {
   const [state, setState] = useState<{
     user: any;
     wallet: any;
     followers: any;
     followings: any;
+    twitter?: any;
+    projectCategories: any;
+    interestedExpertises: any;
+    userRole: any;
     pinnedWalletId: any;
   }>(userData ?? undefined);
 
-  const userBaseData = useAuthorization();
+  const userBaseData = useContext(Authorization);
   const { disconnect } = useDisconnect();
+
   useEffect(() => {
-    if (!!userBaseData) {
-      getUserInformation(userBaseData.id.toString()).then((data) => {
-        if (!!data) {
-          setState({
-            user: data[0][0],
-            wallet: data[1],
-            followers: data[2],
-            followings: data[3],
-            pinnedWalletId: data[4][0]?.id,
-          });
-        }
-      });
+    if (userBaseData) {
+      getUserInformation(userBaseData.id.toString())
+        .then(async (data) => {
+          const expertises = await axiosClient
+            .post(apiKeys.fetch, {
+              0: {
+                model: "User.interested_expertises",
+                model_id: userBaseData.id.toString(),
+                orders: [],
+                graph: {
+                  fetch_fields: [
+                    {
+                      name: "*"
+                    }
+                  ]
+                }
+              }
+            })
+            .then((res) => res.data[0]);
+          const userRole = await axiosClient
+            .post(apiKeys.fetch, {
+              "0": {
+                model: "User.roles",
+                model_id: userBaseData.id.toString(),
+                orders: [],
+                graph: { fetch_fields: [{ name: "*" }] },
+                condition: {}
+              }
+            })
+            .then((res) => res.data[0] ?? []);
+          const userPinnedWallet = await axiosClient
+            .post(apiKeys.fetch, {
+              0: {
+                model: "User.pined_wallet",
+                model_id: userBaseData.id.toString(),
+                orders: [],
+                graph: {
+                  fetch_fields: [
+                    {
+                      name: "id"
+                    }
+                  ]
+                }
+              }
+            })
+            .then((res) => res.data[0] ?? []);
+          return {
+            ...data,
+            5: expertises,
+            6: userRole,
+            7: userPinnedWallet
+          };
+        })
+        .then((data) => {
+          if (data) {
+            setState({
+              user: data[0][0],
+              wallet: data[1],
+              followers: data[2],
+              followings: data[3],
+              projectCategories: data[4],
+              interestedExpertises: data[5],
+              twitter: {},
+              userRole: data[6],
+              pinnedWalletId: data[7]
+            });
+          }
+        });
     } else {
       setState(undefined);
       disconnect();

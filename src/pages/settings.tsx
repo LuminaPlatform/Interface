@@ -5,7 +5,7 @@ import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import {
   useAuthorization,
   useDispatchGlobalUserData,
-  useGlobalUserData,
+  useGlobalUserData
 } from "@/hooks/bases";
 import { Index } from "@/modules/settings/page/Index";
 import { GetServerSidePropsContext } from "next";
@@ -17,30 +17,34 @@ interface SettingsProps {
   profileImage: any;
 }
 const Settings = ({ user, profileImage }: SettingsProps) => {
-  // const userBaseData = useAuthorization();
-  // const userInfo = useGlobalUserData();
-  // const dispatchUserInfo = useDispatchGlobalUserData();
-  // const {
-  //   0: [userData],
-  //   1: wallet,
-  // } = user;
+  const userBaseData = useAuthorization();
+  const userInfo = useGlobalUserData();
+  const dispatchUserInfo = useDispatchGlobalUserData();
+  const {
+    0: [userData],
+    1: wallet
+  } = user;
 
-  // const router = useRouter();
+  const router = useRouter();
 
-  // useEffect(() => {
-  //   if (!userInfo && !!userBaseData) {
-  //     dispatchUserInfo({
-  //       user: userData,
-  //       wallet,
-  //       // TODO shoud get from api
-  //       followers: [],
-  //       followings: [],
-  //       pinnedWalletId: null,
-  //     });
-  //   } else if (!userBaseData) {
-  //     router.replace("/projects");
-  //   }
-  // }, [userBaseData]);
+  useEffect(() => {
+    if (!userInfo && !!userBaseData) {
+      dispatchUserInfo({
+        user: userData,
+        wallet,
+        // TODO shoud get from api
+        followers: [],
+        followings: [],
+        projectCategories: [],
+        interestedExpertises: [],
+        pinnedWalletId: [],
+        userRole: [],
+        twitter: ""
+      });
+    } else if (!userBaseData) {
+      router.replace("/projects");
+    }
+  }, [userBaseData]);
   return <Index profileImage={profileImage} />;
 };
 
@@ -52,16 +56,32 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     return {
       redirect: {
         permanent: false,
-        destination: "/projects",
-      },
+        destination: "/projects"
+      }
     };
   }
   try {
     const userBaseData = await axiosClient.get(apiKeys.auth.isAuthorized, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
+    const userInterests = await axiosClient
+      .post(apiKeys.fetch, {
+        0: {
+          model: "User.interested_expertises",
+          model_id: userBaseData.data.id,
+          orders: [],
+          graph: {
+            fetch_fields: [
+              {
+                name: "*"
+              }
+            ]
+          }
+        }
+      })
+      .then((res) => res.data[0] ?? []);
     const userInformation = await getUserInformation(userBaseData.data.id);
 
     const profileImage = await axiosClient
@@ -73,11 +93,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           graph: {
             fetch_fields: [
               {
-                name: "*",
-              },
-            ],
-          },
-        },
+                name: "*"
+              }
+            ]
+          }
+        }
       })
       .then((res) => {
         return res.data[0][0] ?? null;
@@ -86,21 +106,22 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       return {
         redirect: {
           permanent: false,
-          destination: "/projects",
-        },
+          destination: "/projects"
+        }
       };
     }
     return {
-      props: { user: userInformation, profileImage },
+      props: {
+        user: { ...userInformation, interestedExpertises: userInterests },
+        profileImage
+      }
     };
   } catch (error) {
-    console.log(error);
-
     return {
       redirect: {
         permanent: false,
-        destination: "/projects",
-      },
+        destination: "/projects"
+      }
     };
   }
 };

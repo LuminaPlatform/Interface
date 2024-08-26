@@ -2,7 +2,7 @@ import { axiosClient } from "@/config/axios";
 import { apiKeys } from "./apiKeys";
 
 export const getUserInformation = async (id: string) => {
-  return await axiosClient
+  return axiosClient
     .post(apiKeys.fetch, {
       0: {
         model: "User",
@@ -12,16 +12,16 @@ export const getUserInformation = async (id: string) => {
         graph: {
           fetch_fields: [
             {
-              name: "*",
-            },
-          ],
+              name: "*"
+            }
+          ]
         },
         condition: {
           field: "id",
           operator: "EQ",
           value: id,
-          __type__: "SimpleFetchCondition",
-        },
+          __type__: "SimpleFetchCondition"
+        }
       },
       1: {
         model: "Wallet",
@@ -31,16 +31,16 @@ export const getUserInformation = async (id: string) => {
         graph: {
           fetch_fields: [
             {
-              name: "*",
-            },
-          ],
+              name: "*"
+            }
+          ]
         },
         condition: {
           field: "user_id",
           operator: "EQ",
           value: id,
-          __type__: "SimpleFetchCondition",
-        },
+          __type__: "SimpleFetchCondition"
+        }
       },
       2: {
         model: "User.followers",
@@ -49,10 +49,10 @@ export const getUserInformation = async (id: string) => {
         graph: {
           fetch_fields: [
             {
-              name: "*",
-            },
-          ],
-        },
+              name: "*"
+            }
+          ]
+        }
       },
       3: {
         model: "User.following",
@@ -61,28 +61,28 @@ export const getUserInformation = async (id: string) => {
         graph: {
           fetch_fields: [
             {
-              name: "*",
-            },
-          ],
-        },
+              name: "*"
+            }
+          ]
+        }
       },
       4: {
-        model: "User.pined_wallet",
+        model: "User.interested_categories",
         model_id: id,
         orders: [],
         graph: {
           fetch_fields: [
             {
-              name: "id",
-            },
-          ],
-        },
-      },
+              name: "*"
+            }
+          ]
+        }
+      }
     })
     .then((response) => {
       return response.data;
     })
     .catch((error) => {
-      console.log({ error });
+      throw new Error(error);
     });
 };

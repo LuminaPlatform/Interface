@@ -5,13 +5,13 @@ import {
   Stack,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
-import { Badge } from "./Badge";
 import { reviewStatuses } from "@/constant";
-import { ModalBase } from "./ModalBase";
 import { ReviewDetail } from "@/modules/reviews/components/ReviewDetail";
 import { Project, Review } from "@/modules/projects/types";
+import { ModalBase } from "./ModalBase";
+import { Badge } from "./Badge";
 
 interface ReviewCardProps {
   review: Review;
@@ -21,7 +21,7 @@ interface ReviewCardProps {
 export const ReviewCard = ({
   review,
   showProjectName,
-  project,
+  project
 }: ReviewCardProps) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
 

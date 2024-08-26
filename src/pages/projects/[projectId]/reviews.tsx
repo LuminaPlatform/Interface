@@ -3,7 +3,7 @@ import { axiosClient } from "@/config/axios";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import {
   ProjectDetailProvider,
-  ProjectReviewsProvider,
+  ProjectReviewsProvider
 } from "@/modules/projects/pdp/context";
 import { Reviews as PageBase } from "@/modules/projects/pdp/page/Reviews";
 import { Project, Review } from "@/modules/projects/types";
@@ -14,19 +14,15 @@ interface ReviewsProps {
   reviews: Review[];
   viewpoints: any;
   userViewpoint: any;
-  userRole: any;
 }
 const Reviews = ({
   reviews,
   project,
   viewpoints,
-  userViewpoint,
-  userRole,
+  userViewpoint
 }: ReviewsProps) => {
   return (
-    <ProjectDetailProvider
-      project={{ ...project, viewpoints, userViewpoint, userRole }}
-    >
+    <ProjectDetailProvider project={{ ...project, viewpoints, userViewpoint }}>
       <ProjectReviewsProvider reviews={reviews}>
         <PageBase />
       </ProjectReviewsProvider>
@@ -39,18 +35,18 @@ export default Reviews;
 export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
   ctx
 ) => {
-  const params = ctx.params;
-  const projectId = params.projectId;
+  const { params } = ctx;
+  const { projectId } = params;
 
   const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
-  const userInfo = await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
+  const userInfo = await axiosClient.get(apiKeys.auth.isAuthorized, {
     headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
+      Authorization: `Bearer ${accessToken}`
+    }
   });
   const userViewpoint = await axiosClient
     .post(
-      apiKeys["fetch"],
+      apiKeys.fetch,
       {
         "0": {
           model: "ViewPoint",
@@ -60,9 +56,9 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
           graph: {
             fetch_fields: [
               {
-                name: "*",
-              },
-            ],
+                name: "*"
+              }
+            ]
           },
           condition: {
             __type__: "ComplexSearchCondition",
@@ -72,22 +68,22 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
                 __type__: "SimpleFetchCondition",
                 field: "user_id",
                 operator: "EQ",
-                value: userInfo.data.id,
+                value: userInfo.data.id
               },
               {
                 __type__: "SimpleFetchCondition",
                 field: "project_id",
                 operator: "EQ",
-                value: projectId,
-              },
-            ],
-          },
-        },
+                value: projectId
+              }
+            ]
+          }
+        }
       },
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+          Authorization: `Bearer ${accessToken}`
+        }
       }
     )
     .then((res) => res.data[0])
@@ -109,13 +105,13 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
         graph: {
           fetch_fields: [
             {
-              name: "id",
+              name: "id"
             },
             {
-              name: "name",
+              name: "name"
             },
             {
-              name: "logo_id",
+              name: "logo_id"
             },
             { name: "content.fundingSources" },
             { name: "content.includedInBallots" },
@@ -128,15 +124,15 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
             { name: "content.contributionLinks" },
             { name: "content.impactDescription" },
             { name: "content.impactMetrics" },
-            { name: "content.impactCategory" },
-          ],
+            { name: "content.impactCategory" }
+          ]
         },
         condition: {
           __type__: "SimpleFetchCondition",
           field: "id",
           operator: "EQ",
-          value: projectId,
-        },
+          value: projectId
+        }
       },
       1: {
         model: "Project.reviews",
@@ -145,38 +141,38 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
         graph: {
           fetch_fields: [
             {
-              name: "*",
+              name: "*"
             },
             {
               name: "user",
               graph: {
                 fetch_fields: [
                   {
-                    name: "display_name",
+                    name: "display_name"
                   },
                   {
-                    name: "id",
+                    name: "id"
                   },
                   {
-                    name: "profile_id",
-                  },
-                ],
-              },
+                    name: "profile_id"
+                  }
+                ]
+              }
             },
             {
               name: "files",
               graph: {
                 fetch_fields: [
                   {
-                    name: "*",
-                  },
-                ],
-              },
-            },
-          ],
+                    name: "*"
+                  }
+                ]
+              }
+            }
+          ]
         },
-        condition: {},
-      },
+        condition: {}
+      }
     })
     .then(async (response) => {
       const project = response.data["0"];
@@ -188,8 +184,8 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
           model_id: userInfo.data.id,
           orders: [],
           graph: { fetch_fields: [{ name: "*" }] },
-          condition: {},
-        },
+          condition: {}
+        }
       });
 
       return {
@@ -198,15 +194,13 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
           reviews,
           viewpoints,
           userViewpoint: userViewpoint ?? [],
-          userRole: userRole.data[0],
-        },
+          userRole: userRole.data[0]
+        }
       };
     })
-    .catch((error) => {
-      console.log(error);
-
+    .catch(() => {
       return {
-        notFound: true,
+        notFound: true
       };
     });
 };

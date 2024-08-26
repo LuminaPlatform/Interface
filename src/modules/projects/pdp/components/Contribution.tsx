@@ -1,16 +1,18 @@
 "use client";
+
 import {
   GridItem,
   HStack,
   SimpleGrid,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { TbChevronRight } from "react-icons/tb";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useGlobalUserData } from "@/hooks/bases";
 import { useProjectData, useProjectReviews } from "../hooks";
-import { useEffect, useRef, useState } from "react";
 import { Reviews } from "./Reviews";
 import { Feedback } from "./Feedback";
 import { ProjectLink } from "./ProjectLink";
@@ -24,8 +26,8 @@ export const Contribution = () => {
       contributionLinks,
       contributionDescription,
       impactDescription,
-      impactMetrics,
-    },
+      impactMetrics
+    }
   } = project;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,6 +46,16 @@ export const Contribution = () => {
   useEffect(() => {
     setImpactHeight(impactRef?.current?.clientHeight);
   }, [impactRef?.current?.clientHeight]);
+
+  const globalUser = useGlobalUserData();
+
+  const hasAccessWriteReview = useMemo(
+    () =>
+      !!globalUser?.userRole.find((role: any) =>
+        role.name.includes("BETA_USER")
+      ),
+    [globalUser]
+  );
 
   return (
     <VStack width="full">
@@ -76,13 +88,7 @@ export const Contribution = () => {
       </HStack>
       <SimpleGrid width="full" gap="24px" columns={{ base: 1, lg: 3 }}>
         <GridItem
-          h={
-            !!project.userRole.find((role: any) =>
-              role.name.includes("BETA_USER")
-            )
-              ? "384px"
-              : "276px"
-          }
+          h={hasAccessWriteReview && reviews?.length !== 0 ? "384px" : "276px"}
           overflow="auto"
           order={{ base: "1", lg: "0" }}
           colSpan={{ base: 1, lg: 2 }}
@@ -92,7 +98,7 @@ export const Contribution = () => {
         <GridItem
           order={{ base: "0", lg: "1" }}
           colSpan={{ base: 1, lg: 1 }}
-          bg="gray.700"
+          bg="rgba(38, 38, 41, 0.6)"
           borderRadius="10px"
           p="16px"
         >

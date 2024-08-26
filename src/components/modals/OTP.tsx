@@ -7,7 +7,7 @@ import {
   PinInput,
   PinInputField,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -28,8 +28,8 @@ export const OTP = ({ handleClick, backIconHandler }: OTPProps) => {
 
   const { register, control, handleSubmit } = useForm<{ otp: string[] }>({
     defaultValues: {
-      otp: ["", "", "", "", "", ""],
-    },
+      otp: ["", "", "", "", "", ""]
+    }
   });
   const otpValues = useWatch({ control });
 
@@ -60,7 +60,7 @@ export const OTP = ({ handleClick, backIconHandler }: OTPProps) => {
     <VStack
       as={motion.div}
       exit={{
-        opacity: 0,
+        opacity: 0
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -119,7 +119,7 @@ export const OTP = ({ handleClick, backIconHandler }: OTPProps) => {
               {OTPFields.map((item) => (
                 <PinInputField
                   _invalid={{
-                    borderColor: "red.200",
+                    borderColor: "red.200"
                   }}
                   borderRadius={{ base: "8px", md: "12px" }}
                   width={{ base: "35px", md: "48px" }}
@@ -130,22 +130,22 @@ export const OTP = ({ handleClick, backIconHandler }: OTPProps) => {
                   fontWeight="500"
                   borderColor="gray.100"
                   _placeholder={{
-                    color: "gray.100",
+                    color: "gray.100"
                   }}
                   _hover={{
                     bg: "gray.700",
-                    border: "none",
+                    border: "none"
                   }}
                   _focus={{
                     bg: "gray.700",
                     borer: "1px solid",
                     color: "gray.40",
-                    borderColor: "gray.100",
+                    borderColor: "gray.100"
                   }}
                   key={item}
                   defaultValue=""
                   {...register(`otp.${item}`, {
-                    required: "Invalid verification code",
+                    required: "Invalid verification code"
                   })}
                 />
               ))}

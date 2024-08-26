@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Alert,
   AlertIcon,
@@ -20,28 +21,28 @@ import {
   Portal,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction, useState } from "react";
-import { ConnectModal } from "./modals/Connect";
 import {
   useAuthorization,
   useGlobalUserData,
-  useWalletModal,
+  useWalletModal
 } from "@/hooks/bases";
 import {
   TbBell,
   TbLogout,
   TbSearch,
   TbSettings2,
-  TbUserCircle,
+  TbUserCircle
 } from "react-icons/tb";
 import Link from "next/link";
-import { BadgeModal } from "./modals/badges/Badge";
 import { Badges } from "@/types";
+import { AnimatePresence, motion } from "framer-motion";
+import { ConnectModal } from "./modals/Connect";
+import { BadgeModal } from "./modals/badges/Badge";
 import { Logout } from "./modals/Logout";
 import { NotificationItem } from "./NotificationItem";
-import { AnimatePresence, motion } from "framer-motion";
 
 const ProfileBox = () => {
   const userData = useGlobalUserData();
@@ -216,7 +217,7 @@ const NotificationBody = ({ messages, setMessages }: NotificationBodyProps) => {
           _hover={{ color: "gray.0", bg: "transparent" }}
           _active={{
             color: "orange.300",
-            bg: "transparent",
+            bg: "transparent"
           }}
           bg="transparent"
         >
@@ -230,7 +231,7 @@ const NotificationBody = ({ messages, setMessages }: NotificationBodyProps) => {
               key={item}
               exit={{
                 transform: "translateX(400px)",
-                opacity: 0,
+                opacity: 0
               }}
               transition={{ delay: index * 0.2, duration: 0.2 }}
             >
@@ -240,7 +241,7 @@ const NotificationBody = ({ messages, setMessages }: NotificationBodyProps) => {
                 isSeen
                 title="You've been upgraded!"
                 ctaText="CTA"
-                cta={() => {}}
+                // cta={() => {}}
               />
             </motion.div>
           ))}
@@ -298,7 +299,7 @@ const Navbar = () => {
             border="1px solid"
             borderColor="gray.200"
             _hover={{
-              borderColor: "gray.300",
+              borderColor: "gray.300"
             }}
             _active={{ borderColor: "gray.400" }}
             _focus={{ borderColor: "gray.400" }}
@@ -310,7 +311,7 @@ const Navbar = () => {
             fontWeight="regular"
             _placeholder={{
               fontWeight: "regular",
-              color: "gray.100",
+              color: "gray.100"
             }}
             borderRadius="27px"
             placeholder="Search"
@@ -318,7 +319,7 @@ const Navbar = () => {
         </InputGroup>
         {!!authorization && (
           <Box cursor="pointer" onClick={() => {}} position="relative">
-            {true && (
+            {/* {true && (
               <Text
                 textAlign="center"
                 fontSize="10px"
@@ -337,7 +338,7 @@ const Navbar = () => {
               >
                 1
               </Text>
-            )}
+            )} */}
             <Popover>
               <PopoverTrigger>
                 <Button
@@ -394,7 +395,7 @@ const Navbar = () => {
       </HStack>
       <ConnectModal isOpen={isOpen} onClose={onClose} />
       <BadgeModal
-        badgeType={Badges["HOLDER"]}
+        badgeType={Badges.HOLDER}
         isOpen={badgeIsOpen}
         onClose={badgeOnClose}
       />

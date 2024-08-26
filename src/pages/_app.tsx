@@ -5,7 +5,7 @@ import {
   GlobalUserProvider,
   IsSidebarOpenProvider,
   SelectedProjectProvider,
-  WalletConnectProvider,
+  WalletConnectProvider
 } from "@/context";
 import GoogleAnalytics from "@/GoogleAnalytics";
 import "@/styles/globals.css";
@@ -44,7 +44,7 @@ export default function App({
   Component,
   pageProps,
   baseUserData,
-  userAllData,
+  userAllData
 }: AppPropsWithLayout & {
   baseUserData: AuthenticationData;
   userAllData: any;
@@ -71,7 +71,7 @@ export default function App({
   return (
     <>
       {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID ? (
-        <GoogleAnalytics ga_id={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
       ) : null}
       <Head>
         <title>Lumina interface</title>
@@ -100,23 +100,24 @@ export default function App({
   );
 }
 
-//TODO should fix this type
+// TODO should fix this type
 
 App.getInitialProps = async ({ ctx }: { ctx: any }) => {
   const cookies = ctx.req?.cookies;
 
-  if (!!cookies) {
+  if (cookies) {
     const accessToken = cookies[ACCESS_TOKEN_COOKIE_KEY];
     if (!accessToken) {
       // @ts-expect-error fix type
       return { baseUserData: undefined };
     }
     try {
-      const response = await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
+      const response = await axiosClient.get(apiKeys.auth.isAuthorized, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+          Authorization: `Bearer ${accessToken}`
+        }
       });
+
       const userAllDataResponse = await axiosClient.post(apiKeys.fetch, {
         0: {
           model: "User",
@@ -126,16 +127,16 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
           graph: {
             fetch_fields: [
               {
-                name: "*",
-              },
-            ],
+                name: "*"
+              }
+            ]
           },
           condition: {
             field: "email",
             operator: "EQ",
             value: response.data.email,
-            __type__: "SimpleFetchCondition",
-          },
+            __type__: "SimpleFetchCondition"
+          }
         },
         1: {
           model: "Wallet",
@@ -145,16 +146,16 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
           graph: {
             fetch_fields: [
               {
-                name: "*",
-              },
-            ],
+                name: "*"
+              }
+            ]
           },
           condition: {
             field: "user_id",
             operator: "EQ",
             value: response.data.id,
-            __type__: "SimpleFetchCondition",
-          },
+            __type__: "SimpleFetchCondition"
+          }
         },
         2: {
           model: "User.followers",
@@ -163,10 +164,10 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
           graph: {
             fetch_fields: [
               {
-                name: "*",
-              },
-            ],
-          },
+                name: "*"
+              }
+            ]
+          }
         },
         3: {
           model: "User.following",
@@ -175,24 +176,69 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
           graph: {
             fetch_fields: [
               {
-                name: "*",
-              },
-            ],
-          },
+                name: "*"
+              }
+            ]
+          }
         },
         4: {
-          model: "User.pined_wallet",
+          model: "User.interested_categories",
           model_id: response.data.id,
           orders: [],
           graph: {
             fetch_fields: [
               {
-                name: "id",
-              },
-            ],
-          },
-        },
+                name: "*"
+              }
+            ]
+          }
+        }
       });
+      const userInterests = await axiosClient
+        .post(apiKeys.fetch, {
+          0: {
+            model: "User.interested_expertises",
+            model_id: response.data.id,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*"
+                }
+              ]
+            }
+          }
+        })
+        .then((res) => res.data[0] ?? []);
+      const userRole = await axiosClient
+        .post(apiKeys.fetch, {
+          "0": {
+            model: "User.roles",
+            model_id: response.data.id,
+            orders: [],
+            graph: { fetch_fields: [{ name: "*" }] },
+            condition: {}
+          }
+        })
+        .then((res) => res.data[0] ?? []);
+
+      const userPinnedWallet = await axiosClient
+        .post(apiKeys.fetch, {
+          0: {
+            model: "User.pined_wallet",
+            model_id: response.data.id,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "id"
+                }
+              ]
+            }
+          }
+        })
+        .then((res) => res.data[0] ?? []);
+
       if (response.status === 200) {
         return {
           baseUserData: response.data,
@@ -201,13 +247,14 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
             wallet: userAllDataResponse.data[1],
             followers: userAllDataResponse.data[2],
             followings: userAllDataResponse.data[3],
-            pinnedWalletId: userAllDataResponse.data[4][0]?.id,
-          },
+            projectCategories: userAllDataResponse.data[4],
+            interestedExpertises: userInterests ?? [],
+            userRole,
+            pinnedWalletId: userPinnedWallet
+          }
         };
       }
     } catch (error: any) {
-      console.log(error);
-
       return { baseUserData: undefined };
     }
   }

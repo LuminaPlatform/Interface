@@ -1,4 +1,4 @@
-import { SetupWizardForm, WalletModalBodyProps } from "@/types";
+import { SetupWizardForm } from "@/types";
 import {
   Box,
   Button,
@@ -13,46 +13,194 @@ import {
   StepTitle,
   Text,
   useSteps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import {
+  FormProvider,
+  useForm,
+  useFormContext,
+  useWatch
+} from "react-hook-form";
 import { TbChevronsLeft } from "react-icons/tb";
-import { useWalletModal } from "@/hooks/bases";
+import {
+  useDispatchGlobalUserData,
+  useGlobalUserData,
+  useWalletModal
+} from "@/hooks/bases";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { getCookie } from "cookies-next";
 import { ConnectSocial } from "../wizardSteps/ConnectSocial";
 import { Profile } from "../wizardSteps/Profile";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { Interests } from "../wizardSteps/Interests";
 
+const steps = [
+  { title: "Social" },
+  { title: "Profile" },
+  { title: "Interests" }
+];
 interface StepperProps {
   activeStep: number;
   setActiveStep: Dispatch<SetStateAction<number>>;
 }
 const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
+  const globalUser = useGlobalUserData();
+
+  const dispatchGlobalUser = useDispatchGlobalUserData();
+  const [isLoading, setLoading] = useState(false);
   const {
     formState: { errors },
+    control
   } = useFormContext<SetupWizardForm>();
 
-  const [isConnect, setConnect] = useState(false);
+  const { nickname, username, profile, interests } = useWatch({
+    control
+  });
+
   const [editMode, setEditMode] = useState(false);
 
   const { onClose } = useWalletModal();
 
   const handleSubmit = [
     () => {
-      setActiveStep((prev) => prev + 1);
+      setLoading(true);
+      axiosClient
+        .post(apiKeys.update, {
+          "0": {
+            model_name: "User",
+            params: {
+              x_username: globalUser.twitter?.data?.username
+            },
+            id: globalUser.user.id
+          }
+        })
+        .then(() => {
+          setActiveStep((prev) => prev + 1);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    async () => {
+      // setLoading(true);
+      if (profile && typeof profile === "object") {
+        const formData = new FormData();
+        formData.append("file", profile);
+        formData.append(
+          "proposal",
+          JSON.stringify({
+            model: "User",
+            id: globalUser.user.id,
+            field: "profile_id"
+          })
+        );
+        axiosClient
+          .post(apiKeys.file.file, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+            }
+          })
+          .then((res) => {
+            axiosClient.post(apiKeys.update, {
+              "0": {
+                model_name: "User",
+                params: {
+                  username,
+                  display_name: nickname,
+                  profile_id: res.data.id
+                },
+                id: globalUser.user.id
+              }
+            });
+            return res.data.id;
+          })
+          .then((id) => {
+            setActiveStep((prev) => prev + 1);
+            dispatchGlobalUser({
+              ...globalUser,
+              user: {
+                ...globalUser.user,
+                display_name: nickname,
+                profile_id: id,
+                username
+              }
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        const imageFile = await axiosClient
+          .post(apiKeys.file.link, {
+            url: profile,
+            proposal: {
+              model: "User",
+              id: globalUser.user.id,
+              field: "profile_id"
+            }
+          })
+          .then((res) => res.data);
+        axiosClient
+          .post(apiKeys.update, {
+            "0": {
+              model_name: "User",
+              params: {
+                username,
+                display_name: nickname,
+                profile_id: imageFile.id
+              },
+              id: globalUser.user.id
+            }
+          })
+          .then(() => {
+            setActiveStep((prev) => prev + 1);
+            dispatchGlobalUser({
+              ...globalUser,
+              user: {
+                ...globalUser.user,
+                display_name: nickname,
+                username
+              }
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+            onClose();
+          });
+      }
     },
     () => {
-      setActiveStep((prev) => prev + 1);
-    },
-    () => {},
+      setLoading(true);
+      axiosClient
+        .post(apiKeys.relation.add, {
+          "0": {
+            model_name: "User",
+            params: {
+              interested_categories: interests.map((item) => item.id)
+            },
+            id: globalUser.user.id
+          }
+        })
+        .then(() => {
+          onClose();
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   ];
+
+  const isConnect = useGlobalUserData().user.x_username;
 
   const stepsComponent = useMemo(() => {
     return [
-      <ConnectSocial key={0} setConnect={setConnect} isConnect={isConnect} />,
+      <ConnectSocial key={0} />,
       <Profile key={1} editMode={editMode} setEditMode={setEditMode} />,
-      <Interests key={2} />,
+      <Interests key={2} />
     ];
   }, [editMode, isConnect]);
 
@@ -60,7 +208,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
     <Stack mt="4px" rowGap="16px" width="full">
       <ChakraStepper size="sm" index={activeStep} gap="0">
         {steps.map((step, index) => (
-          <Step style={{ columnGap: 0 }} key={index}>
+          <Step style={{ columnGap: 0 }} key={step.title}>
             <VStack justifyContent="flex-start">
               <StepIndicator
                 bg="gray.80"
@@ -72,11 +220,11 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
                     outline: "1px dashed",
                     outlineColor: "primary.300",
                     outlineOffset: "2px",
-                    bg: "primary.300",
+                    bg: "primary.300"
                   },
                   "[data-status=complete] &": {
-                    bg: "primary.300",
-                  },
+                    bg: "primary.300"
+                  }
                 }}
               >
                 <StepStatus
@@ -104,12 +252,12 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
                 mt: "12px",
                 backgroundColor: "gray.60",
                 "[data-status=complete] &": {
-                  bg: "primary.300",
-                },
+                  bg: "primary.300"
+                }
               }}
               style={{
                 marginInline: "4px",
-                height: "2px",
+                height: "2px"
               }}
             />
           </Step>
@@ -152,6 +300,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
             Skip This Step
           </Button>
           <Button
+            isLoading={isLoading}
             onClick={handleSubmit[activeStep]}
             size="md"
             isDisabled={
@@ -168,31 +317,23 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
   );
 };
 
-const steps = [
-  { title: "Social" },
-  { title: "Profile" },
-  { title: "Interests" },
-];
-
-interface SetupWizardProps extends WalletModalBodyProps {}
-
-export const SetupWizard = ({}: SetupWizardProps) => {
+export const SetupWizard = () => {
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
-    count: steps.length,
+    count: steps.length
   });
   const methods = useForm<SetupWizardForm>({
     defaultValues: {
       profile: null,
-      interests: [],
-    },
+      interests: []
+    }
   });
 
   return (
     <VStack
       as={motion.div}
       exit={{
-        opacity: 0,
+        opacity: 0
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}

@@ -6,21 +6,19 @@ import {
   useDispatchAuthorization,
   useDispatchModalSteps,
   useGlobalUserData,
-  useWalletModal,
+  useWalletModal
 } from "@/hooks/bases";
-import { STEP_MODAL, WalletModalBodyProps } from "@/types";
+import { STEP_MODAL } from "@/types";
 import { Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { getCookie, setCookie } from "cookies-next";
 import { motion } from "framer-motion";
 
-interface SignWalletProps extends WalletModalBodyProps {}
-
 import { useEffect, useState } from "react";
 
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 
-export const SignWallet = ({}: SignWalletProps) => {
+export const SignWallet = () => {
   const dispatchSteps = useDispatchModalSteps();
   const globalUser = useGlobalUserData();
   const { data: signMessageData, signMessage } = useSignMessage();
@@ -34,7 +32,7 @@ export const SignWallet = ({}: SignWalletProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const connectedWallet = globalUser?.wallet?.find(
-    (wallet: any) => wallet?.address == address
+    (wallet: any) => wallet?.address === address
   );
 
   useEffect(() => {
@@ -51,20 +49,19 @@ export const SignWallet = ({}: SignWalletProps) => {
       axiosClient
         .post(apiKeys.auth.login.wallet, {
           wallet: address,
-          signature: signMessageData,
+          signature: signMessageData
         })
         .then((res) => {
           const accessToken = res.data.access_token;
           setCookie(ACCESS_TOKEN_COOKIE_KEY, accessToken);
           return axiosClient.get(apiKeys.auth.isAuthorized, {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+              Authorization: `Bearer ${accessToken}`
+            }
           });
         })
         .then(async (res) => {
           const userBaseInfo = res.data;
-          console.log({ userBaseInfo });
 
           await axiosClient
             .post(
@@ -74,33 +71,25 @@ export const SignWallet = ({}: SignWalletProps) => {
                   model_name: "Wallet",
                   params: {
                     address,
-                    last_verified_signature: signMessageData,
+                    last_verified_signature: signMessageData
                   },
-                  id: userBaseInfo?.id,
-                },
+                  id: userBaseInfo?.id
+                }
               },
               {
                 headers: {
-                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`,
-                },
+                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                }
               }
             )
             .then(() => {
               dispatchAuthorization(userBaseInfo);
-              console.log({ globalUser });
             });
         })
-        .then(() => {
-          console.log({ globa: globalUser });
-
-          return;
-        })
         .catch((error: AxiosError<{ error_message: string }>) => {
-          console.log(error);
-
           return toast({
             status: "error",
-            description: error.response.data.error_message,
+            description: error.response.data.error_message
           });
         })
         .finally(() => {
@@ -113,7 +102,7 @@ export const SignWallet = ({}: SignWalletProps) => {
     <VStack
       as={motion.div}
       exit={{
-        opacity: 0,
+        opacity: 0
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -156,7 +145,7 @@ export const SignWallet = ({}: SignWalletProps) => {
                   .then((msg: string) => {
                     signMessage({
                       message: msg,
-                      account: address,
+                      account: address
                     });
                   });
               }}

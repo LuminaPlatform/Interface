@@ -9,24 +9,24 @@ import {
   Stack,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { TbCameraPlus, TbEdit, TbPencil } from "react-icons/tb";
-import { settingsFormType } from "../types";
 import { ModalBase } from "@/components/ModalBase";
-import { UserInfoModal, UserInfoModalHeader } from "./UserInfoModal";
 import {
   useCustomToast,
   useDispatchGlobalUserData,
-  useGlobalUserData,
+  useGlobalUserData
 } from "@/hooks/bases";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { AxiosError } from "axios";
 import { getCookie } from "cookies-next";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { UserInfoModal, UserInfoModalHeader } from "./UserInfoModal";
+import { settingsFormType } from "../types";
 
 type UserInfoEditableProps = {
   isEditable: boolean;
@@ -37,7 +37,7 @@ type UserInfoEditableProps = {
 export const UserInfoEditable = ({
   isEditable,
   setEditable,
-  profileImageId,
+  profileImageId
 }: UserInfoEditableProps) => {
   const userInfo = useGlobalUserData();
 
@@ -58,35 +58,35 @@ export const UserInfoEditable = ({
       JSON.stringify({
         model: "User",
         id: userInfo.user.id,
-        field: "profile_id",
+        field: "profile_id"
       })
     );
     axiosClient
-      .post(apiKeys.file, formData, {
+      .post(apiKeys.file.file, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`,
-        },
+          Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+        }
       })
       .then((res) => {
         toast({
           status: "success",
-          description: "Your avatar is updated",
+          description: "Your avatar is updated"
         });
         setAvatar(res.data.id);
         dispatchUserInfo({
           ...userInfo,
           user: {
             ...userInfo.user,
-            profile_id: res.data.id,
-          },
+            profile_id: res.data.id
+          }
         });
         resetField("profile");
       })
       .catch((error: AxiosError<{ error_message: string }>) => {
         toast({
           status: "error",
-          description: error.response.data.error_message,
+          description: error.response.data.error_message
         });
       });
   };
@@ -121,14 +121,14 @@ export const UserInfoEditable = ({
                   profile !== null
                     ? profile && URL.createObjectURL(profile)
                     : avatarImage
-                    ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${avatarImage}`
-                    : "/assets/images/default-avatar.png"
+                      ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${avatarImage}`
+                      : "/assets/images/default-avatar.png"
                 }
                 hasBadge={false}
                 imageStyle={{
                   width: { base: "80px", md: "124px" },
                   height: { base: "80px", md: "124px" },
-                  objectFit: "contain",
+                  objectFit: "contain"
                 }}
               />
               {isEditable && (
@@ -205,7 +205,7 @@ export const UserInfoEditable = ({
           variant="outline"
           onClick={() => {
             if (isEditable) {
-              if (!!profile) {
+              if (profile) {
                 handleSave(profile, setAvatarImage);
               }
               setEditable(false);

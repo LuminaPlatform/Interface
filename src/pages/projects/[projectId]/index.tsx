@@ -3,7 +3,7 @@ import { axiosClient } from "@/config/axios";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import {
   ProjectDetailProvider,
-  ProjectReviewsProvider,
+  ProjectReviewsProvider
 } from "@/modules/projects/pdp/context";
 import { Index } from "@/modules/projects/pdp/page/Index";
 import { Project, Review } from "@/modules/projects/types";
@@ -12,19 +12,15 @@ const ProjectDetail = ({
   project,
   reviews,
   viewpoints,
-  userViewpoint,
-  userRole,
+  userViewpoint
 }: {
   project: Project;
   reviews: Review[];
   viewpoints: any;
   userViewpoint: any;
-  userRole: any;
 }) => {
   return (
-    <ProjectDetailProvider
-      project={{ ...project, viewpoints, userViewpoint, userRole }}
-    >
+    <ProjectDetailProvider project={{ ...project, viewpoints, userViewpoint }}>
       <ProjectReviewsProvider reviews={reviews}>
         <Index />
       </ProjectReviewsProvider>
@@ -35,20 +31,20 @@ const ProjectDetail = ({
 export default ProjectDetail;
 
 export const getServerSideProps = async (ctx: any) => {
-  const params = ctx.params;
-  const projectId = params.projectId;
+  const { params } = ctx;
+  const { projectId } = params;
   const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
 
   const userInfo =
     !!accessToken &&
-    (await axiosClient.get(apiKeys["auth"]["isAuthorized"], {
+    (await axiosClient.get(apiKeys.auth.isAuthorized, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     }));
   const userViewpoint = await axiosClient
     .post(
-      apiKeys["fetch"],
+      apiKeys.fetch,
       {
         "0": {
           model: "ViewPoint",
@@ -58,9 +54,9 @@ export const getServerSideProps = async (ctx: any) => {
           graph: {
             fetch_fields: [
               {
-                name: "*",
-              },
-            ],
+                name: "*"
+              }
+            ]
           },
           condition: {
             __type__: "ComplexSearchCondition",
@@ -71,23 +67,23 @@ export const getServerSideProps = async (ctx: any) => {
                   __type__: "SimpleFetchCondition",
                   field: "user_id",
                   operator: "EQ",
-                  value: userInfo.data.id,
-                }),
+                  value: userInfo.data.id
+                })
               },
               {
                 __type__: "SimpleFetchCondition",
                 field: "project_id",
                 operator: "EQ",
-                value: projectId,
-              },
-            ],
-          },
-        },
+                value: projectId
+              }
+            ]
+          }
+        }
       },
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+          Authorization: `Bearer ${accessToken}`
+        }
       }
     )
     .then((res) => res.data[0])
@@ -107,13 +103,13 @@ export const getServerSideProps = async (ctx: any) => {
       graph: {
         fetch_fields: [
           {
-            name: "id",
+            name: "id"
           },
           {
-            name: "name",
+            name: "name"
           },
           {
-            name: "logo_id",
+            name: "logo_id"
           },
           { name: "content.fundingSources" },
           { name: "content.includedInBallots" },
@@ -126,15 +122,15 @@ export const getServerSideProps = async (ctx: any) => {
           { name: "content.contributionLinks" },
           { name: "content.impactDescription" },
           { name: "content.impactMetrics" },
-          { name: "content.impactCategory" },
-        ],
+          { name: "content.impactCategory" }
+        ]
       },
       condition: {
         __type__: "SimpleFetchCondition",
         field: "id",
         operator: "EQ",
-        value: projectId,
-      },
+        value: projectId
+      }
     },
     1: {
       model: "Project.reviews",
@@ -142,60 +138,47 @@ export const getServerSideProps = async (ctx: any) => {
       graph: {
         fetch_fields: [
           {
-            name: "*",
+            name: "*"
           },
           {
             name: "user",
             graph: {
               fetch_fields: [
                 {
-                  name: "display_name",
+                  name: "display_name"
                 },
                 {
-                  name: "id",
+                  name: "id"
                 },
                 {
-                  name: "profile_id",
-                },
-              ],
-            },
+                  name: "profile_id"
+                }
+              ]
+            }
           },
           {
             name: "files",
             graph: {
               fetch_fields: [
                 {
-                  name: "*",
-                },
-              ],
-            },
-          },
-        ],
+                  name: "*"
+                }
+              ]
+            }
+          }
+        ]
       },
-      condition: {},
-    },
+      condition: {}
+    }
   };
-  const projectResponse = await axiosClient.post(apiKeys["fetch"], postData, {
+  const projectResponse = await axiosClient.post(apiKeys.fetch, postData, {
     headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
+      Authorization: `Bearer ${accessToken}`
+    }
   });
 
   const project = projectResponse.data["0"];
   const reviews = projectResponse.data["1"];
-
-  let userRole;
-  if (userInfo?.data) {
-    userRole = await axiosClient.post(apiKeys.fetch, {
-      "0": {
-        model: "User.roles",
-        model_id: userInfo.data.id,
-        orders: [],
-        graph: { fetch_fields: [{ name: "*" }] },
-        condition: {},
-      },
-    });
-  }
 
   if (project) {
     return {
@@ -203,12 +186,11 @@ export const getServerSideProps = async (ctx: any) => {
         project: project[0],
         reviews,
         viewpoints,
-        userViewpoint: userViewpoint ?? [],
-        userRole: (await userRole?.data[0]) ?? [],
-      },
+        userViewpoint: userViewpoint ?? []
+      }
     };
   }
-  // return {
-  //   notFound: true,
-  // };
+  return {
+    notFound: true
+  };
 };

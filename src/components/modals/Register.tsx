@@ -1,4 +1,4 @@
-import { ModalForm, STEP_MODAL, WalletModalBodyProps } from "@/types";
+import { ModalForm, STEP_MODAL } from "@/types";
 import {
   Button,
   chakra,
@@ -12,7 +12,7 @@ import {
   InputLeftElement,
   InputRightElement,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -21,22 +21,22 @@ import {
   TbBrandGoogleFilled,
   TbEye,
   TbEyeOff,
-  TbMail,
+  TbMail
 } from "react-icons/tb";
-import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useEmailSignUp, usePlatformLogin } from "@/hooks/auth";
 import { useCustomToast, useDispatchModalSteps } from "@/hooks/bases";
 import { apiKeys } from "@/api/apiKeys";
+import { MethodSeparator } from "../MethodSeparator";
 
 const ChakraForm = chakra("form");
 
-export const Register = ({}: WalletModalBodyProps) => {
+export const Register = () => {
   const {
     register,
     formState: { errors },
-    handleSubmit,
+    handleSubmit
   } = useFormContext<ModalForm>();
   const dispatchSteps = useDispatchModalSteps();
 
@@ -51,7 +51,7 @@ export const Register = ({}: WalletModalBodyProps) => {
     <ChakraForm
       as={motion.div}
       exit={{
-        opacity: 0,
+        opacity: 0
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -98,8 +98,8 @@ export const Register = ({}: WalletModalBodyProps) => {
                 required: "Email is required!",
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Enter a valid Email",
-                },
+                  message: "Enter a valid Email"
+                }
               })}
             />
           </InputGroup>
@@ -136,8 +136,8 @@ export const Register = ({}: WalletModalBodyProps) => {
                 required: "Password is required!",
                 minLength: {
                   value: 8,
-                  message: "Password must contain at least 8 characters",
-                },
+                  message: "Password must contain at least 8 characters"
+                }
               })}
             />
           </InputGroup>
@@ -154,18 +154,18 @@ export const Register = ({}: WalletModalBodyProps) => {
               height: "20px",
               border: "1px solid",
               borderColor: "gray.60",
-              borderRadius: "6px",
+              borderRadius: "6px"
             },
             "label>span:first-of-type[data-checked]": {
               border: "none",
-              backgroundColor: "primary.300",
-            },
+              backgroundColor: "primary.300"
+            }
           }}
         >
           <Checkbox
             color="gray.0"
             {...register("isAccepted", {
-              required: "Read terms & conditions",
+              required: "Read terms & conditions"
             })}
           >
             I agree with Lumina&apos;s{" "}
@@ -194,9 +194,9 @@ export const Register = ({}: WalletModalBodyProps) => {
                 return toast({
                   title: error.response.data.error_message,
                   description: error.response.data.error_detail,
-                  status: "error",
+                  status: "error"
                 });
-              },
+              }
             }
           );
         })}
@@ -219,11 +219,11 @@ export const Register = ({}: WalletModalBodyProps) => {
           borderColor="primary.50"
           _active={{
             bg: "none",
-            borderColor: "primary.50",
+            borderColor: "primary.50"
           }}
           _hover={{
             bg: "none",
-            borderColor: "primary.50",
+            borderColor: "primary.50"
           }}
           height="48px"
           borderRadius="33px"
@@ -237,17 +237,17 @@ export const Register = ({}: WalletModalBodyProps) => {
           borderColor="primary.50"
           _active={{
             bg: "none",
-            borderColor: "primary.50",
+            borderColor: "primary.50"
           }}
           _hover={{
             bg: "none",
-            borderColor: "primary.50",
+            borderColor: "primary.50"
           }}
           height="48px"
           borderRadius="33px"
           width="full"
           onClick={() => {
-            handleGoogleLogin(apiKeys["auth"]["login"]["google"]["req"]);
+            handleGoogleLogin(apiKeys.auth.login.google.req);
           }}
         >
           <TbBrandGoogleFilled
