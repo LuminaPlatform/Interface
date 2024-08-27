@@ -139,7 +139,7 @@ const WalletItem = ({
 
 export const Wallet = () => {
   const [pinnedWalletId, setPinnedWalletId] = useState(undefined);
-  const { wallet } = useGlobalUserData();
+  const wallet = useGlobalUserData()?.wallet;
   const { onOpen } = useWalletModal();
   const dispatch = useDispatchModalSteps();
 
@@ -167,7 +167,7 @@ export const Wallet = () => {
         </Button>
       </HStack>
       <VStack width="full" rowGap="16px">
-        {wallet.map((item: any) => (
+        {wallet?.map((item: any) => (
           <WalletItem
             setPinnedWalletId={setPinnedWalletId}
             pinnedWalletId={pinnedWalletId}
