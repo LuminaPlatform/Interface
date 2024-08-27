@@ -40,7 +40,7 @@ export const Interests = () => {
         <CategoryModal
           type="CATEGORIES"
           onClose={onClose}
-          selectedData={globalUser.projectCategories}
+          selectedData={globalUser?.projectCategories}
           title="Choose categories that align with your interests to discover projects you’ll love to follow and participate in!"
         />
       ),
@@ -51,7 +51,7 @@ export const Interests = () => {
         <CategoryModal
           type="PEOPLE"
           onClose={onClose}
-          selectedData={globalUser.interestedExpertises}
+          selectedData={globalUser?.interestedExpertises}
           title="Pick categories based on what the people you want to follow are great at.
         This way, you connect with the right crowd!"
         />
@@ -101,7 +101,7 @@ export const Interests = () => {
             </Button>
           </HStack>
           <HStack width="full" flexWrap="wrap">
-            {globalUser.projectCategories.map((item: CategoryItem) => (
+            {globalUser?.projectCategories.map((item: CategoryItem) => (
               <Tag
                 key={item.id}
                 minWidth="75px"
@@ -124,12 +124,12 @@ export const Interests = () => {
                           params: {
                             interested_categories: [item.id]
                           },
-                          id: globalUser.user.id
+                          id: globalUser?.user?.id
                         }
                       })
                       .then(() => {
                         const filteredProjectCategories =
-                          globalUser.projectCategories.filter(
+                          globalUser?.projectCategories.filter(
                             (category: CategoryItem) => category.id !== item.id
                           );
                         dispatchGlobalUser({
@@ -181,6 +181,32 @@ export const Interests = () => {
                   height="16px"
                   size="sm"
                   color="gray.300"
+                  onClick={() => {
+                    setLoading(true);
+                    axiosClient
+                      .post(apiKeys.relation.remove, {
+                        "0": {
+                          model_name: "User",
+                          params: {
+                            interested_expertises: [item.id]
+                          },
+                          id: globalUser?.user?.id
+                        }
+                      })
+                      .then(() => {
+                        const filteredExpertises =
+                          globalUser?.interestedExpertises.filter(
+                            (category: CategoryItem) => category.id !== item.id
+                          );
+                        dispatchGlobalUser({
+                          ...globalUser,
+                          interestedExpertises: filteredExpertises
+                        });
+                      })
+                      .finally(() => {
+                        setLoading(false);
+                      });
+                  }}
                 />
                 <TagLabel fontSize="md" fontWeight="700">
                   {item.name}
