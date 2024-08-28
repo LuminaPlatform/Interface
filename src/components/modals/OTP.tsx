@@ -26,7 +26,9 @@ export const OTP = ({ handleClick, backIconHandler }: OTPProps) => {
   const { getValues } = useFormContext<ModalForm>();
   const email = getValues("email");
 
-  const { register, control, handleSubmit } = useForm<{ otp: string[] }>({
+  const { control, handleSubmit, setValue } = useForm<{
+    otp: string[];
+  }>({
     defaultValues: {
       otp: ["", "", "", "", "", ""]
     }
@@ -112,7 +114,7 @@ export const OTP = ({ handleClick, backIconHandler }: OTPProps) => {
         <ChakraForm mt="32px" width="full">
           <HStack columnGap="10px" justifyContent="center" width="full">
             <PinInput
-              isInvalid={!!otpValues.otp?.some((item) => item === "")}
+              isInvalid={otpValues.otp.includes("")}
               placeholder="-"
               otp
             >
@@ -144,9 +146,17 @@ export const OTP = ({ handleClick, backIconHandler }: OTPProps) => {
                   }}
                   key={item}
                   defaultValue=""
-                  {...register(`otp.${item}`, {
-                    required: "Invalid verification code"
-                  })}
+                  onChange={(e) => {
+                    const convertedToArray = e.target.value.split("");
+
+                    if (convertedToArray.length > 1) {
+                      convertedToArray.forEach((val, index) => {
+                        setValue(`otp.${index}`, val);
+                      });
+                    } else {
+                      setValue(`otp.${item}`, e.target.value);
+                    }
+                  }}
                 />
               ))}
             </PinInput>
