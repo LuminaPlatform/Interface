@@ -1,8 +1,10 @@
 import { getUserInformation } from "@/api";
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { UserProfileProvider } from "@/modules/profile/context";
 import { Index } from "@/modules/profile/pages/Index";
+import { getCookie } from "cookies-next";
 import { GetServerSidePropsContext } from "next";
 
 interface ProfileProps {
@@ -103,7 +105,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     .then((response) => response.data);
 
   const userActivities = await fetchPlan[0];
-  const userProfileData = await getUserInformation(userId);
+  const userProfileData = await getUserInformation(
+    userId,
+    getCookie(ACCESS_TOKEN_COOKIE_KEY)
+  );
 
   const followers = await axiosClient
     .post(apiKeys.fetch, {

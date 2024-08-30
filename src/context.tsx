@@ -8,11 +8,13 @@ import {
   useEffect,
   useState
 } from "react";
+import { getCookie } from "cookies-next";
 import { Project } from "./modules/projects/types";
 import { AuthenticationData, STEP_MODAL } from "./types";
 import { getUserInformation } from "./api";
 import { axiosClient } from "./config/axios";
 import { apiKeys } from "./api/apiKeys";
+import { ACCESS_TOKEN_COOKIE_KEY } from "./constant";
 
 export const IsSidebarOpen = createContext(true);
 export const DispatchIsSidebarOpen = createContext<
@@ -153,7 +155,10 @@ export const GlobalUserProvider = ({
 
   useEffect(() => {
     if (userBaseData) {
-      getUserInformation(userBaseData.id.toString())
+      getUserInformation(
+        userBaseData.id.toString(),
+        getCookie(ACCESS_TOKEN_COOKIE_KEY)
+      )
         .then(async (data) => {
           const expertises = await axiosClient
             .post(apiKeys.fetch, {

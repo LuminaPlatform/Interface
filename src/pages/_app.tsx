@@ -118,82 +118,90 @@ App.getInitialProps = async ({ ctx }: { ctx: any }) => {
         }
       });
 
-      const userAllDataResponse = await axiosClient.post(apiKeys.fetch, {
-        0: {
-          model: "User",
-          model_id: "None",
-          limit: 1,
-          orders: [],
-          graph: {
-            fetch_fields: [
-              {
-                name: "*"
-              }
-            ]
+      const userAllDataResponse = await axiosClient.post(
+        apiKeys.fetch,
+        {
+          0: {
+            model: "User",
+            model_id: "None",
+            limit: 1,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*"
+                }
+              ]
+            },
+            condition: {
+              field: "email",
+              operator: "EQ",
+              value: response.data.email,
+              __type__: "SimpleFetchCondition"
+            }
           },
-          condition: {
-            field: "email",
-            operator: "EQ",
-            value: response.data.email,
-            __type__: "SimpleFetchCondition"
-          }
-        },
-        1: {
-          model: "Wallet",
-          model_id: "None",
-          limit: 1,
-          orders: [],
-          graph: {
-            fetch_fields: [
-              {
-                name: "*"
-              }
-            ]
+          1: {
+            model: "Wallet",
+            model_id: "None",
+            limit: 1,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*"
+                }
+              ]
+            },
+            condition: {
+              field: "user_id",
+              operator: "EQ",
+              value: response.data.id,
+              __type__: "SimpleFetchCondition"
+            }
           },
-          condition: {
-            field: "user_id",
-            operator: "EQ",
-            value: response.data.id,
-            __type__: "SimpleFetchCondition"
+          2: {
+            model: "User.followers",
+            model_id: response.data.id,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*"
+                }
+              ]
+            }
+          },
+          3: {
+            model: "User.following",
+            model_id: response.data.id,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*"
+                }
+              ]
+            }
+          },
+          4: {
+            model: "User.interested_categories",
+            model_id: response.data.id,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*"
+                }
+              ]
+            }
           }
         },
-        2: {
-          model: "User.followers",
-          model_id: response.data.id,
-          orders: [],
-          graph: {
-            fetch_fields: [
-              {
-                name: "*"
-              }
-            ]
-          }
-        },
-        3: {
-          model: "User.following",
-          model_id: response.data.id,
-          orders: [],
-          graph: {
-            fetch_fields: [
-              {
-                name: "*"
-              }
-            ]
-          }
-        },
-        4: {
-          model: "User.interested_categories",
-          model_id: response.data.id,
-          orders: [],
-          graph: {
-            fetch_fields: [
-              {
-                name: "*"
-              }
-            ]
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
           }
         }
-      });
+      );
       const userInterests = await axiosClient
         .post(apiKeys.fetch, {
           0: {

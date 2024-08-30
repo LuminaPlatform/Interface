@@ -19,6 +19,8 @@ import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { useCustomToast, useGlobalUserData } from "@/hooks/bases";
 import { AxiosError } from "axios";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { getCookie } from "cookies-next";
 import { SettingsModalFooter } from "../EmailFooter";
 import { SettingsModalBody, SettingsModalsForm } from "../../types";
 
@@ -47,15 +49,23 @@ export const ChangePasswordModal = ({
   const handleChangePassword = (values: SettingsModalsForm) => {
     setLoading(true);
     axiosClient
-      .post(apiKeys.update, {
-        "0": {
-          model_name: "User",
-          params: {
-            password: values.password
-          },
-          id: userInfo?.user.id
+      .post(
+        apiKeys.update,
+        {
+          "0": {
+            model_name: "User",
+            params: {
+              password: values.password
+            },
+            id: userInfo?.user.id
+          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+          }
         }
-      })
+      )
       .then(() => {
         return toast({
           status: "success",

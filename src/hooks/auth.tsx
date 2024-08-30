@@ -42,7 +42,11 @@ export const useEmailLogin = () => {
       formData.append("password", password);
 
       return axios.post<any, { data: { access_token: string } }>(
-        `${process.env.NEXT_PUBLIC_BASE_API_URL}${apiKeys.auth.login.email}`,
+        `${
+          process.env.production
+            ? process.env.NEXT_PUBLIC_BASE_API_URL
+            : process.env.NEXT_PUBLIC_DEV_BASE_API_URL
+        }${apiKeys.auth.login.email}`,
         formData
       );
     }

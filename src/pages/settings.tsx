@@ -81,7 +81,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         }
       })
       .then((res) => res.data[0] ?? []);
-    const userInformation = await getUserInformation(userBaseData.data.id);
+    const userInformation = await getUserInformation(
+      userBaseData.data.id,
+      accessToken
+    );
 
     const profileImage = await axiosClient
       .post(apiKeys.fetch, {
