@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { debounce } from "lodash";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
-// import { StringParam, useQueryParams } from "use-query-params";
+import { pageThreshold } from "@/constant";
+import { useRouter } from "next/router";
 import Table from "../components/Table";
 import { useProjects, useProjectsDispatch } from "../hooks";
 import { EmptyState } from "../components/EmptyState";
@@ -11,20 +12,20 @@ import { EmptyState } from "../components/EmptyState";
 const Index = () => {
   const [search, setSearch] = useState("");
   const dispatchProjects = useProjectsDispatch();
+  const page = useRouter()?.query?.page ?? 1;
 
   const projects = useProjects();
-  // const [, setQuery] = useQueryParams({
-  //   page: StringParam
-  // });
 
   const handleSearchProjects = useMemo(
     () =>
       debounce((value) => {
+        setSearch(value);
         axiosClient
           .post(apiKeys.fetch, {
             0: {
               model: "Project",
               model_id: "None",
+              ...(!value && { limit: pageThreshold }),
               orders: [],
               graph: {
                 fetch_fields: [
@@ -44,21 +45,26 @@ const Index = () => {
                   { name: "content.impactCategory" }
                 ]
               },
-              condition: {
-                __type__: "SimpleFetchCondition",
-                field: "name",
-                operator: "LIKE",
-                value
-              }
+              condition: value
+                ? {
+                    __type__: "SimpleFetchCondition",
+                    field: "name",
+                    operator: "LIKE",
+                    value
+                  }
+                : {
+                    __type__: "SimpleFetchCondition",
+                    field: "id",
+                    operator: "GTE",
+                    value: (Number(page) - 1) * pageThreshold
+                  }
             }
           })
           .then((res) => {
-            // setQuery({ page: 1 });
-
             dispatchProjects(res.data[0]);
           });
-      }, 1000),
-    []
+      }, 500),
+    [search, page]
   );
 
   return (
@@ -81,10 +87,8 @@ const Index = () => {
       <Input
         height="30px"
         px="16px"
-        value={search}
         onChange={(e) => {
           const { value } = e.target;
-          setSearch(value);
           handleSearchProjects(value);
         }}
         bg="gray.600"
@@ -110,7 +114,7 @@ const Index = () => {
         placeholder="Search Project"
       />
       <Box width="full" overflow="auto">
-        {projects.length === 0 ? <EmptyState /> : <Table />}
+        {projects.length === 0 ? <EmptyState /> : <Table search={search} />}
       </Box>
     </VStack>
   );

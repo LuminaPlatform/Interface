@@ -126,11 +126,10 @@ export const ArrowDown = () => (
   </svg>
 );
 
-const Table = () => {
+const Table = ({ search }: { search: string }) => {
   const router = useRouter();
   const page = router.query?.page ?? 1;
   const projectsData = useProjects();
-  // const networkThreshold = 7;
 
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -139,7 +138,9 @@ const Table = () => {
   const columns = [
     columnHelper.accessor("id", {
       cell: (info) => {
-        return info.row.index + 1 + (Number(page) - 1) * pageThreshold;
+        return search
+          ? info.row.index + 1
+          : info.row.index + 1 + (Number(page) - 1) * pageThreshold;
       },
       header: () => "#"
     }),
@@ -174,55 +175,6 @@ const Table = () => {
                 marginLeft="6px"
               />
             </HStack>
-            {/* <HStack
-              width="full"
-              justifyContent="flex-start"
-              columnGap="4px"
-              margin="0px !important"
-              {...(info.getValue()?.cryptosImg.length <= 3 && {
-                divider: (
-                  <Divider
-                    rounded="full"
-                    margin="0px !important"
-                    width="1px"
-                    height="1px"
-                    borderColor="gray.60"
-                  />
-                ),
-              })}
-            >
-              {info
-                .getValue()
-                ?.cryptosImg.slice(0, networkThreshold)
-                .map((img) =>
-                  info.getValue().cryptosImg.length <= 3 ? (
-                    <HStack
-                      key={img.id}
-                      columnGap="2px"
-                      margin="0px !important"
-                    >
-                      {img.src}
-                      <Text
-                        margin="0px !important"
-                        display="flex"
-                        whiteSpace="nowrap"
-                        color="gray.60"
-                        fontSize="xs"
-                        fontWeight="500"
-                      >
-                        {img.title}
-                      </Text>
-                    </HStack>
-                  ) : (
-                    img.src
-                  )
-                )}
-              {info.getValue()?.cryptosImg.length > networkThreshold && (
-                <Text margin="0px !important">
-                  +{info.getValue().cryptosImg.length - networkThreshold}
-                </Text>
-              )}
-            </HStack> */}
           </VStack>
         </HStack>
       ),
@@ -453,7 +405,7 @@ const Table = () => {
           ))}
         </Tbody>
       </ChakraTable>
-      {projectsData.length !== 0 && (
+      {projectsData.length !== 0 && !search && (
         <HStack alignItems="center" width="full" justifyContent="center">
           <Flex columnGap="10px" alignItems="center">
             <Button
