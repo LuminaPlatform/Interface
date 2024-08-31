@@ -19,6 +19,7 @@ import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { getCookie } from "cookies-next";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { generateImageSrc } from "@/utils";
 import { useDispatchUserProfile, useUserProfile } from "../hooks";
 
 interface UnFollowModalProps {
@@ -42,7 +43,7 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
         hasBadge={false}
         src={
           user.profile_id
-            ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${user.profile_id}`
+            ? generateImageSrc(user.profile_id)
             : "/assets/images/default-img.png"
         }
       />
@@ -173,7 +174,7 @@ const UserFollowBox = ({ item, type }: UserFollowBoxProps) => {
           badgeSize="18px"
           src={
             item.profile_id
-              ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${item.profile_id}`
+              ? generateImageSrc(item.profile_id)
               : "/assets/images/default-img.png"
           }
           textStyle={{ fontSize: "md", fontWeight: "500", color: "gray.0" }}

@@ -19,3 +19,10 @@ export const getBrowserCookie = (name: string): string => {
   if (typeof document === "undefined" || !document.cookie) return undefined;
   return getCookie(document.cookie, name);
 };
+
+export const generateImageSrc = (id: string | number) => {
+  const baseUrl = process.env.production
+    ? process.env.NEXT_PUBLIC_BASE_FILE_URL
+    : process.env.NEXT_PUBLIC_DEV_BASE_FILE_URL;
+  return `${baseUrl}/${id}`;
+};

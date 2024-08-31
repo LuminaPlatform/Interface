@@ -1,5 +1,5 @@
 import { ModalBase } from "@/components/ModalBase";
-import { textTruncator } from "@/utils";
+import { generateImageSrc, textTruncator } from "@/utils";
 import {
   Button,
   Code,
@@ -75,7 +75,7 @@ export const UserInfo = () => {
         badgeSize="48px"
         src={
           userInfo.user?.profile_id
-            ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${userInfo.user?.profile_id}`
+            ? generateImageSrc(userInfo.user?.profile_id)
             : "/assets/images/default-avatar.png"
         }
         hasBadge

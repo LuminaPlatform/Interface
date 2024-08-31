@@ -27,6 +27,7 @@ import { TbLogout, TbSearch, TbSettings2, TbUserCircle } from "react-icons/tb";
 import Link from "next/link";
 import { Badges } from "@/types";
 import dynamic from "next/dynamic";
+import { generateImageSrc } from "@/utils";
 import { ConnectModal } from "./modals/Connect";
 import { BadgeModal } from "./modals/badges/Badge";
 import { Logout } from "./modals/Logout";
@@ -51,7 +52,7 @@ const ProfileBox = () => {
               height="32px"
               src={
                 user?.profile_id
-                  ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${user.profile_id}`
+                  ? generateImageSrc(user.profile_id)
                   : "/assets/images/default-avatar.png"
               }
               alt="user"
@@ -85,7 +86,7 @@ const ProfileBox = () => {
               height="64px"
               src={
                 user?.profile_id
-                  ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${user.profile_id}`
+                  ? generateImageSrc(user.profile_id)
                   : "/assets/images/default-avatar.png"
               }
               alt="profile"

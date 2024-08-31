@@ -1,6 +1,7 @@
 import { Badge } from "@/components/Badge";
 import { reviewStatuses } from "@/constant";
 import { Project, Review } from "@/modules/projects/types";
+import { generateImageSrc } from "@/utils";
 import { HStack, Img, Text, VStack } from "@chakra-ui/react";
 
 interface ReviewDetailProps {
@@ -63,7 +64,7 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
               alt="writer"
               src={
                 review.user?.profile_id
-                  ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${review.user?.profile_id}`
+                  ? generateImageSrc(review.user?.profile_id)
                   : "/assets/images/default-avatar.png"
               }
               width={{ base: "16px", md: "24px" }}
@@ -100,7 +101,7 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
           maxWidth="full"
           maxHeight="312px"
           alt="review"
-          src={`${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${review?.files.id}`}
+          src={generateImageSrc(review?.files.id)}
         />
       )}
 
