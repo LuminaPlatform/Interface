@@ -161,31 +161,47 @@ export const GlobalUserProvider = ({
       )
         .then(async (data) => {
           const expertises = await axiosClient
-            .post(apiKeys.fetch, {
-              0: {
-                model: "User.interested_expertises",
-                model_id: userBaseData.id.toString(),
-                orders: [],
-                graph: {
-                  fetch_fields: [
-                    {
-                      name: "*"
-                    }
-                  ]
+            .post(
+              apiKeys.fetch,
+              {
+                0: {
+                  model: "User.interested_expertises",
+                  model_id: userBaseData.id.toString(),
+                  orders: [],
+                  graph: {
+                    fetch_fields: [
+                      {
+                        name: "*"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
                 }
               }
-            })
+            )
             .then((res) => res.data[0]);
           const userRole = await axiosClient
-            .post(apiKeys.fetch, {
-              "0": {
-                model: "User.roles",
-                model_id: userBaseData.id.toString(),
-                orders: [],
-                graph: { fetch_fields: [{ name: "*" }] },
-                condition: {}
+            .post(
+              apiKeys.fetch,
+              {
+                "0": {
+                  model: "User.roles",
+                  model_id: userBaseData.id.toString(),
+                  orders: [],
+                  graph: { fetch_fields: [{ name: "*" }] },
+                  condition: {}
+                }
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                }
               }
-            })
+            )
             .then((res) => res.data[0] ?? []);
           return {
             ...data,
