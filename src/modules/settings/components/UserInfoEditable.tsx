@@ -25,19 +25,18 @@ import { apiKeys } from "@/api/apiKeys";
 import { AxiosError } from "axios";
 import { getCookie } from "cookies-next";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { generateImageSrc } from "@/utils";
 import { UserInfoModal, UserInfoModalHeader } from "./UserInfoModal";
 import { settingsFormType } from "../types";
 
 type UserInfoEditableProps = {
   isEditable: boolean;
   setEditable: Dispatch<SetStateAction<boolean>>;
-  profileImageId: number;
 };
 
 export const UserInfoEditable = ({
   isEditable,
-  setEditable,
-  profileImageId
+  setEditable
 }: UserInfoEditableProps) => {
   const userInfo = useGlobalUserData();
 
@@ -92,7 +91,7 @@ export const UserInfoEditable = ({
   };
 
   const { profile } = useWatch<settingsFormType>({ control });
-  const [avatarImage, setAvatarImage] = useState(profileImageId);
+  const [avatarImage, setAvatarImage] = useState(userInfo?.user?.profile_id);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -121,7 +120,7 @@ export const UserInfoEditable = ({
                   profile !== null
                     ? profile && URL.createObjectURL(profile)
                     : avatarImage
-                      ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${avatarImage}`
+                      ? generateImageSrc(avatarImage)
                       : "/assets/images/default-avatar.png"
                 }
                 hasBadge={false}

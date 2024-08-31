@@ -14,9 +14,8 @@ import { useEffect } from "react";
 
 interface SettingsProps {
   user: any;
-  profileImage: any;
 }
-const Settings = ({ user, profileImage }: SettingsProps) => {
+const Settings = ({ user }: SettingsProps) => {
   const userBaseData = useAuthorization();
   const userInfo = useGlobalUserData();
   const dispatchUserInfo = useDispatchGlobalUserData();
@@ -44,13 +43,14 @@ const Settings = ({ user, profileImage }: SettingsProps) => {
       router.replace("/projects");
     }
   }, [userBaseData]);
-  return <Index profileImage={profileImage} />;
+  return <Index />;
 };
 
 export default Settings;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
+
   if (!accessToken) {
     return {
       redirect: {
@@ -66,44 +66,34 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       }
     });
     const userInterests = await axiosClient
-      .post(apiKeys.fetch, {
-        0: {
-          model: "User.interested_expertises",
-          model_id: userBaseData.data.id,
-          orders: [],
-          graph: {
-            fetch_fields: [
-              {
-                name: "*"
-              }
-            ]
+      .post(
+        apiKeys.fetch,
+        {
+          0: {
+            model: "User.interested_expertises",
+            model_id: userBaseData.data.id,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*"
+                }
+              ]
+            }
+          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
           }
         }
-      })
+      )
       .then((res) => res.data[0] ?? []);
     const userInformation = await getUserInformation(
       userBaseData.data.id,
       accessToken
     );
 
-    const profileImage = await axiosClient
-      .post(apiKeys.fetch, {
-        0: {
-          model: "User.profile",
-          model_id: userInformation[0][0].id,
-          orders: [],
-          graph: {
-            fetch_fields: [
-              {
-                name: "*"
-              }
-            ]
-          }
-        }
-      })
-      .then((res) => {
-        return res.data[0][0] ?? null;
-      });
     if (!userInformation) {
       return {
         redirect: {
@@ -114,8 +104,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     }
     return {
       props: {
-        user: { ...userInformation, interestedExpertises: userInterests },
-        profileImage
+        user: { ...userInformation, interestedExpertises: userInterests }
       }
     };
   } catch (error) {

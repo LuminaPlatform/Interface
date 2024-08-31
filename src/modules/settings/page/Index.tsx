@@ -9,10 +9,7 @@ import { settingsFormType } from "../types";
 
 const ChakraForm = chakra("form");
 
-interface SettingsProps {
-  profileImage: any;
-}
-export const Index = ({ profileImage }: SettingsProps) => {
+export const Index = () => {
   const [isEditable, setEditable] = useState(false);
 
   // TODO should add default value
@@ -37,11 +34,7 @@ export const Index = ({ profileImage }: SettingsProps) => {
           >
             Account Setting
           </Text>
-          <UserInfoEditable
-            profileImageId={profileImage?.id}
-            isEditable={isEditable}
-            setEditable={setEditable}
-          />
+          <UserInfoEditable isEditable={isEditable} setEditable={setEditable} />
           <Wallet />
           <AccountSecurity />
           <Interests />
