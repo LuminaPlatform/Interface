@@ -18,37 +18,46 @@ const Distribute = ({ projects }: DistributeProps) => {
 export default Distribute;
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const postData = {
-    0: {
-      model: "Project",
-      model_id: "None",
-      graph: {
-        fetch_fields: [
-          {
-            name: "id"
-          },
-          {
-            name: "name"
-          },
-          {
-            name: "logo_id"
-          },
-          { name: "content.websiteUrl" },
-          { name: "content.fundingSources" },
-          { name: "content.includedInBallots" },
-          { name: "content.lists.count" },
-          { name: "content.profile" },
-          { name: "content.impactCategory" }
-        ]
-      },
-      condition: {}
-    }
-  };
-  const response = await axiosClient.post(apiKeys.fetch, postData);
-  const projects = await response.data["0"];
-  return {
-    props: {
-      projects
-    }
-  };
+  try {
+    const postData = {
+      0: {
+        model: "Project",
+        model_id: "None",
+        graph: {
+          fetch_fields: [
+            {
+              name: "id"
+            },
+            {
+              name: "name"
+            },
+            {
+              name: "logo_id"
+            },
+            { name: "content.websiteUrl" },
+            { name: "content.fundingSources" },
+            { name: "content.includedInBallots" },
+            { name: "content.lists.count" },
+            { name: "content.profile" },
+            { name: "content.impactCategory" }
+          ]
+        },
+        condition: {}
+      }
+    };
+    const response = await axiosClient.post(apiKeys.fetch, postData);
+    const projects = await response.data["0"];
+    return {
+      props: {
+        projects
+      }
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        destination: "/500",
+        permanent: false
+      }
+    };
+  }
 };
