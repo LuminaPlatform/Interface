@@ -1,4 +1,4 @@
-export const globalSearchTabs = [
+export const searchTabs = [
     {
       id: 0,
       title: "People",

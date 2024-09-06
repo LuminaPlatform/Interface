@@ -50,7 +50,7 @@ export const useLogout = () => {
     reset();
     deleteCookie(ACCESS_TOKEN_COOKIE_KEY);
     dispatchAuthorization(undefined);
-    dispatchGlobalUser(undefined)
+    dispatchGlobalUser(undefined);
   };
 };
 

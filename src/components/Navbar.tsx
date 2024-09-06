@@ -4,7 +4,8 @@ import {
   AlertIcon,
   Box,
   Button,
-  Collapse,
+  Divider,
+  Fade,
   HStack,
   Img,
   Input,
@@ -25,7 +26,7 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ConnectModal } from "./modals/Connect";
 import {
   useAuthorization,
@@ -53,9 +54,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import PeopleCard from "./globalSearch/PeopleCard";
 import ProjectCard from "./globalSearch/ProjectCard";
 import ReviewCard from "./globalSearch/ReviewCard";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const ProfileBox = () => {
   const userData = useGlobalUserData();
+
   const user = userData?.user;
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -271,6 +277,126 @@ const Navbar = () => {
 
   const authorization = useAuthorization();
 
+  const [searchedProjects, setSearchedProjects] = useState([]);
+  const [searchedReviews, setSearchedReviews] = useState([]);
+  const [searchedUsers, setSearchedUsers] = useState([]);
+
+  useEffect(() => {
+    if (search !== "") {
+      axiosClient
+        .post(apiKeys.fetch, {
+          "0": {
+            model: "Project",
+            model_id: "None",
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "id",
+                },
+                {
+                  name: "name",
+                },
+                {
+                  name: "logo_id",
+                },
+                {
+                  name: "content.fundingSources",
+                },
+                {
+                  name: "content.includedInBallots",
+                },
+                {
+                  name: "content.lists.count",
+                },
+                {
+                  name: "content.profile",
+                },
+                {
+                  name: "content.impactCategory",
+                },
+              ],
+            },
+            condition: {
+              __type__: "SimpleFetchCondition",
+              field: "name",
+              operator: "LIKE",
+              value: search,
+            },
+          },
+        })
+        .then((res) => {
+          setSearchedProjects(res.data[0]);
+        });
+
+      axiosClient
+        .post(apiKeys.fetch, {
+          "0": {
+            model: "Review",
+            model_id: "None",
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*",
+                },
+                {
+                  name: "user",
+                  graph: {
+                    fetch_fields: [
+                      {
+                        name: "display_name",
+                      },
+                      {
+                        name: "id",
+                      },
+                      {
+                        name: "profile_id",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            condition: {
+              __type__: "SimpleFetchCondition",
+              field: "title",
+              operator: "LIKE",
+              value: search,
+            },
+          },
+        })
+        .then((res) => {
+          setSearchedReviews(res.data[0]);
+        });
+
+      axiosClient
+        .post(apiKeys.fetch, {
+          "0": {
+            model: "User",
+            model_id: "None",
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*",
+                },
+              ],
+            },
+            condition: {
+              __type__: "SimpleFetchCondition",
+              field: "username",
+              operator: "LIKE",
+              value: search,
+            },
+          },
+        })
+        .then((res) => {
+          setSearchedUsers(res.data[0]);
+        });
+    }
+  }, [search]);
+
   return (
     <>
       <Alert
@@ -340,156 +466,296 @@ const Navbar = () => {
                 onClick={() => {
                   setSearch("");
                 }}
+                cursor="pointer"
               >
                 <TbX size={20} color="var(--chakra-colors-gray-80)" />
               </InputRightElement>
             )}
           </InputGroup>
 
-          {search != "" && (
-            <Box w="90%" h="1px" bg="gray.400" mt="-8px" zIndex="300" />
-          )}
-
-          <Collapse in={search != ""}>
+          <Fade in={search != ""}>
             <VStack
               width="395px"
               maxH="580px"
               bg="gray.700"
-              zIndex="200"
+              zIndex="dropdown"
               position="absolute"
-              mt="-9px"
+              top="40px" // the height of the input group
               left="0"
               borderBottomRadius="27px"
               p="16px"
-              pt="12px"
-              overflowY="auto"
-              pr="12px"
-              css={{
-                "&::-webkit-scrollbar": {
-                  width: "4px",
-                  height: "50px",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "rgba(67, 67, 70, 1)",
-                  borderRadius: "8px",
-                },
-                "&::-webkit-scrollbar-track": {
-                  backgroundColor: "transparent",
-                },
-              }}
-              boxSizing="border-box"
+              pt="0"
+              pr="8px"
             >
-              <VStack w="100%" gap="16px">
-                <VStack w="100%" gap="12px" alignItems={"start"}>
-                  <HStack w="100%" justifyContent="space-between">
-                    <HStack gap="6px">
-                      <TbUsers color="var(--chakra-colors-gray-80)" />
-                      <Text color="gray.80" fontSize="12px" fontWeight="700">
-                        People
-                      </Text>
-                    </HStack>
-                    <Link href="">
-                      <HStack gap="4px" mr="-4px">
-                        <Text color="gray.60" fontSize="12px">
-                          Show All
-                        </Text>
-                        <TbChevronRight color="var(--chakra-colors-gray-60)" />
-                      </HStack>
-                    </Link>
-                  </HStack>
+              <VStack
+                borderTop="1px solid"
+                borderTopColor="gray.400"
+                pt="4px"
+                w="full"
+                overflowY="auto"
+              >
+                <VStack
+                  pt="16px"
+                  w="full"
+                  gap="16px"
+                  overflowX="hidden"
+                  pr="8px"
+                  css={{
+                    "&::-webkit-scrollbar": {
+                      width: "4px",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "rgba(67, 67, 70, 1)",
+                    },
+                  }}
+                >
+                  {searchedUsers.length > 0 && (
+                    <>
+                      <VStack w="full" gap="12px" alignItems={"start"}>
+                        <HStack w="full" justifyContent="space-between">
+                          <HStack gap="6px">
+                            <TbUsers color="var(--chakra-colors-gray-80)" />
+                            <Text
+                              color="gray.80"
+                              fontSize="12px"
+                              fontWeight="700"
+                            >
+                              People
+                            </Text>
+                          </HStack>
+                          <Link
+                            onClick={() => {
+                              setSearch("");
+                            }}
+                            href="/search"
+                          >
+                            <HStack gap="4px" mr="-4px">
+                              <Text color="gray.60" fontSize="12px">
+                                Show All
+                              </Text>
+                              <TbChevronRight color="var(--chakra-colors-gray-60)" />
+                            </HStack>
+                          </Link>
+                        </HStack>
 
-                  <HStack
-                    w={"100%"}
-                    gap="8px"
-                    overflow="auto"
-                    whiteSpace={"nowrap"}
-                    pb={"4px"}
-                  >
-                    <PeopleCard name="payam" />
-                    <PeopleCard name="haj popol" />
-                  </HStack>
-                </VStack>
+                        <HStack
+                          w="full"
+                          gap="8px"
+                          overflow="auto"
+                          whiteSpace={"nowrap"}
+                          pb={"4px"}
+                        >
+                          <Swiper
+                            direction="horizontal" // Ensures the swiper is horizontal
+                            spaceBetween={8} // Gap between slides
+                            slidesPerView="auto" // Show as many slides as fit in the view
+                            freeMode={true} // Enables free scrolling
+                            style={{ overflow: "visible" }} // Allows for visible overflow outside the container
+                          >
+                            {searchedUsers.map((item, index) => (
+                              <SwiperSlide
+                                key={index}
+                                style={{
+                                  width: "auto",
+                                  display: "inline-flex",
+                                }} // Auto width for slide
+                              >
+                                <PeopleCard
+                                  id={item?.id.toString()}
+                                  setSearch={setSearch}
+                                  search={search}
+                                  name={
+                                    item?.username ||
+                                    item?.x_username ||
+                                    item?.display_name
+                                  }
+                                />
+                              </SwiperSlide>
+                            ))}
+                          </Swiper>
+                          {/* <PeopleCard name="payam" />
+                      <PeopleCard name="haj popol" /> */}
+                        </HStack>
+                      </VStack>
+                      <Divider />
+                    </>
+                  )}
 
-                <Box w="100%" h="1px" bg="gray.400" zIndex="300" />
+                  {searchedProjects.length > 0 && (
+                    <>
+                      <VStack w="full" gap="12px" alignItems={"start"}>
+                        <HStack w="full" justifyContent="space-between">
+                          <HStack gap="6px">
+                            <TbFiles color="var(--chakra-colors-gray-80)" />
+                            <Text
+                              color="gray.80"
+                              fontSize="12px"
+                              fontWeight="700"
+                            >
+                              Projects
+                            </Text>
+                          </HStack>
+                          <Link
+                            onClick={() => {
+                              setSearch("");
+                            }}
+                            href="/search"
+                          >
+                            <HStack gap="4px" mr="-4px">
+                              <Text
+                                color="gray.60"
+                                fontSize="12px"
+                                fontWeight="700"
+                              >
+                                Show All
+                              </Text>
+                              <TbChevronRight color="var(--chakra-colors-gray-60)" />
+                            </HStack>
+                          </Link>
+                        </HStack>
 
-                <VStack w="100%" gap="12px" alignItems={"start"}>
-                  <HStack w="100%" justifyContent="space-between">
-                    <HStack gap="6px">
-                      <TbFiles color="var(--chakra-colors-gray-80)" />
-                      <Text color="gray.80" fontSize="12px" fontWeight="700">
-                        Projects
-                      </Text>
-                    </HStack>
-                    <Link href="">
-                      <HStack gap="4px" mr="-4px">
-                        <Text color="gray.60" fontSize="12px" fontWeight="700">
-                          Show All
-                        </Text>
-                        <TbChevronRight color="var(--chakra-colors-gray-60)" />
-                      </HStack>
-                    </Link>
-                  </HStack>
-
-                  <HStack
-                    w={"100%"}
-                    gap="8px"
-                    overflow="auto"
-                    whiteSpace={"nowrap"}
-                    pb={"4px"}
-                  >
-                    <ProjectCard name="Protocol Guild" />
-                    <ProjectCard name="Solidity" />
-                  </HStack>
-                </VStack>
-
-                <Box w="100%" h="1px" bg="gray.400" zIndex="300" />
-                <VStack w="100%" gap="12px" alignItems={"start"}>
-                  <HStack w="100%" justifyContent="space-between">
-                    <HStack gap="6px">
-                      <TbMessage color="var(--chakra-colors-gray-80)" />
-                      <Text color="gray.80" fontSize="12px" fontWeight="700">
-                        Reviews
-                      </Text>
-                    </HStack>
-                    <Link href="">
-                      <HStack gap="4px" mr="-4px">
-                        <Text color="gray.60" fontSize="12px" fontWeight="700">
-                          Show All
-                        </Text>
-                        <TbChevronRight color="var(--chakra-colors-gray-60)" />
-                      </HStack>
-                    </Link>
-                  </HStack>
-                  <VStack w="100%" gap="12px">
-                    <ReviewCard
-                      title="Preview Title"
-                      text={
-                        "Reprehenderit eu sint veniam eu esse. Do non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. "
-                      }
-                      date="2024-02-26, 14:05"
-                      name="NickName"
-                    />
-                    <ReviewCard
-                      title="Preview Title"
-                      text={
-                        "Reprehenderit eu sint veniam eu esse. Do non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. "
-                      }
-                      date="2024-02-26, 14:05"
-                      name="NickName"
-                    />
-                    <ReviewCard
-                      title="Preview Title"
-                      text={
-                        "Reprehenderit eu sint veniam eu esse. Do non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. "
-                      }
-                      date="2024-02-26, 14:05"
-                      name="NickName"
-                    />
-                  </VStack>
+                        <Box
+                          w="full"
+                          overflow="auto"
+                          whiteSpace={"nowrap"}
+                          pb={"4px"}
+                        >
+                          <Swiper
+                            direction="horizontal" // Ensures the swiper is horizontal
+                            spaceBetween={8} // Gap between slides
+                            slidesPerView="auto" // Show as many slides as fit in the view
+                            freeMode={true} // Enables free scrolling
+                            style={{ overflow: "visible" }} // Allows for visible overflow outside the container
+                          >
+                            {searchedProjects.map((item, index) => (
+                              <SwiperSlide
+                                key={index}
+                                style={{
+                                  width: "auto",
+                                  display: "inline-flex",
+                                }} // Auto width for slide
+                              >
+                                <ProjectCard
+                                  id={item?.id.toString()}
+                                  setSearch={setSearch}
+                                  name={item.name}
+                                  search={search}
+                                  imageUrl={
+                                    item.content.profile?.profileImageUrl
+                                  }
+                                />
+                              </SwiperSlide>
+                            ))}
+                          </Swiper>
+                          {/* {searchedProjects.map((item) => (
+                        <ProjectCard name={item.name} search={search} />
+                      ))} */}
+                        </Box>
+                      </VStack>
+                      <Divider />
+                    </>
+                  )}
+                  {searchedReviews.length > 0 && (
+                    <>
+                      <VStack w="full" gap="12px" alignItems={"start"}>
+                        <HStack w="full" justifyContent="space-between">
+                          <HStack gap="6px">
+                            <TbMessage color="var(--chakra-colors-gray-80)" />
+                            <Text
+                              color="gray.80"
+                              fontSize="12px"
+                              fontWeight="700"
+                            >
+                              Reviews
+                            </Text>
+                          </HStack>
+                          <Link
+                            onClick={() => {
+                              setSearch("");
+                            }}
+                            href="/search"
+                          >
+                            <HStack gap="4px" mr="-4px">
+                              <Text
+                                color="gray.60"
+                                fontSize="12px"
+                                fontWeight="700"
+                              >
+                                Show All
+                              </Text>
+                              <TbChevronRight color="var(--chakra-colors-gray-60)" />
+                            </HStack>
+                          </Link>
+                        </HStack>
+                        <VStack w="full" gap="12px">
+                          {searchedReviews.map((item, index) => (
+                            <ReviewCard
+                              key={index}
+                              title={item.title}
+                              text={item.description}
+                              name={item.user?.display_name || "user"}
+                              UserProfileID={item.user?.id.toString()}
+                              date={item.createTimestamp}
+                              search={search}
+                              project={item.project_id}
+                              review={item.id}
+                              viewpoint={item.viewpoint}
+                            />
+                          ))}
+                          {/* <ReviewCard
+                        title="Preview Title"
+                        text={"Reprehenderit eu sint veniam eu esse. "}
+                        date="2024-02-26, 14:05"
+                        name="NickName"
+                      />
+                      <ReviewCard
+                        title="Preview Title"
+                        text={
+                          "Reprehenderit eu sint veniam eu esse. Do non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. "
+                        }
+                        date="2024-02-26, 14:05"
+                        name="NickName"
+                      />
+                      <ReviewCard
+                        title="Preview Title"
+                        text={
+                          "Reprehenderit eu sint veniam eu esse. Do non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. Dolor non voluptate duis veniam ad qui do aute anim Lorem mollit aliqua. "
+                        }
+                        date="2024-02-26, 14:05"
+                        name="NickName"
+                      /> */}
+                        </VStack>
+                        {/* <Box w="full">
+                      <Swiper
+                        direction="vertical" // Ensures the swiper is horizontal
+                        spaceBetween={12} // Gap between slides
+                        slidesPerView="auto" // Show as many slides as fit in the view
+                        freeMode={true} // Enables free scrolling
+                        style={{ overflow: "visible" }} // Allows for visible overflow outside the container
+                      >
+                        {searchedReviews.map((item, index) => (
+                          <SwiperSlide
+                            key={index}
+                            style={{ width: "100%" }} // Auto width for slide
+                          >
+                            <ReviewCard
+                              title={item.title}
+                              text="text"
+                              name="nickName"
+                              date="date"
+                              search={search}
+                            />
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+                    </Box> */}
+                      </VStack>
+                    </>
+                  )}
                 </VStack>
               </VStack>
             </VStack>
-          </Collapse>
+          </Fade>
         </VStack>
         {!!authorization && (
           <Box cursor="pointer" onClick={() => {}} position="relative">
