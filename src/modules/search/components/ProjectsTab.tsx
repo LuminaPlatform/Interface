@@ -1,8 +1,5 @@
-import { Box, Button, HStack, Img, Text, VStack } from "@chakra-ui/react";
+import { Box, Text, VStack } from "@chakra-ui/react";
 import React from "react";
-import Link from "next/link";
-import { textTruncator } from "@/utils";
-import { TbUserCheck, TbUserPlus } from "react-icons/tb";
 import Table from "@/modules/projects/components/Table";
 
 interface PeopleCardProps {

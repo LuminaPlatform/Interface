@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  HStack,
-  Img,
-  Stack,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Button, HStack, Stack, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import Link from "next/link";
 import { textTruncator } from "@/utils";
