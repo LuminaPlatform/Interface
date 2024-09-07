@@ -7,6 +7,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useGlobalUserData } from "@/hooks/bases";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
+import { getCookie } from "cookies-next";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { EmailVerifyModal } from "./modals/EmailVerifyModal";
 import { SettingsModalBody, SettingsModalsForm } from "../types";
 import { EmailOTP } from "./modals/EmailOTPModal";
@@ -146,15 +148,23 @@ export const AccountSecurity = () => {
               setPublic: () => {
                 setEmail((prev) => ({ ...prev, isLoading: true }));
                 axiosClient
-                  .post(apiKeys.update, {
-                    "0": {
-                      model_name: "User",
-                      params: {
-                        email_public: !email.isPublic
-                      },
-                      id: userInfo.user.id
+                  .post(
+                    apiKeys.update,
+                    {
+                      "0": {
+                        model_name: "User",
+                        params: {
+                          email_public: !email.isPublic
+                        },
+                        id: userInfo.user.id
+                      }
+                    },
+                    {
+                      headers: {
+                        Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                      }
                     }
-                  })
+                  )
                   .then(() => {
                     handleSetPublic(setEmail);
                   })

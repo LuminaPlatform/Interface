@@ -17,6 +17,8 @@ import {
   useGlobalUserData
 } from "@/hooks/bases";
 import { useState } from "react";
+import { getCookie } from "cookies-next";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { settingsFormType } from "../types";
 
 type UserInfoModalProps = {
@@ -125,16 +127,24 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
           onClick={handleSubmit((values) => {
             setLoading(true);
             axiosClient
-              .post(apiKeys.update, {
-                "0": {
-                  model_name: "User",
-                  params: {
-                    username: values.username,
-                    display_name: values.nickname
-                  },
-                  id: globalUser.user.id
+              .post(
+                apiKeys.update,
+                {
+                  "0": {
+                    model_name: "User",
+                    params: {
+                      username: values.username,
+                      display_name: values.nickname
+                    },
+                    id: globalUser.user.id
+                  }
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                  }
                 }
-              })
+              )
               .then((response) => {
                 dispatchGlobalUser({
                   ...globalUser,

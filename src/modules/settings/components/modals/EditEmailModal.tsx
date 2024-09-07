@@ -19,6 +19,8 @@ import {
   useGlobalUserData
 } from "@/hooks/bases";
 import { AxiosError } from "axios";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { getCookie } from "cookies-next";
 import { SettingsModalFooter } from "../EmailFooter";
 import { SettingsModalsForm } from "../../types";
 
@@ -73,15 +75,23 @@ export const EditEmailModal = ({ onClose }: EditEmailModalProps) => {
         submitHandler={handleSubmit((values) => {
           setLoading(true);
           axiosClient
-            .post(apiKeys.update, {
-              "0": {
-                model_name: "User",
-                params: {
-                  email: values.email
-                },
-                id: 1
+            .post(
+              apiKeys.update,
+              {
+                "0": {
+                  model_name: "User",
+                  params: {
+                    email: values.email
+                  },
+                  id: globalUser.user.id
+                }
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                }
               }
-            })
+            )
             .then((response) => {
               dispatchGlobalUser({
                 ...globalUser,
