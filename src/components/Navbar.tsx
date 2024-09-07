@@ -15,19 +15,20 @@ import {
   MenuList,
   Text,
   useDisclosure,
-  VStack
+  VStack,
+  useOutsideClick
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   useAuthorization,
   useGlobalUserData,
   useWalletModal
 } from "@/hooks/bases";
 import { TbLogout, TbSearch, TbSettings2, TbUserCircle } from "react-icons/tb";
-import Link from "next/link";
 import { Badges } from "@/types";
 import dynamic from "next/dynamic";
 import { generateImageSrc } from "@/utils";
+import { useRouter } from "next/router";
 import { ConnectModal } from "./modals/Connect";
 import { BadgeModal } from "./modals/badges/Badge";
 import { Logout } from "./modals/Logout";
@@ -36,14 +37,28 @@ const ProfileBox = () => {
   const userData = useGlobalUserData();
   const user = userData?.user;
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: menuIsOpen,
+    onClose: menuOnClose,
+    onOpen: menuOnOpen
+  } = useDisclosure();
+
+  const menuRef = useRef();
+
+  useOutsideClick({
+    ref: menuRef,
+    handler: menuOnClose
+  });
+
+  const router = useRouter();
 
   if (!user) {
     return null;
   }
 
   return (
-    <>
-      <Menu>
+    <Box ref={menuRef}>
+      <Menu onOpen={menuOnOpen} isOpen={menuIsOpen} onClose={menuOnClose}>
         <MenuButton as={Box} display="flex">
           <HStack width="full">
             <Img
@@ -111,8 +126,10 @@ const ProfileBox = () => {
               height="48px"
               variant="primaryDark"
               width="full"
-              as={Link}
-              href={`/profile/${user?.id}`}
+              onClick={() => {
+                menuOnClose();
+                router.push(`/profile/${user?.id}`);
+              }}
             >
               <HStack width="full" justifyContent="flex-start" columnGap="8px">
                 <TbUserCircle fontSize="20px" />
@@ -125,8 +142,10 @@ const ProfileBox = () => {
               height="48px"
               variant="primaryDark"
               width="full"
-              as={Link}
-              href="/settings"
+              onClick={() => {
+                menuOnClose();
+                router.push("/settings");
+              }}
             >
               <HStack width="full" justifyContent="flex-start" columnGap="8px">
                 <TbSettings2 fontSize="20px" />
@@ -150,7 +169,7 @@ const ProfileBox = () => {
         </MenuList>
       </Menu>
       <Logout isOpen={isOpen} onClose={onClose} />
-    </>
+    </Box>
   );
 };
 
