@@ -40,6 +40,7 @@ const WalletItem = ({
   const [isPublic, setPublic] = useState(wallet.public);
   const [isHover, setHover] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const globalUser = useGlobalUserData();
 
   const handleStatusChange = () => {
     setLoading(true);
@@ -50,7 +51,7 @@ const WalletItem = ({
           params: {
             public: !isPublic
           },
-          id: 1
+          id: globalUser.user.id
         }
       })
       .then(() => {
