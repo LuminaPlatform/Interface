@@ -1,14 +1,15 @@
 import { ActionCard } from "@/components/ActionCard";
 import { ModalBase } from "@/components/ModalBase";
 import { Stack, Text, useDisclosure, VStack } from "@chakra-ui/react";
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { TbBrandX, TbLock, TbMail, TbPencil } from "react-icons/tb";
 import { FormProvider, useForm } from "react-hook-form";
-import { useGlobalUserData } from "@/hooks/bases";
+import { useDispatchGlobalUserData, useGlobalUserData } from "@/hooks/bases";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { getCookie } from "cookies-next";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { handleStorageChange, handleTwitterLogin } from "@/utils";
 import { EmailVerifyModal } from "./modals/EmailVerifyModal";
 import { SettingsModalBody, SettingsModalsForm } from "../types";
 import { EmailOTP } from "./modals/EmailOTPModal";
@@ -25,6 +26,20 @@ type modalsBodyType = {
 
 export const AccountSecurity = () => {
   const userInfo = useGlobalUserData();
+  const dispatchGlobalUser = useDispatchGlobalUserData();
+
+  useEffect(() => {
+    window.addEventListener("storage", () =>
+      handleStorageChange(dispatchGlobalUser, userInfo)
+    );
+
+    return () => {
+      window.removeEventListener("storage", () =>
+        handleStorageChange(dispatchGlobalUser, userInfo)
+      );
+    };
+  }, []);
+
   const methods = useForm<SettingsModalsForm>({
     mode: "all",
     reValidateMode: "onChange"
@@ -48,13 +63,33 @@ export const AccountSecurity = () => {
     isLoading: false
   });
   const [twitter, setTwitter] = useState({
-    isConnect: true,
-    isSecure: false,
+    isConnect: userInfo?.user?.x_username,
     isLoading: false
   });
   const [password, setPassword] = useState({
     isSet: !!userInfo?.user?.password
   });
+  useEffect(() => {
+    if (userInfo?.user?.x_username) {
+      axiosClient
+        .post(apiKeys.update, {
+          "0": {
+            model_name: "User",
+            params: {
+              x_username: userInfo.twitter?.data?.username
+            },
+            id: userInfo?.user?.id
+          }
+        })
+        .then(() => {
+          setTwitter((prev) => ({
+            ...prev,
+            isConnect: userInfo?.user?.x_username,
+            isLoading: false
+          }));
+        });
+    }
+  }, [userInfo.user.x_username]);
 
   const modals = useMemo<modalsBodyType>(() => {
     return {
@@ -122,17 +157,14 @@ export const AccountSecurity = () => {
           <ActionCard
             logo={TbBrandX}
             text="Connect to X"
-            secure={{
-              isLoading: twitter.isLoading,
-              isPublic: !twitter.isSecure,
-              setPublic: () => handleSetPublic(setTwitter),
-              showPublic: twitter.isConnect
-            }}
             connect={{
               showConnect: true,
               isConnect: false,
               buttonText: twitter.isConnect ? "Edit" : "Connect",
-              handleClick: () => {},
+              handleClick: () => {
+                setTwitter((prev) => ({ ...prev, isLoading: true }));
+                handleTwitterLogin();
+              },
               ...(twitter.isConnect && {
                 buttonIcon: <TbPencil fontSize="14px" />
               })
