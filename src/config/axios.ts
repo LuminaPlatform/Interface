@@ -3,9 +3,10 @@ import axios from "axios";
 import { getCookie } from "cookies-next";
 
 export const axiosClient = axios.create({
-  baseURL: process.env.production
-    ? process.env.NEXT_PUBLIC_BASE_API_URL
-    : process.env.NEXT_PUBLIC_DEV_BASE_API_URL,
+  baseURL:
+    process.env.NODE_ENV === "production"
+      ? process.env.NEXT_PUBLIC_BASE_API_URL
+      : process.env.NEXT_PUBLIC_DEV_BASE_API_URL,
   headers: {
     "Content-Type": "application/json",
     ...(getCookie(ACCESS_TOKEN_COOKIE_KEY) && {

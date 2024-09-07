@@ -43,7 +43,7 @@ export const useEmailLogin = () => {
 
       return axios.post<any, { data: { access_token: string } }>(
         `${
-          process.env.production
+          process.env.NODE_ENV === "production"
             ? process.env.NEXT_PUBLIC_BASE_API_URL
             : process.env.NEXT_PUBLIC_DEV_BASE_API_URL
         }${apiKeys.auth.login.email}`,
@@ -116,7 +116,8 @@ export const usePlatformLogin = (callback: () => void) => {
             openedWindow.close();
           }
         } catch (e) {
-          throw new Error("error");
+          // eslint-disable-next-line no-console
+          console.log(e);
         }
       }, 1000);
     });
