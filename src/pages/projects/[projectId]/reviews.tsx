@@ -41,57 +41,62 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
 
     const accessToken =
       ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
-    const userInfo = await axiosClient.get(apiKeys.auth.isAuthorized, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
-    const userViewpoint = await axiosClient
-      .post(
-        apiKeys.fetch,
-        {
-          "0": {
-            model: "ViewPoint",
-            model_id: "None",
-            limit: 1,
-            orders: [],
-            graph: {
-              fetch_fields: [
-                {
-                  name: "*"
-                }
-              ]
-            },
-            condition: {
-              __type__: "ComplexSearchCondition",
-              operator: "AND",
-              conditions: [
-                {
-                  __type__: "SimpleFetchCondition",
-                  field: "user_id",
-                  operator: "EQ",
-                  value: userInfo.data.id
-                },
-                {
-                  __type__: "SimpleFetchCondition",
-                  field: "project_id",
-                  operator: "EQ",
-                  value: projectId
-                }
-              ]
+
+    let userViewpoint = null;
+    let userInfo = null;
+    if (accessToken) {
+      userInfo = await axiosClient.get(apiKeys.auth.isAuthorized, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+      userViewpoint = await axiosClient
+        .post(
+          apiKeys.fetch,
+          {
+            "0": {
+              model: "ViewPoint",
+              model_id: "None",
+              limit: 1,
+              orders: [],
+              graph: {
+                fetch_fields: [
+                  {
+                    name: "*"
+                  }
+                ]
+              },
+              condition: {
+                __type__: "ComplexSearchCondition",
+                operator: "AND",
+                conditions: [
+                  {
+                    __type__: "SimpleFetchCondition",
+                    field: "user_id",
+                    operator: "EQ",
+                    value: userInfo.data.id
+                  },
+                  {
+                    __type__: "SimpleFetchCondition",
+                    field: "project_id",
+                    operator: "EQ",
+                    value: projectId
+                  }
+                ]
+              }
+            }
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
             }
           }
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        }
-      )
-      .then((res) => res.data[0])
-      .catch(() => {
-        return [];
-      });
+        )
+        .then((res) => res.data[0])
+        .catch(() => {
+          return [];
+        });
+    }
 
     const viewpoints = await axiosClient
       .get(`${apiKeys.viewpoint}/${projectId}`)
@@ -180,15 +185,18 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
         const project = response.data["0"];
         const reviews = response.data["1"];
 
-        const userRole = await axiosClient.post(apiKeys.fetch, {
-          "0": {
-            model: "User.roles",
-            model_id: userInfo.data.id,
-            orders: [],
-            graph: { fetch_fields: [{ name: "*" }] },
-            condition: {}
-          }
-        });
+        let userRole = null;
+        if (userInfo?.data.id) {
+          userRole = await axiosClient.post(apiKeys.fetch, {
+            "0": {
+              model: "User.roles",
+              model_id: userInfo?.data.id,
+              orders: [],
+              graph: { fetch_fields: [{ name: "*" }] },
+              condition: {}
+            }
+          });
+        }
 
         return {
           props: {
@@ -196,13 +204,8 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
             reviews,
             viewpoints,
             userViewpoint: userViewpoint ?? [],
-            userRole: userRole.data[0]
+            userRole: userRole?.data[0] ?? []
           }
-        };
-      })
-      .catch(() => {
-        return {
-          notFound: true
         };
       });
   } catch (error) {
