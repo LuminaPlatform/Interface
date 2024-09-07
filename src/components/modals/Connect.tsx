@@ -144,7 +144,7 @@ const ModalBody = () => {
 export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
   const { onOpen } = useWalletModal();
   const methods = useForm<ModalForm>({
-    mode: "all",
+    mode: "onSubmit",
     reValidateMode: "onChange"
   });
 

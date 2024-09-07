@@ -46,6 +46,9 @@ export const Login = () => {
     formState: { errors },
     handleSubmit
   } = useFormContext<ModalForm>();
+
+  const [isLoading, setLoading] = useState(false);
+
   const toast = useCustomToast();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -161,10 +164,11 @@ export const Login = () => {
         </FormControl>
       </VStack>
       <Button
-        type="button"
+        type="submit"
         variant="primary"
-        isDisabled={!!errors.email || !!errors.password}
+        isDisabled={!!errors.email || !!errors.password || isLoading}
         onClick={handleSubmit(({ email, password }) => {
+          setLoading(true);
           mutate(
             { username: email, password },
             {
@@ -194,6 +198,9 @@ export const Login = () => {
                   description: error.response.data.error_detail,
                   status: "error"
                 });
+              },
+              onSettled: () => {
+                setLoading(false);
               }
             }
           );
@@ -215,6 +222,8 @@ export const Login = () => {
       <MethodSeparator />
       <HStack columnGap="16px" width="full">
         <Button
+          isDisabled={isLoading}
+          type="button"
           bg="none"
           border="1px solid"
           borderColor="primary.50"
@@ -233,6 +242,8 @@ export const Login = () => {
           <FaApple color="var(--chakra-colors-primary-50)" fontSize="32px" />
         </Button>
         <Button
+          isDisabled={isLoading}
+          type="button"
           bg="none"
           border="1px solid"
           borderColor="primary.50"
@@ -248,7 +259,10 @@ export const Login = () => {
           borderRadius="33px"
           width="full"
           onClick={() => {
-            handleGoogleLogin(apiKeys.auth.login.google.req);
+            setLoading(true);
+            handleGoogleLogin(apiKeys.auth.login.google.req).finally(() => {
+              setLoading(false);
+            });
           }}
         >
           <TbBrandGoogleFilled

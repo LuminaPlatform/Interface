@@ -38,6 +38,9 @@ export const Register = () => {
     formState: { errors },
     handleSubmit
   } = useFormContext<ModalForm>();
+
+  const [isLoading, setLoading] = useState(false);
+
   const dispatchSteps = useDispatchModalSteps();
 
   const { mutate } = useEmailSignUp();
@@ -181,8 +184,14 @@ export const Register = () => {
       <Button
         type="submit"
         variant="primary"
-        isDisabled={!!errors.email || !!errors.password || !!errors.isAccepted}
+        isDisabled={
+          !!errors.email ||
+          !!errors.password ||
+          !!errors.isAccepted ||
+          isLoading
+        }
         onClick={handleSubmit(({ email, password }) => {
+          setLoading(true);
           mutate(
             { email, password },
             {
@@ -196,6 +205,9 @@ export const Register = () => {
                   description: error.response.data.error_detail,
                   status: "error"
                 });
+              },
+              onSettled: () => {
+                setLoading(false);
               }
             }
           );
@@ -214,6 +226,7 @@ export const Register = () => {
       <MethodSeparator />
       <HStack columnGap="16px" width="full">
         <Button
+          isDisabled={isLoading}
           bg="none"
           border="1px solid"
           borderColor="primary.50"
@@ -232,6 +245,7 @@ export const Register = () => {
           <FaApple color="var(--chakra-colors-primary-50)" fontSize="32px" />
         </Button>
         <Button
+          isDisabled={isLoading}
           bg="none"
           border="1px solid"
           borderColor="primary.50"
@@ -247,7 +261,10 @@ export const Register = () => {
           borderRadius="33px"
           width="full"
           onClick={() => {
-            handleGoogleLogin(apiKeys.auth.login.google.req);
+            setLoading(true);
+            handleGoogleLogin(apiKeys.auth.login.google.req).finally(() => {
+              setLoading(false);
+            });
           }}
         >
           <TbBrandGoogleFilled
