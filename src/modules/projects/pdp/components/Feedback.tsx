@@ -58,6 +58,16 @@ export const Feedback = ({
     [globalUser]
   );
 
+  const viewpointsLength = useMemo(
+    () =>
+      Object.values(project.viewpoints).reduce<number>(
+        (accumulator, currentValue) =>
+          Number(accumulator) + Number(currentValue),
+        0
+      ),
+    [project.viewpoints]
+  );
+
   useEffect(() => {
     if (typeof status !== "undefined") {
       axiosClient
@@ -119,7 +129,7 @@ export const Feedback = ({
           hasAccessWriteReview={hasAccessWriteReview}
         />
         <Text mr="auto" color="gray.60" fontSize="xs" fontWeight="500">
-          Based on 604 rating
+          Based on {viewpointsLength} rating
         </Text>
 
         {hasAccessWriteReview && reviews.length !== 0 && (
