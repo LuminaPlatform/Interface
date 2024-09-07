@@ -1,12 +1,17 @@
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
-import { ApiErrorType } from "@/types";
+import { ApiErrorType, STEP_MODAL } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { setCookie } from "cookies-next";
 import { useEffect, useState } from "react";
-import { useCustomToast, useDispatchAuthorization } from "./bases";
+import {
+  useCustomToast,
+  useDispatchAuthorization,
+  useDispatchModalSteps,
+  useWalletModal
+} from "./bases";
 
 type UseEmailSignUpInputs = {
   email: string;
@@ -72,6 +77,9 @@ export const usePlatformLogin = (callback: () => void) => {
   const toast = useCustomToast();
   const dispatchAuthorization = useDispatchAuthorization();
 
+  const { onOpen } = useWalletModal();
+  const dispatchWalletConnectStep = useDispatchModalSteps();
+
   useEffect(() => {
     if (authorizationCode) {
       axiosClient
@@ -96,6 +104,10 @@ export const usePlatformLogin = (callback: () => void) => {
                 description: "You are logged in",
                 status: "success"
               });
+            })
+            .then(() => {
+              dispatchWalletConnectStep(STEP_MODAL.setupWizard);
+              onOpen();
             });
         });
     }
