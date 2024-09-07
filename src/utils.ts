@@ -1,3 +1,8 @@
+import { getCookie as getNextCookie } from "cookies-next";
+import { apiKeys } from "./api/apiKeys";
+import { axiosClient } from "./config/axios";
+import { ACCESS_TOKEN_COOKIE_KEY, TWITTER_INFO } from "./constant";
+
 export const textTruncator = (text: string) => {
   const startText = text.substring(0, 4);
   const endText = text.substring(text.length - 4);
@@ -26,4 +31,29 @@ export const generateImageSrc = (id: string | number) => {
       ? process.env.NEXT_PUBLIC_BASE_FILE_URL
       : process.env.NEXT_PUBLIC_DEV_BASE_FILE_URL;
   return `${baseUrl}/${id}`;
+};
+
+export const handleTwitterLogin = async () => {
+  return axiosClient
+    .get(apiKeys.auth.login.twitter.req, {
+      headers: {
+        Authorization: `Bearer ${getNextCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+      }
+    })
+    .then((resp) => {
+      window.open(resp.data.url, "_blank", "width=500,height=600");
+    });
+};
+
+export const handleStorageChange = (dispatch: any, globalUser: any) => {
+  const twitterInfo = localStorage.getItem(TWITTER_INFO);
+  if (twitterInfo) {
+    const { ...data } = JSON.parse(localStorage.getItem(TWITTER_INFO));
+    dispatch({
+      ...globalUser,
+      user: { ...globalUser.user, x_username: data.data.username },
+      twitter: data
+    });
+    localStorage.removeItem(TWITTER_INFO);
+  }
 };
