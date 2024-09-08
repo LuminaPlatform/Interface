@@ -68,15 +68,23 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
     () => {
       setLoading(true);
       axiosClient
-        .post(apiKeys.update, {
-          "0": {
-            model_name: "User",
-            params: {
-              x_username: globalUser.twitter?.data?.username
-            },
-            id: globalUser.user.id
+        .post(
+          apiKeys.update,
+          {
+            "0": {
+              model_name: "User",
+              params: {
+                x_username: globalUser.twitter?.data?.username
+              },
+              id: globalUser.user.id
+            }
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+            }
           }
-        })
+        )
         .then(() => {
           setActiveStep((prev) => prev + 1);
         })
@@ -105,17 +113,25 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
             }
           })
           .then((res) => {
-            axiosClient.post(apiKeys.update, {
-              "0": {
-                model_name: "User",
-                params: {
-                  username,
-                  display_name: nickname,
-                  profile_id: res.data.id
-                },
-                id: globalUser.user.id
+            axiosClient.post(
+              apiKeys.update,
+              {
+                "0": {
+                  model_name: "User",
+                  params: {
+                    username,
+                    display_name: nickname,
+                    profile_id: res.data.id
+                  },
+                  id: globalUser.user.id
+                }
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                }
               }
-            });
+            );
             return res.data.id;
           })
           .then((id) => {
@@ -135,27 +151,43 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
           });
       } else {
         const imageFile = await axiosClient
-          .post(apiKeys.file.link, {
-            url: profile,
-            proposal: {
-              model: "User",
-              id: globalUser.user.id,
-              field: "profile_id"
+          .post(
+            apiKeys.file.link,
+            {
+              url: profile,
+              proposal: {
+                model: "User",
+                id: globalUser.user.id,
+                field: "profile_id"
+              }
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+              }
             }
-          })
+          )
           .then((res) => res.data);
         axiosClient
-          .post(apiKeys.update, {
-            "0": {
-              model_name: "User",
-              params: {
-                username,
-                display_name: nickname,
-                profile_id: imageFile.id
-              },
-              id: globalUser.user.id
+          .post(
+            apiKeys.update,
+            {
+              "0": {
+                model_name: "User",
+                params: {
+                  username,
+                  display_name: nickname,
+                  profile_id: imageFile.id
+                },
+                id: globalUser.user.id
+              }
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+              }
             }
-          })
+          )
           .then(() => {
             setActiveStep((prev) => prev + 1);
             dispatchGlobalUser({
@@ -169,22 +201,29 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
           })
           .finally(() => {
             setLoading(false);
-            onClose();
           });
       }
     },
     () => {
       setLoading(true);
       axiosClient
-        .post(apiKeys.relation.add, {
-          "0": {
-            model_name: "User",
-            params: {
-              interested_categories: interests.map((item) => item.id)
-            },
-            id: globalUser.user.id
+        .post(
+          apiKeys.relation.add,
+          {
+            "0": {
+              model_name: "User",
+              params: {
+                interested_categories: interests.map((item) => item.id)
+              },
+              id: globalUser.user.id
+            }
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+            }
           }
-        })
+        )
         .then(() => {
           onClose();
         })
