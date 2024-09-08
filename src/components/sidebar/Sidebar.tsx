@@ -28,6 +28,21 @@ import {
   TbSettings2
 } from "react-icons/tb";
 
+const hoverEffect = {
+  bg: "gray.800",
+  _before: {
+    content: "''",
+    position: "absolute",
+    left: "0",
+    top: "0",
+    height: "full",
+    width: "2px",
+    backgroundColor: "primary.300"
+  },
+  svg: {
+    color: "var(--chakra-colors-primary-300)"
+  }
+};
 const ChakraLink = chakra(Link, {
   baseStyle: {
     py: "16px",
@@ -37,7 +52,8 @@ const ChakraLink = chakra(Link, {
     fontWeight: "bold",
     color: "gray.10",
     position: "relative",
-    pl: "24px"
+    pl: "24px",
+    transition: "all 0.3s ease"
   }
 });
 
@@ -165,25 +181,25 @@ export const Sidebar = () => {
             )}
             <ChakraLink
               href={route.href}
+              {...(!isOpen && {
+                pl: 0
+              })}
               {...(route.href.split("/").at(-1) ===
                 router.pathname.split("/")[1] && {
-                bg: "gray.800",
-                _before: {
-                  content: "''",
-                  position: "absolute",
-                  left: "0",
-                  top: "0",
-                  height: "full",
-                  width: "2px",
-                  backgroundColor: "primary.300"
-                }
+                ...hoverEffect
               })}
+              _hover={hoverEffect}
             >
-              <HStack>
+              <HStack
+                {...(!isOpen && {
+                  justifyContent: "center"
+                })}
+                width="full"
+              >
                 {route.icon(
                   route.href.split("/").at(-1) === router.pathname.split("/")[1]
                 )}
-                {isOpen && <Text>{route.title}</Text>}
+                {isOpen && <Text whiteSpace="nowrap">{route.title}</Text>}
               </HStack>
             </ChakraLink>
           </VStack>
@@ -191,6 +207,9 @@ export const Sidebar = () => {
       </VStack>
       {!!authorization && (
         <ChakraLink
+          {...(!isOpen && {
+            pl: 0
+          })}
           {...(router.pathname.split("/")[1] === "settings" && {
             bg: "gray.800",
             _before: {
@@ -204,8 +223,14 @@ export const Sidebar = () => {
             }
           })}
           href="/settings"
+          _hover={hoverEffect}
         >
-          <HStack>
+          <HStack
+            {...(!isOpen && {
+              justifyContent: "center"
+            })}
+            width="full"
+          >
             <Icon
               fontSize="24px"
               color={
