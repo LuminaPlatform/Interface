@@ -36,14 +36,14 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
   const globalUser = useGlobalUserData();
 
   useEffect(() => {
-    if (globalUser.twitter.data.username) {
-      setValue("username", globalUser.twitter.data.username);
+    if (globalUser?.twitter?.data?.username) {
+      setValue("username", globalUser?.twitter?.data?.username);
     }
-    if (globalUser.twitter.data.name) {
-      setValue("nickname", globalUser.twitter.data.name);
+    if (globalUser?.twitter?.data?.name) {
+      setValue("nickname", globalUser?.twitter?.data?.name);
     }
-    if (globalUser.twitter.data.profile_image_url) {
-      setValue("profile", globalUser.twitter.data.profile_image_url);
+    if (globalUser?.twitter?.data?.profile_image_url) {
+      setValue("profile", globalUser?.twitter?.data?.profile_image_url);
     }
   }, [globalUser.twitter]);
 
@@ -71,7 +71,7 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
             }
           />
           <Text color="gray.20" fontSize="md">
-            {globalUser.twitter.data.name}
+            {globalUser?.twitter?.data?.name}
           </Text>
         </VStack>
         <Input
@@ -125,7 +125,7 @@ export const Profile = ({ editMode, setEditMode }: ProfileProps) => {
                 onClick={() => {
                   setValue(
                     "profile",
-                    globalUser.twitter.data.profile_image_url
+                    globalUser?.twitter?.data?.profile_image_url
                   );
                 }}
               >
