@@ -42,6 +42,10 @@ export const ProjectLink = ({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
+      _hover={{
+        boxShadow: "1px 4px 16px 0px #00000040",
+        background: "gray.600"
+      }}
     >
       {type && (
         <Box width="20px" height="20px">
