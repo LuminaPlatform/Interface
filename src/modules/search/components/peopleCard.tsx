@@ -6,6 +6,7 @@ import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
 import { Avatar } from "@/components/AvatarText";
 import { xDomain } from "@/constant";
 import { getHighlightedText } from "@/components/globalSearch/HighlightText";
+import { useAuthorization, useWalletModal } from "@/hooks/bases";
 
 interface PeopleCardProps {
   name: string;
@@ -28,6 +29,9 @@ const PeopleCard = ({
   x_username,
   setSearch,
 }: PeopleCardProps) => {
+  const authorization = useAuthorization();
+  const { isOpen, onClose, onOpen } = useWalletModal();
+
   return (
     <HStack
       w="full"
@@ -39,14 +43,6 @@ const PeopleCard = ({
       justifyContent="space-between"
     >
       <HStack>
-        {/* <Img
-          rounded="full"
-          width="60px"
-          minW="60px"
-          height="60px"
-          minH="60px"
-          src={"/assets/images/default-avatar.png"}
-        /> */}
         <Link href={`/profile/${id}`} onClick={() => setSearch("")}>
           <Avatar
             badgeSize={{}}
@@ -65,9 +61,11 @@ const PeopleCard = ({
 
         <VStack alignItems="start">
           <HStack>
-            <Text color="gray.0" fontSize="20px" fontWeight="700">
-              {getHighlightedText(name, search)}
-            </Text>
+            <Link href={`/profile/${id}`} onClick={() => setSearch("")}>
+              <Text color="gray.0" fontSize="20px" fontWeight="700">
+                {getHighlightedText(name, search)}
+              </Text>
+            </Link>
 
             {email && (
               <Stack
@@ -130,7 +128,17 @@ const PeopleCard = ({
           )}
         </VStack>
       </HStack>
-      {true ? (
+      {!authorization ? (
+        <Button
+          onClick={onOpen}
+          borderRadius="8px"
+          height="40px"
+          px="28px"
+          variant="primary"
+        >
+          Connect
+        </Button>
+      ) : true ? (
         <Button
           onClick={() => {}}
           borderRadius="8px"
@@ -159,7 +167,7 @@ const PeopleCard = ({
           <TbUserCheck strokeWidth={3} color="rgba(67, 67, 70, 1)" />
 
           <Text color="gray.40" fontSize="14px">
-            Follow
+            Following
           </Text>
         </Button>
       )}
