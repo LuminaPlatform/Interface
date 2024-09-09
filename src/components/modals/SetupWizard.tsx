@@ -322,6 +322,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
         )}
         <HStack width="full" justifyContent="flex-end">
           <Button
+            variant="grayGhost"
             onClick={() => {
               if (activeStep === steps.length - 1) {
                 onClose();
@@ -329,12 +330,8 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
                 setActiveStep((prev) => prev + 1);
               }
             }}
-            color="gray.60"
             fontSize="md"
             fontWeight="700"
-            _hover={{}}
-            _active={{}}
-            bg="transparent"
           >
             Skip This Step
           </Button>

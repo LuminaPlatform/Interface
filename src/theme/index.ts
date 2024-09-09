@@ -53,6 +53,14 @@ export const theme = extendTheme({
             }
           }
         },
+        grayGhost: {
+          backgroundColor: "transparent",
+          color: "gray.60",
+          border: "none",
+          _hover: {
+            color: "gray.0"
+          }
+        },
         ghost: {
           color: "primary.200",
           px: "0",
