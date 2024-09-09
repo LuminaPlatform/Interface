@@ -61,7 +61,7 @@ export const getServerSideProps = async (ctx: any) => {
               ]
             },
             condition: {
-              __type__: "ComplexSearchCondition",
+              __type__: "ComplexFetchCondition",
               operator: "AND",
               conditions: [
                 {

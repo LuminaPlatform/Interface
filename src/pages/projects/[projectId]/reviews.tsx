@@ -67,7 +67,7 @@ export const getServerSideProps: GetServerSideProps<ReviewsProps> = async (
                 ]
               },
               condition: {
-                __type__: "ComplexSearchCondition",
+                __type__: "ComplexFetchCondition",
                 operator: "AND",
                 conditions: [
                   {
