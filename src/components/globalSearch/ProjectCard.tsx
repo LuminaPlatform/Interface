@@ -1,6 +1,7 @@
 import { HStack, Img, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
+import { getHighlightedText } from "./HighlightText";
 
 interface ProjectCardProps {
   name: string;
@@ -9,22 +10,6 @@ interface ProjectCardProps {
   imageUrl: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
-
-export const getHighlightedText = (text: string, highlight: string) => {
-  // Split the text based on the search text
-  const parts = text.split(new RegExp(`(${highlight})`, "gi"));
-  return parts.map((part, i) =>
-    part.toLowerCase() === highlight.toLowerCase() ? (
-      <Text as="span" color="primary.300" key={i}>
-        {part}
-      </Text>
-    ) : (
-      <Text as="span" color="gray.20" key={i}>
-        {part}
-      </Text>
-    )
-  );
-};
 
 const ProjectCard = ({
   name,

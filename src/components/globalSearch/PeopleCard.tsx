@@ -1,7 +1,7 @@
 import { HStack, Img, Text } from "@chakra-ui/react";
 import React from "react";
-import { getHighlightedText } from "./ProjectCard";
 import Link from "next/link";
+import { getHighlightedText } from "./HighlightText";
 
 interface PeopleCardProps {
   name: string;

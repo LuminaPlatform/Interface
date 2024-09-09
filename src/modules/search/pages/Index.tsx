@@ -266,7 +266,10 @@ const Index = () => {
                 </VStack>
               ) : item.id === 1 ? (
                 searchedProjects.length !== 0 ? (
-                  <ProjectsTab searchedProjects={searchedProjects} />
+                  <ProjectsTab
+                    search={search}
+                    searchedProjects={searchedProjects}
+                  />
                 ) : (
                   <Text color={"white"}></Text>
                 )
@@ -279,6 +282,8 @@ const Index = () => {
                       showProjectName
                       review={item}
                       key={item.id}
+                      highlightNeeded={true}
+                      search={search}
                     />
                   ))}
                 </VStack>

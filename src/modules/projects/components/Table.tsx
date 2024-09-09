@@ -30,6 +30,7 @@ import { useProjects } from "../hooks";
 import { currencyScale, primaryCategories } from "@/constant";
 import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
 import { useRouter } from "next/router";
+import { getHighlightedText } from "@/components/globalSearch/HighlightText";
 
 const CheckMarkIcon = () => (
   <svg
@@ -128,8 +129,14 @@ export const ArrowDown = () => (
 
 interface TableProps {
   searchedProjects: any[];
+  highlightNeeded?: boolean;
+  searchText?: string;
 }
-const Table = ({ searchedProjects }: TableProps) => {
+const Table = ({
+  searchedProjects,
+  highlightNeeded = false,
+  searchText,
+}: TableProps) => {
   const projectsData = useProjects();
   // const networkThreshold = 7;
 
@@ -167,7 +174,9 @@ const Table = ({ searchedProjects }: TableProps) => {
                 textAlign="left"
                 whiteSpace="nowrap"
               >
-                {info.row.original.name}
+                {highlightNeeded
+                  ? getHighlightedText(info.row.original.name, searchText)
+                  : info.row.original.name}
               </ChakraLink>
               <Icon
                 size={18}

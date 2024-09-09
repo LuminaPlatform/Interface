@@ -5,6 +5,7 @@ import { textTruncator } from "@/utils";
 import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
 import { Avatar } from "@/components/AvatarText";
 import { xDomain } from "@/constant";
+import { getHighlightedText } from "@/components/globalSearch/HighlightText";
 
 interface PeopleCardProps {
   name: string;
@@ -16,22 +17,6 @@ interface PeopleCardProps {
   x_username: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
-
-export const getHighlightedText = (text: string, highlight: string) => {
-  // Split the text based on the search text
-  const parts = text.split(new RegExp(`(${highlight})`, "gi"));
-  return parts.map((part, i) =>
-    part.toLowerCase() === highlight.toLowerCase() ? (
-      <Text as="span" color="primary.300" key={i}>
-        {part}
-      </Text>
-    ) : (
-      <Text as="span" color="gray.20" key={i}>
-        {part}
-      </Text>
-    )
-  );
-};
 
 const PeopleCard = ({
   name,

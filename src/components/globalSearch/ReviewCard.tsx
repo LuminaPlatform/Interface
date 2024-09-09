@@ -1,11 +1,11 @@
 import { HStack, Img, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import React from "react";
-import { getHighlightedText } from "./ProjectCard";
 import { ModalBase } from "../ModalBase";
 import { ReviewDetail } from "@/modules/reviews/components/ReviewDetail";
 import { Project, Review } from "@/modules/projects/types";
 import { reviewStatuses } from "@/constant";
 import { Badge } from "../Badge";
+import { getHighlightedText } from "./HighlightText";
 
 interface ReviewCardProps {
   title: string;

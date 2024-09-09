@@ -4,25 +4,10 @@ import Table from "@/modules/projects/components/Table";
 
 interface PeopleCardProps {
   searchedProjects: any[];
+  search: string;
 }
 
-export const getHighlightedText = (text: string, highlight: string) => {
-  // Split the text based on the search text
-  const parts = text.split(new RegExp(`(${highlight})`, "gi"));
-  return parts.map((part, i) =>
-    part.toLowerCase() === highlight.toLowerCase() ? (
-      <Text as="span" color="primary.300" key={i}>
-        {part}
-      </Text>
-    ) : (
-      <Text as="span" color="gray.20" key={i}>
-        {part}
-      </Text>
-    )
-  );
-};
-
-const ProjectsTab = ({ searchedProjects }: PeopleCardProps) => {
+const ProjectsTab = ({ searchedProjects, search }: PeopleCardProps) => {
   return (
     <VStack
       pb="16px"
@@ -32,7 +17,11 @@ const ProjectsTab = ({ searchedProjects }: PeopleCardProps) => {
       marginTop="28px"
     >
       <Box width="full" overflow="auto">
-        <Table searchedProjects={searchedProjects} />
+        <Table
+          searchText={search}
+          highlightNeeded={true}
+          searchedProjects={searchedProjects}
+        />
       </Box>
     </VStack>
   );
