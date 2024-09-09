@@ -61,55 +61,41 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         }
       };
     }
-    try {
-      const userBaseData = await axiosClient.get(apiKeys.auth.isAuthorized, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
-      const userInterests = await axiosClient
-        .post(
-          apiKeys.fetch,
-          {
-            0: {
-              model: "User.interested_expertises",
-              model_id: userBaseData.data.id,
-              orders: [],
-              graph: {
-                fetch_fields: [
-                  {
-                    name: "*"
-                  }
-                ]
-              }
-            }
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`
-            }
-          }
-        )
-        .then((res) => res.data[0] ?? []);
-      const userInformation = await getUserInformation(
-        userBaseData.data.id,
-        accessToken
-      );
-
-      if (!userInformation) {
-        return {
-          redirect: {
-            permanent: false,
-            destination: "/projects"
-          }
-        };
+    const userBaseData = await axiosClient.get(apiKeys.auth.isAuthorized, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
       }
-      return {
-        props: {
-          user: { ...userInformation, interestedExpertises: userInterests }
+    });
+    const userInterests = await axiosClient
+      .post(
+        apiKeys.fetch,
+        {
+          0: {
+            model: "User.interested_expertises",
+            model_id: userBaseData.data.id,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*"
+                }
+              ]
+            }
+          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
         }
-      };
-    } catch (error) {
+      )
+      .then((res) => res.data[0] ?? []);
+    const userInformation = await getUserInformation(
+      userBaseData.data.id,
+      accessToken
+    );
+
+    if (!userInformation) {
       return {
         redirect: {
           permanent: false,
@@ -117,6 +103,11 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         }
       };
     }
+    return {
+      props: {
+        user: { ...userInformation, interestedExpertises: userInterests }
+      }
+    };
   } catch (error) {
     return {
       redirect: {
