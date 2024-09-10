@@ -261,10 +261,7 @@ const Index = () => {
                 </VStack>
               ) : item.id === 1 ? (
                 searchedProjects.length !== 0 ? (
-                  <ProjectsTab
-                    search={search}
-                    searchedProjects={searchedProjects}
-                  />
+                  <ProjectsTab search={search} />
                 ) : (
                   <Text color="white" />
                 )

@@ -1,13 +1,12 @@
-import { Box, Text, VStack } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 import React from "react";
 import Table from "@/modules/projects/components/Table";
 
 interface PeopleCardProps {
-  searchedProjects: any[];
   search: string;
 }
 
-const ProjectsTab = ({ searchedProjects, search }: PeopleCardProps) => {
+const ProjectsTab = ({ search }: PeopleCardProps) => {
   return (
     <VStack
       pb="16px"
@@ -17,11 +16,7 @@ const ProjectsTab = ({ searchedProjects, search }: PeopleCardProps) => {
       marginTop="28px"
     >
       <Box width="full" overflow="auto">
-        <Table
-          searchText={search}
-          highlightNeeded={true}
-          searchedProjects={searchedProjects}
-        />
+        <Table highlightNeeded search={search} />
       </Box>
     </VStack>
   );

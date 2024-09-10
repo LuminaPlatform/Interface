@@ -130,10 +130,9 @@ export const ArrowDown = () => (
 interface TableProps {
   search: string;
   highlightNeeded?: boolean;
-  searchText?: string;
 }
 
-const Table = ({ search, highlightNeeded, searchText }: TableProps) => {
+const Table = ({ search, highlightNeeded }: TableProps) => {
   const router = useRouter();
   const page = router.query?.page ?? 1;
   const projectsData = useProjects();
@@ -174,7 +173,7 @@ const Table = ({ search, highlightNeeded, searchText }: TableProps) => {
                 whiteSpace="nowrap"
               >
                 {highlightNeeded
-                  ? getHighlightedText(info.row.original.name, searchText)
+                  ? getHighlightedText(info.row.original.name, search)
                   : info.row.original.name}
               </ChakraLink>
               <Icon
