@@ -6,16 +6,18 @@ import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
 import { Avatar } from "@/components/AvatarText";
 import { xDomain } from "@/constant";
 import { getHighlightedText } from "@/components/globalSearch/HighlightText";
-import { useAuthorization, useWalletModal } from "@/hooks/bases";
+import {
+  useAuthorization,
+  useGlobalUserData,
+  useWalletModal
+} from "@/hooks/bases";
 
 interface PeopleCardProps {
   name: string;
   search: string;
   id: string;
   walletAddress: string;
-  profile_id: string;
   email: string;
-  x_username: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
@@ -24,13 +26,12 @@ const PeopleCard = ({
   search,
   id,
   walletAddress,
-  profile_id,
   email,
-  x_username,
-  setSearch,
+  setSearch
 }: PeopleCardProps) => {
+  const globalUser = useGlobalUserData();
   const authorization = useAuthorization();
-  const { isOpen, onClose, onOpen } = useWalletModal();
+  const { onOpen } = useWalletModal();
 
   return (
     <HStack
@@ -48,12 +49,12 @@ const PeopleCard = ({
             badgeSize={{}}
             imageStyle={{
               width: "60px",
-              height: "60px",
+              height: "60px"
             }}
             hasBadge={false}
             src={
-              !!profile_id
-                ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${profile_id}`
+              globalUser?.user?.profile_id
+                ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${globalUser?.user?.profile_id}`
                 : "/assets/images/default-img.png"
             }
           />
@@ -86,7 +87,7 @@ const PeopleCard = ({
                 </Link>
               </Stack>
             )}
-            {x_username && (
+            {globalUser?.user?.profile_id?.x_username && (
               <Stack
                 w="32px"
                 h="32px"
@@ -96,9 +97,9 @@ const PeopleCard = ({
                 alignItems="center"
               >
                 <Link
-                  title={`${xDomain}/${x_username}`}
+                  title={`${xDomain}/${globalUser?.user?.x_username}`}
                   rel="noreferrer noopener"
-                  href={`${xDomain}/${x_username}`}
+                  href={`${xDomain}/${globalUser?.user?.x_username}`}
                   target="_blank"
                 >
                   <TbBrandX

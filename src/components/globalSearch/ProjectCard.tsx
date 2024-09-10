@@ -16,7 +16,7 @@ const ProjectCard = ({
   search,
   id,
   imageUrl,
-  setSearch,
+  setSearch
 }: ProjectCardProps) => {
   return (
     <HStack
@@ -29,7 +29,6 @@ const ProjectCard = ({
       href={`/projects/${id}`}
       onClick={() => {
         setSearch("");
-        console.log(`/projects/${id}`);
       }}
     >
       <Img
@@ -39,7 +38,7 @@ const ProjectCard = ({
         height="32px"
         minH="32px"
         // src={"/assets/images/search/default-project.png"}
-        src={!!imageUrl ? imageUrl : "/assets/images/default-img.png"}
+        src={imageUrl || "/assets/images/default-img.png"}
       />
       <Text fontSize="16px">{getHighlightedText(name, search)}</Text>
     </HStack>

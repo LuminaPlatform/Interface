@@ -7,30 +7,26 @@ import {
   TabPanels,
   Tabs,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo, useState } from "react";
-import { searchTabs } from "../constants";
 import { StringParam, useQueryParams } from "use-query-params";
 import { ProjectSearch } from "@/modules/distribute/components/ProjectSearch";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
+import { ReviewCard } from "@/components/ReviewCard";
 import PeopleCard from "../components/peopleCard";
 import ProjectsTab from "../components/ProjectsTab";
-import { ReviewCard } from "@/components/ReviewCard";
-// import { useGlobalSearchData } from "@/hooks/bases";
+import { searchTabs } from "../constants";
 
 const Index = () => {
-  // const globalSearch = useGlobalSearchData();
   const [search, setSearch] = useState("");
   const [searchedProjects, setSearchedProjects] = useState([]);
   const [searchedReviews, setSearchedReviews] = useState([]);
   const [searchedUsers, setSearchedUsers] = useState([]);
 
-  // console.log(globalSearch?.inputValue);
-
   const [query, setQuery] = useQueryParams({
-    tab: StringParam,
+    tab: StringParam
   });
   const activeTab = useMemo(
     () =>
@@ -51,35 +47,35 @@ const Index = () => {
             graph: {
               fetch_fields: [
                 {
-                  name: "id",
+                  name: "id"
                 },
                 {
-                  name: "name",
+                  name: "name"
                 },
                 {
-                  name: "logo_id",
+                  name: "logo_id"
                 },
                 { name: "content.fundingSources" },
                 { name: "content.includedInBallots" },
                 { name: "content.lists.count" },
                 { name: "content.profile" },
-                { name: "content.impactCategory" },
-              ],
+                { name: "content.impactCategory" }
+              ]
             },
             condition: {
               __type__: "SimpleFetchCondition",
               field: "name",
               operator: "LIKE",
-              value: search,
-            },
-          },
+              value: search
+            }
+          }
         })
         .then((res) => {
           setSearchedProjects(res.data[0]);
         });
 
       axiosClient
-        .post(apiKeys["fetch"], {
+        .post(apiKeys.fetch, {
           0: {
             model: "Review",
             model_id: "None",
@@ -87,46 +83,46 @@ const Index = () => {
             graph: {
               fetch_fields: [
                 {
-                  name: "*",
+                  name: "*"
                 },
                 {
                   name: "files",
                   graph: {
                     fetch_fields: [
                       {
-                        name: "*",
-                      },
-                    ],
-                  },
+                        name: "*"
+                      }
+                    ]
+                  }
                 },
                 {
                   name: "user",
                   graph: {
                     fetch_fields: [
                       {
-                        name: "display_name",
+                        name: "display_name"
                       },
                       {
-                        name: "id",
+                        name: "id"
                       },
                       {
-                        name: "profile_id",
-                      },
-                    ],
-                  },
+                        name: "profile_id"
+                      }
+                    ]
+                  }
                 },
                 {
                   name: "project",
                   graph: {
                     fetch_fields: [
                       {
-                        name: "id",
+                        name: "id"
                       },
                       {
-                        name: "name",
+                        name: "name"
                       },
                       {
-                        name: "logo_id",
+                        name: "logo_id"
                       },
                       { name: "content.fundingSources" },
                       { name: "content.includedInBallots" },
@@ -139,19 +135,19 @@ const Index = () => {
                       { name: "content.contributionLinks" },
                       { name: "content.impactDescription" },
                       { name: "content.impactMetrics" },
-                      { name: "content.impactCategory" },
-                    ],
-                  },
-                },
-              ],
+                      { name: "content.impactCategory" }
+                    ]
+                  }
+                }
+              ]
             },
             condition: {
               __type__: "SimpleFetchCondition",
               field: "title",
               operator: "LIKE",
-              value: search,
-            },
-          },
+              value: search
+            }
+          }
         })
         .then((res) => {
           setSearchedReviews(res.data[0]);
@@ -166,32 +162,31 @@ const Index = () => {
             graph: {
               fetch_fields: [
                 {
-                  name: "*",
+                  name: "*"
                 },
                 {
                   name: "wallets",
                   graph: {
                     fetch_fields: [
                       {
-                        name: "*",
-                      },
-                    ],
-                  },
-                },
-              ],
+                        name: "*"
+                      }
+                    ]
+                  }
+                }
+              ]
             },
 
             condition: {
               __type__: "SimpleFetchCondition",
               field: "username",
               operator: "LIKE",
-              value: search,
-            },
-          },
+              value: search
+            }
+          }
         })
         .then((res) => {
           setSearchedUsers(res.data[0]);
-          console.log(res.data[0]);
         });
     } else {
       setSearchedProjects([]);
@@ -248,19 +243,19 @@ const Index = () => {
             <TabPanel w="full" p="0" key={item.id}>
               {item.id === 0 ? (
                 <VStack w="full" gap="16px">
-                  {searchedUsers.map((item, key) => (
+                  {searchedUsers.map((users: any) => (
                     <PeopleCard
-                      key={key}
-                      profile_id={item.profile_id}
-                      id={item?.id.toString()}
+                      key={users?.id}
+                      id={users?.id.toString()}
                       setSearch={setSearch}
                       search={search}
-                      email={item.email}
-                      x_username={item.x_username}
+                      email={users.email}
                       name={
-                        item?.username || item?.x_username || item?.display_name
+                        users?.username ||
+                        users?.x_username ||
+                        users?.display_name
                       }
-                      walletAddress={item.wallets?.address}
+                      walletAddress={users.wallets?.address}
                     />
                   ))}
                 </VStack>
@@ -271,24 +266,24 @@ const Index = () => {
                     searchedProjects={searchedProjects}
                   />
                 ) : (
-                  <Text color={"white"}></Text>
+                  <Text color="white" />
                 )
               ) : // <Text color={"white"}>i'm tired</Text>
               searchedReviews.length !== 0 ? (
                 <VStack w="full" gap="16px">
-                  {searchedReviews.map((item) => (
+                  {searchedReviews.map((reviews) => (
                     <ReviewCard
-                      project={item.project}
+                      project={reviews.project}
                       showProjectName
-                      review={item}
-                      key={item.id}
-                      highlightNeeded={true}
+                      review={reviews}
+                      key={reviews.id}
+                      highlightNeeded
                       search={search}
                     />
                   ))}
                 </VStack>
               ) : (
-                <Text color={"white"}></Text>
+                <Text color="white" />
               )}
             </TabPanel>
           ))}

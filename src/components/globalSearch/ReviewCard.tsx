@@ -1,9 +1,9 @@
 import { HStack, Img, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import React from "react";
-import { ModalBase } from "../ModalBase";
 import { ReviewDetail } from "@/modules/reviews/components/ReviewDetail";
 import { Project, Review } from "@/modules/projects/types";
 import { reviewStatuses } from "@/constant";
+import { ModalBase } from "../ModalBase";
 import { Badge } from "../Badge";
 import { getHighlightedText } from "./HighlightText";
 
@@ -28,7 +28,7 @@ const ReviewCard = ({
   project,
   review,
   UserProfileID,
-  viewpoint,
+  viewpoint
 }: ReviewCardProps) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const foundReviewStatus = reviewStatuses.find(
@@ -86,7 +86,7 @@ const ReviewCard = ({
               height="24px"
               minH="24px"
               src={
-                !!UserProfileID
+                UserProfileID
                   ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${UserProfileID}`
                   : "/assets/images/default-avatar.png"
               }

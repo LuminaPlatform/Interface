@@ -10,7 +10,7 @@ import {
   Spinner,
   Text,
   useOutsideClick,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -20,14 +20,15 @@ import {
   TbMessage,
   TbSearch,
   TbUsers,
-  TbX,
+  TbX
 } from "react-icons/tb";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { Swiper, SwiperSlide } from "swiper/react";
+import { apiKeys } from "@/api/apiKeys";
+import { axiosClient } from "@/config/axios";
 import PeopleCard from "./globalSearch/PeopleCard";
 import ProjectCard from "./globalSearch/ProjectCard";
 import ReviewCard from "./globalSearch/ReviewCard";
-import { axiosClient } from "@/config/axios";
-import { apiKeys } from "@/api/apiKeys";
 
 const SearchField = () => {
   const [searchedProjects, setSearchedProjects] = useState([]);
@@ -43,7 +44,7 @@ const SearchField = () => {
     ref: searchBarRef,
     handler: () => {
       setSearch("");
-    },
+    }
   });
 
   useEffect(() => {
@@ -59,38 +60,38 @@ const SearchField = () => {
             graph: {
               fetch_fields: [
                 {
-                  name: "id",
+                  name: "id"
                 },
                 {
-                  name: "name",
+                  name: "name"
                 },
                 {
-                  name: "logo_id",
+                  name: "logo_id"
                 },
                 {
-                  name: "content.fundingSources",
+                  name: "content.fundingSources"
                 },
                 {
-                  name: "content.includedInBallots",
+                  name: "content.includedInBallots"
                 },
                 {
-                  name: "content.lists.count",
+                  name: "content.lists.count"
                 },
                 {
-                  name: "content.profile",
+                  name: "content.profile"
                 },
                 {
-                  name: "content.impactCategory",
-                },
-              ],
+                  name: "content.impactCategory"
+                }
+              ]
             },
             condition: {
               __type__: "SimpleFetchCondition",
               field: "name",
               operator: "LIKE",
-              value: search,
-            },
-          },
+              value: search
+            }
+          }
         })
         .then((res) => {
           setSearchedProjects(res.data[0]);
@@ -105,37 +106,36 @@ const SearchField = () => {
             graph: {
               fetch_fields: [
                 {
-                  name: "*",
+                  name: "*"
                 },
                 {
                   name: "user",
                   graph: {
                     fetch_fields: [
                       {
-                        name: "display_name",
+                        name: "display_name"
                       },
                       {
-                        name: "id",
+                        name: "id"
                       },
                       {
-                        name: "profile_id",
-                      },
-                    ],
-                  },
-                },
-              ],
+                        name: "profile_id"
+                      }
+                    ]
+                  }
+                }
+              ]
             },
             condition: {
               __type__: "SimpleFetchCondition",
               field: "title",
               operator: "LIKE",
-              value: search,
-            },
-          },
+              value: search
+            }
+          }
         })
         .then((res) => {
           setSearchedReviews(res.data[0]);
-          console.log(res.data[0]);
         });
 
       axiosClient
@@ -147,17 +147,17 @@ const SearchField = () => {
             graph: {
               fetch_fields: [
                 {
-                  name: "*",
-                },
-              ],
+                  name: "*"
+                }
+              ]
             },
             condition: {
               __type__: "SimpleFetchCondition",
               field: "username",
               operator: "LIKE",
-              value: search,
-            },
-          },
+              value: search
+            }
+          }
         })
         .then((res) => {
           setSearchedUsers(res.data[0]);
@@ -179,7 +179,7 @@ const SearchField = () => {
           <TbSearch
             size={24}
             color={
-              search == ""
+              search === ""
                 ? "var(--chakra-colors-gray-100)"
                 : "var(--chakra-colors-gray-40)"
             }
@@ -190,10 +190,10 @@ const SearchField = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           bg="gray.700"
-          border={search == "" ? "1px solid" : 0}
+          border={search === "" ? "1px solid" : 0}
           borderColor="gray.200"
           _hover={{
-            borderColor: "gray.300",
+            borderColor: "gray.300"
           }}
           _active={{ borderColor: "gray.400" }}
           _focus={{ borderColor: "gray.400" }}
@@ -205,13 +205,13 @@ const SearchField = () => {
           fontWeight="regular"
           _placeholder={{
             fontWeight: "regular",
-            color: "gray.100",
+            color: "gray.100"
           }}
           borderRadius="27px"
-          borderBottomRadius={search == "" ? "27px" : "0"}
+          borderBottomRadius={search === "" ? "27px" : "0"}
           placeholder="Search"
         />
-        {search != "" && (
+        {search !== "" && (
           <InputRightElement
             onClick={() => {
               setSearch("");
@@ -223,7 +223,7 @@ const SearchField = () => {
         )}
       </InputGroup>
 
-      <Fade ref={searchBarRef} in={search != ""}>
+      <Fade ref={searchBarRef} in={search !== ""}>
         <VStack
           width="395px"
           maxH="580px"
@@ -255,11 +255,11 @@ const SearchField = () => {
               divider={<Divider />}
               css={{
                 "&::-webkit-scrollbar": {
-                  width: "4px",
+                  width: "4px"
                 },
                 "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "rgba(67, 67, 70, 1)",
-                },
+                  backgroundColor: "rgba(67, 67, 70, 1)"
+                }
               }}
             >
               {!isLoading &&
@@ -270,7 +270,7 @@ const SearchField = () => {
                 )}
               {isLoading && <Spinner color="primary.300" />}
               {!!searchedUsers.length && !isLoading && (
-                <VStack w="full" gap="12px" alignItems={"start"}>
+                <VStack w="full" gap="12px" alignItems="start">
                   <HStack w="full" justifyContent="space-between">
                     <HStack gap="6px">
                       <TbUsers color="var(--chakra-colors-gray-80)" />
@@ -293,25 +293,20 @@ const SearchField = () => {
                     </Link>
                   </HStack>
 
-                  <Box
-                    w="full"
-                    overflow="hidden"
-                    whiteSpace={"nowrap"}
-                    pb={"4px"}
-                  >
+                  <Box w="full" overflow="hidden" whiteSpace="nowrap" pb="4px">
                     <Swiper
                       direction="horizontal"
                       spaceBetween={8}
                       slidesPerView="auto"
-                      freeMode={true}
+                      freeMode
                       style={{ overflow: "visible" }}
                     >
-                      {searchedUsers.map((item, index) => (
+                      {searchedUsers.map((item) => (
                         <SwiperSlide
-                          key={index}
+                          key={item?.id}
                           style={{
                             width: "auto",
-                            display: "inline-flex",
+                            display: "inline-flex"
                           }}
                         >
                           <PeopleCard
@@ -332,7 +327,7 @@ const SearchField = () => {
               )}
 
               {!!searchedProjects.length && !isLoading && (
-                <VStack w="full" gap="12px" alignItems={"start"}>
+                <VStack w="full" gap="12px" alignItems="start">
                   <HStack w="full" justifyContent="space-between">
                     <HStack gap="6px">
                       <TbFiles color="var(--chakra-colors-gray-80)" />
@@ -355,25 +350,20 @@ const SearchField = () => {
                     </Link>
                   </HStack>
 
-                  <Box
-                    w="full"
-                    overflow="hidden"
-                    whiteSpace={"nowrap"}
-                    pb={"4px"}
-                  >
+                  <Box w="full" overflow="hidden" whiteSpace="nowrap" pb="4px">
                     <Swiper
                       direction="horizontal"
                       spaceBetween={8}
                       slidesPerView="auto"
-                      freeMode={true}
+                      freeMode
                       style={{ overflow: "visible" }}
                     >
-                      {searchedProjects.map((item, index) => (
+                      {searchedProjects.map((item) => (
                         <SwiperSlide
-                          key={index}
+                          key={item?.id}
                           style={{
                             width: "auto",
-                            display: "inline-flex",
+                            display: "inline-flex"
                           }}
                         >
                           <ProjectCard
@@ -391,7 +381,7 @@ const SearchField = () => {
               )}
 
               {!!searchedReviews.length && !isLoading && (
-                <VStack w="full" gap="12px" alignItems={"start"}>
+                <VStack w="full" gap="12px" alignItems="start">
                   <HStack w="full" justifyContent="space-between">
                     <HStack gap="6px">
                       <TbMessage color="var(--chakra-colors-gray-80)" />
@@ -414,9 +404,9 @@ const SearchField = () => {
                     </Link>
                   </HStack>
                   <VStack w="full" gap="12px">
-                    {searchedReviews.map((item, index) => (
+                    {searchedReviews.map((item) => (
                       <ReviewCard
-                        key={index}
+                        key={item?.id}
                         title={item.title}
                         text={item.description}
                         name={item.user?.display_name || "user"}
