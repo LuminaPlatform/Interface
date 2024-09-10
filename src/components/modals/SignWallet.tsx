@@ -6,26 +6,45 @@ import {
   useWalletModal
 } from "@/hooks/bases";
 import { STEP_MODAL } from "@/types";
-import { Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Img,
+  Spinner,
+  Text,
+  useOutsideClick,
+  VStack
+} from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { motion } from "framer-motion";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 
+import Image from "next/image";
+
 export const SignWallet = () => {
+  const SignWalletText =
+    "Please sign the request in your wallet to continue. This is free and does not require any transactions. The wallet pop-up should appear at the top right corner.";
   const dispatchSteps = useDispatchModalSteps();
 
-  const { data: signMessageData, signMessage } = useSignMessage();
+  const {
+    data: signMessageData
+    //  signMessage
+  } = useSignMessage();
 
   const { onClose } = useWalletModal();
   const { isConnected, address } = useAccount();
   const { disconnect } = useDisconnect();
 
-  const [signMessageApi, setSignMessageApi] = useState("");
+  const [
+    ,
+    // signMessageApi
+    setSignMessageApi
+  ] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const walletSignRef = useRef();
   // useEffect(() => {
   //   const timestampRegex =
   //     /Timestamp: (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)/;
@@ -75,8 +94,20 @@ export const SignWallet = () => {
     }
   }, [signMessageData]);
 
+  useOutsideClick({
+    ref: walletSignRef,
+    handler: () => {
+      onClose();
+      dispatchSteps(STEP_MODAL.wallet);
+      if (isConnected && !signMessageData) {
+        disconnect();
+      }
+    }
+  });
+
   return (
     <VStack
+      ref={walletSignRef}
       as={motion.div}
       exit={{
         opacity: 0
@@ -87,7 +118,7 @@ export const SignWallet = () => {
       flexDirection="column"
       width="full"
       rowGap="16px"
-      px="14px"
+      py="24px"
       position="relative"
       overflow="hidden"
     >
@@ -95,10 +126,43 @@ export const SignWallet = () => {
         <Spinner color="primary.300" />
       ) : (
         <>
+          <Image
+            src="/assets/icons/metamask.svg"
+            alt="metamask Icon"
+            width={64}
+            height={64}
+          />
           <Text fontSize="xl" fontFamily="lexend" color="gray.0">
-            Sign your wallet
+            Awaiting Signature
           </Text>
-          <HStack width="full">
+
+          <Text
+            lineHeight="28.8px"
+            textAlign="center"
+            fontSize="18px"
+            fontWeight="200"
+            fontFamily="Satoshi"
+            color="gray.40"
+            maxWidth="362px"
+          >
+            {SignWalletText}
+          </Text>
+
+          <Box
+            mt="16px"
+            animation="spin 4s linear infinite" // CSS animation property
+            sx={{
+              "@keyframes spin": {
+                // Defining keyframes for rotation
+                "0%": { transform: "rotate(0deg)" },
+                "100%": { transform: "rotate(360deg)" }
+              }
+            }}
+          >
+            <Img src="/assets/images/spinner.png" />
+          </Box>
+
+          {/* <HStack width="full">
             <Button
               onClick={() => {
                 onClose();
@@ -123,7 +187,7 @@ export const SignWallet = () => {
             >
               Sign
             </Button>
-          </HStack>
+          </HStack> */}
         </>
       )}
     </VStack>

@@ -47,6 +47,8 @@ export const ModalBase = ({
           bg="gray.900"
           padding="16px"
           position="relative"
+          borderRadius="16px"
+          // alignItems="center"
         >
           {modalHeader && <ModalHeader pb="0">{modalHeader}</ModalHeader>}
           {showCloseButton && (
