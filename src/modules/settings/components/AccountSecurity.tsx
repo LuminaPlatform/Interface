@@ -72,15 +72,23 @@ export const AccountSecurity = () => {
   useEffect(() => {
     if (userInfo?.user?.x_username) {
       axiosClient
-        .post(apiKeys.update, {
-          "0": {
-            model_name: "User",
-            params: {
-              x_username: userInfo.twitter?.data?.username
-            },
-            id: userInfo?.user?.id
+        .post(
+          apiKeys.update,
+          {
+            "0": {
+              model_name: "User",
+              params: {
+                x_username: userInfo.twitter?.data?.username
+              },
+              id: userInfo?.user?.id
+            }
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+            }
           }
-        })
+        )
         .then(() => {
           setTwitter((prev) => ({
             ...prev,
