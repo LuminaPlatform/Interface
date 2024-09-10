@@ -40,7 +40,7 @@ const Settings = ({ user }: SettingsProps) => {
         twitter: ""
       });
     } else if (!userBaseData) {
-      router.replace("/projects");
+      router.replace("/404");
     }
   }, [userBaseData]);
   return <Index />;
@@ -57,7 +57,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       return {
         redirect: {
           permanent: false,
-          destination: "/projects"
+          destination: "/404"
         }
       };
     }
