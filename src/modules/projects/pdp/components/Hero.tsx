@@ -5,14 +5,14 @@ import {
   Stack,
   Text,
   useClipboard,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
-import { useProjectData } from "../hooks";
 import { textTruncator } from "@/utils";
 import Link from "next/link";
 import { TbLink } from "react-icons/tb";
 import { primaryCategories } from "@/constant";
 import { useEffect } from "react";
+import { useProjectData } from "../hooks";
 
 const Tags = () => {
   const { content } = useProjectData();
@@ -20,8 +20,8 @@ const Tags = () => {
     applicantType,
     impactCategory,
     applicant: {
-      address: { address },
-    },
+      address: { address }
+    }
   } = content;
 
   const { onCopy, setValue, hasCopied } = useClipboard("");

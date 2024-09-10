@@ -10,16 +10,17 @@ import {
   Text,
   useDisclosure,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import { TbSearch, TbUserCheck, TbUserPlus } from "react-icons/tb";
-import { useDispatchUserProfile, useUserProfile } from "../hooks";
 import { useDispatchGlobalUserData, useGlobalUserData } from "@/hooks/bases";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { getCookie } from "cookies-next";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { generateImageSrc } from "@/utils";
+import { useDispatchUserProfile, useUserProfile } from "../hooks";
 
 interface UnFollowModalProps {
   onClose: UseDisclosureProps["onClose"];
@@ -37,12 +38,12 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
       <Avatar
         badgeSize={{}}
         imageStyle={{
-          width: 20,
+          width: 20
         }}
         hasBadge={false}
         src={
-          !!user.profile_id
-            ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${user.profile_id}`
+          user.profile_id
+            ? generateImageSrc(user.profile_id)
             : "/assets/images/default-img.png"
         }
       />
@@ -74,17 +75,17 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
                   "0": {
                     model_name: "User",
                     params: {
-                      following: [user.id],
+                      following: [user.id]
                     },
-                    id: globalUser.user.id,
-                  },
+                    id: globalUser.user.id
+                  }
                 },
                 {
                   headers: {
                     Authorization: `Bearer ${getCookie(
                       ACCESS_TOKEN_COOKIE_KEY
-                    )}`,
-                  },
+                    )}`
+                  }
                 }
               )
               .then(() => {
@@ -97,11 +98,11 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
                       graph: {
                         fetch_fields: [
                           {
-                            name: "*",
-                          },
-                        ],
-                      },
-                    },
+                            name: "*"
+                          }
+                        ]
+                      }
+                    }
                   })
                   .then(() => {
                     const filteredGlobalUserFollowings =
@@ -114,11 +115,11 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
                       );
                     dispatchGlobalUser({
                       ...globalUser,
-                      followings: filteredGlobalUserFollowings,
+                      followings: filteredGlobalUserFollowings
                     });
                     dispatchUserProfile({
                       ...userProfile,
-                      followings: filteredProfileFollowings,
+                      followings: filteredProfileFollowings
                     });
                     onClose();
                   });
@@ -164,8 +165,6 @@ const UserFollowBox = ({ item, type }: UserFollowBoxProps) => {
     );
   }, [globalUser]);
 
-  console.log(item.id, userInfo.user.id);
-
   const dispatchProfile = useDispatchUserProfile();
 
   return (
@@ -174,8 +173,8 @@ const UserFollowBox = ({ item, type }: UserFollowBoxProps) => {
         <AvatarText
           badgeSize="18px"
           src={
-            !!item.profile_id
-              ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${item.profile_id}`
+            item.profile_id
+              ? generateImageSrc(item.profile_id)
               : "/assets/images/default-img.png"
           }
           textStyle={{ fontSize: "md", fontWeight: "500", color: "gray.0" }}
@@ -210,17 +209,17 @@ const UserFollowBox = ({ item, type }: UserFollowBoxProps) => {
                       "0": {
                         model_name: "User",
                         params: {
-                          following: [item.id],
+                          following: [item.id]
                         },
-                        id: globalUser.user.id,
-                      },
+                        id: globalUser.user.id
+                      }
                     },
                     {
                       headers: {
                         Authorization: `Bearer ${getCookie(
                           ACCESS_TOKEN_COOKIE_KEY
-                        )}`,
-                      },
+                        )}`
+                      }
                     }
                   )
                   .then(() => {
@@ -233,25 +232,22 @@ const UserFollowBox = ({ item, type }: UserFollowBoxProps) => {
                           graph: {
                             fetch_fields: [
                               {
-                                name: "*",
-                              },
-                            ],
-                          },
-                        },
+                                name: "*"
+                              }
+                            ]
+                          }
+                        }
                       })
                       .then((res) => {
                         dispatchGlobalUser({
                           ...globalUser,
-                          followings: [
-                            ...globalUser.followings,
-                            ...res.data[0],
-                          ],
+                          followings: [...globalUser.followings, ...res.data[0]]
                         });
 
                         dispatchProfile({
                           ...userInfo,
                           followings: [...userInfo.followings, ...res.data[0]],
-                          isCurrentProfileFollowed: true,
+                          isCurrentProfileFollowed: true
                         });
                       });
                   })
@@ -292,9 +288,9 @@ export const UsersModal = ({ type }: UsersModalProps) => {
   const filteredUsers = useMemo(
     () =>
       search
-        ? users.filter((item: any) => {
+        ? (users.filter((item: any) => {
             return item.email?.includes(search);
-          }) ?? []
+          }) ?? [])
         : users,
 
     [search, users]
@@ -317,7 +313,7 @@ export const UsersModal = ({ type }: UsersModalProps) => {
           border="1px solid"
           borderColor="gray.200"
           _hover={{
-            borderColor: "gray.300",
+            borderColor: "gray.300"
           }}
           _active={{ borderColor: "gray.400" }}
           _focus={{ borderColor: "gray.400" }}
@@ -329,7 +325,7 @@ export const UsersModal = ({ type }: UsersModalProps) => {
           fontWeight="regular"
           _placeholder={{
             fontWeight: "regular",
-            color: "gray.100",
+            color: "gray.100"
           }}
           borderRadius="27px"
           height="30px"

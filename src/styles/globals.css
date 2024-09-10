@@ -1,11 +1,9 @@
 @font-face {
   font-family: "satoshi";
   src: url("/assets/fonts/satoshi.ttf");
-  font-weight: 400;
-  font-style: normal;
 }
 
 #nprogress .bar {
   background: var(--chakra-colors-primary-300) !important;
-  height:3px !important
-  }
+  height: 3px !important;
+}

@@ -13,7 +13,7 @@ import {
   Button,
   Img,
   Link as ChakraLink,
-  Flex,
+  Flex
 } from "@chakra-ui/react";
 import {
   createColumnHelper,
@@ -21,16 +21,16 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   SortingState,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { PiLinkThin } from "react-icons/pi";
 import Link from "next/link";
-import { useProjects } from "../hooks";
-import { currencyScale, primaryCategories } from "@/constant";
+import { currencyScale, pageThreshold, primaryCategories } from "@/constant";
 import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
 import { useRouter } from "next/router";
 import { getHighlightedText } from "@/components/globalSearch/HighlightText";
+import { useProjects } from "../hooks";
 
 const CheckMarkIcon = () => (
   <svg
@@ -128,29 +128,28 @@ export const ArrowDown = () => (
 );
 
 interface TableProps {
-  searchedProjects: any[];
+  search: string;
   highlightNeeded?: boolean;
   searchText?: string;
 }
-const Table = ({
-  searchedProjects,
-  highlightNeeded = false,
-  searchText,
-}: TableProps) => {
+
+const Table = ({ search, highlightNeeded, searchText }: TableProps) => {
+  const router = useRouter();
+  const page = router.query?.page ?? 1;
   const projectsData = useProjects();
-  // const networkThreshold = 7;
 
   const [sorting, setSorting] = useState<SortingState>([]);
-  const data = useMemo(
-    () => (searchedProjects.length !== 0 ? searchedProjects : projectsData),
-    [projectsData, searchedProjects]
-  );
+
   const columnHelper = createColumnHelper<any>();
 
   const columns = [
     columnHelper.accessor("id", {
-      cell: (info) => info.getValue(),
-      header: () => "#",
+      cell: (info) => {
+        return search
+          ? info.row.index + 1
+          : info.row.index + 1 + (Number(page) - 1) * pageThreshold;
+      },
+      header: () => "#"
     }),
     columnHelper.accessor("project", {
       cell: (info) => (
@@ -185,55 +184,6 @@ const Table = ({
                 marginLeft="6px"
               />
             </HStack>
-            {/* <HStack
-              width="full"
-              justifyContent="flex-start"
-              columnGap="4px"
-              margin="0px !important"
-              {...(info.getValue()?.cryptosImg.length <= 3 && {
-                divider: (
-                  <Divider
-                    rounded="full"
-                    margin="0px !important"
-                    width="1px"
-                    height="1px"
-                    borderColor="gray.60"
-                  />
-                ),
-              })}
-            >
-              {info
-                .getValue()
-                ?.cryptosImg.slice(0, networkThreshold)
-                .map((img) =>
-                  info.getValue().cryptosImg.length <= 3 ? (
-                    <HStack
-                      key={img.id}
-                      columnGap="2px"
-                      margin="0px !important"
-                    >
-                      {img.src}
-                      <Text
-                        margin="0px !important"
-                        display="flex"
-                        whiteSpace="nowrap"
-                        color="gray.60"
-                        fontSize="xs"
-                        fontWeight="500"
-                      >
-                        {img.title}
-                      </Text>
-                    </HStack>
-                  ) : (
-                    img.src
-                  )
-                )}
-              {info.getValue()?.cryptosImg.length > networkThreshold && (
-                <Text margin="0px !important">
-                  +{info.getValue().cryptosImg.length - networkThreshold}
-                </Text>
-              )}
-            </HStack> */}
           </VStack>
         </HStack>
       ),
@@ -243,7 +193,7 @@ const Table = ({
         const columnBData: any = rowB.original.name;
 
         return columnAData < columnBData ? 1 : -1;
-      },
+      }
     }),
     columnHelper.accessor("allocated", {
       header: () => "Allocated",
@@ -280,7 +230,7 @@ const Table = ({
           ) / 1000;
 
         return columnAData < columnBData ? 1 : -1;
-      },
+      }
     }),
     columnHelper.accessor("inBallots", {
       header: "In Ballots",
@@ -289,8 +239,8 @@ const Table = ({
           sx={{
             svg: {
               width: "16px",
-              height: "16px",
-            },
+              height: "16px"
+            }
           }}
           margin="0px !important"
         >
@@ -303,7 +253,7 @@ const Table = ({
         const columnBData: any = rowB.original.content.includedInBallots;
 
         return columnAData < columnBData ? 1 : -1;
-      },
+      }
     }),
     columnHelper.accessor("inLists", {
       header: "In List",
@@ -318,7 +268,7 @@ const Table = ({
         const columnBData: any = rowB.original.content.lists;
 
         return columnAData < columnBData ? 1 : -1;
-      },
+      }
     }),
     columnHelper.accessor("tags", {
       sortingFn: (rowA, rowB) => {
@@ -378,25 +328,20 @@ const Table = ({
             return null;
           })}
         </HStack>
-      ),
-    }),
+      )
+    })
   ];
 
   const table = useReactTable({
-    data,
+    data: projectsData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     state: {
-      sorting,
+      sorting
     },
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel()
   });
-
-  const router = useRouter();
-  const { query } = router;
-
-  const page = query.page || 1;
 
   return (
     <Box pb="16px" fontFamily="satoshi" pt="16px" width="full">
@@ -448,8 +393,8 @@ const Table = ({
             <Tr
               _last={{
                 td: {
-                  border: "none",
-                },
+                  border: "none"
+                }
               }}
               key={row.id}
             >
@@ -469,7 +414,7 @@ const Table = ({
           ))}
         </Tbody>
       </ChakraTable>
-      {searchedProjects.length === 0 && (
+      {projectsData.length !== 0 && !search && (
         <HStack alignItems="center" width="full" justifyContent="center">
           <Flex columnGap="10px" alignItems="center">
             <Button

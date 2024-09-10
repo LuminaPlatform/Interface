@@ -1,17 +1,30 @@
-import { Dispatch, SetStateAction } from "react";
-import { WizardContentBase } from "./Base";
+// import { Dispatch, SetStateAction } from "react";
 import { GridItem, HStack, Img, Link, Text, VStack } from "@chakra-ui/react";
-import { ActionCard } from "../ActionCard";
 import { TbBrandXFilled } from "react-icons/tb";
+import { useEffect, useMemo } from "react";
+import { useDispatchGlobalUserData, useGlobalUserData } from "@/hooks/bases";
+import { handleStorageChange, handleTwitterLogin } from "@/utils";
+import { WizardContentBase } from "./Base";
+import { ActionCard } from "../ActionCard";
 
-interface ConnectSocialProps {
-  isConnect: boolean;
-  setConnect: Dispatch<SetStateAction<boolean>>;
-}
-export const ConnectSocial = ({
-  isConnect,
-  setConnect,
-}: ConnectSocialProps) => {
+export const ConnectSocial = () => {
+  const globalUser = useGlobalUserData();
+  const isConnect = useMemo(() => globalUser.user.x_username, [globalUser]);
+
+  const dispatchGlobalUser = useDispatchGlobalUserData();
+
+  useEffect(() => {
+    window.addEventListener("storage", () =>
+      handleStorageChange(dispatchGlobalUser, globalUser)
+    );
+
+    return () => {
+      window.removeEventListener("storage", () =>
+        handleStorageChange(dispatchGlobalUser, globalUser)
+      );
+    };
+  }, []);
+
   return (
     <WizardContentBase>
       <GridItem>
@@ -50,16 +63,19 @@ export const ConnectSocial = ({
             </Text>
           </HStack>
           <ActionCard
-            actionCardId={0}
-            text={isConnect ? "@twitter_username" : "Connect X"}
+            text={
+              isConnect
+                ? `@${globalUser?.twitter?.data?.username}`
+                : "Connect X"
+            }
             logo={TbBrandXFilled}
             connect={{
               buttonText: "Connect",
               handleClick: () => {
-                setConnect(true);
+                handleTwitterLogin();
               },
-              isConnect: isConnect,
-              showConnect: true,
+              isConnect,
+              showConnect: true
             }}
           />
         </VStack>

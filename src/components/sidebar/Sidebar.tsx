@@ -3,7 +3,7 @@ import {
   useAuthorization,
   useDispatchIsOpenSidebar,
   useIsOpenSidebar,
-  useSelectedProjects,
+  useSelectedProjects
 } from "@/hooks/bases";
 import {
   Button,
@@ -14,7 +14,7 @@ import {
   Icon,
   Img,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -25,9 +25,24 @@ import {
   TbChevronsLeft,
   TbChevronsRight,
   TbMessage,
-  TbSettings2,
+  TbSettings2
 } from "react-icons/tb";
 
+const hoverEffect = {
+  bg: "gray.800",
+  _before: {
+    content: "''",
+    position: "absolute",
+    left: "0",
+    top: "0",
+    height: "full",
+    width: "2px",
+    backgroundColor: "primary.300"
+  },
+  svg: {
+    color: "var(--chakra-colors-primary-300)"
+  }
+};
 const ChakraLink = chakra(Link, {
   baseStyle: {
     py: "16px",
@@ -38,7 +53,8 @@ const ChakraLink = chakra(Link, {
     color: "gray.10",
     position: "relative",
     pl: "24px",
-  },
+    transition: "all 0.3s ease"
+  }
 });
 
 export const Sidebar = () => {
@@ -60,7 +76,7 @@ export const Sidebar = () => {
           }
           as={TbChartBar}
         />
-      ),
+      )
     },
     {
       id: 1,
@@ -76,12 +92,12 @@ export const Sidebar = () => {
           }
           as={TbMessage}
         />
-      ),
+      )
     },
     {
       id: 2,
       href: "/distribute",
-      title: !!isAuthorized
+      title: isAuthorized
         ? `Distribute ${selectedProjects.length}`
         : "Distribute",
       icon: (isActive: boolean) => (
@@ -94,8 +110,8 @@ export const Sidebar = () => {
           }
           as={TbChartPie4}
         />
-      ),
-    },
+      )
+    }
   ];
   const router = useRouter();
 
@@ -165,25 +181,25 @@ export const Sidebar = () => {
             )}
             <ChakraLink
               href={route.href}
+              {...(!isOpen && {
+                pl: 0
+              })}
               {...(route.href.split("/").at(-1) ===
                 router.pathname.split("/")[1] && {
-                bg: "gray.800",
-                _before: {
-                  content: "''",
-                  position: "absolute",
-                  left: "0",
-                  top: "0",
-                  height: "full",
-                  width: "2px",
-                  backgroundColor: "primary.300",
-                },
+                ...hoverEffect
               })}
+              _hover={hoverEffect}
             >
-              <HStack>
+              <HStack
+                {...(!isOpen && {
+                  justifyContent: "center"
+                })}
+                width="full"
+              >
                 {route.icon(
                   route.href.split("/").at(-1) === router.pathname.split("/")[1]
                 )}
-                {isOpen && <Text>{route.title}</Text>}
+                {isOpen && <Text whiteSpace="nowrap">{route.title}</Text>}
               </HStack>
             </ChakraLink>
           </VStack>
@@ -191,7 +207,10 @@ export const Sidebar = () => {
       </VStack>
       {!!authorization && (
         <ChakraLink
-          {...("settings" === router.pathname.split("/")[1] && {
+          {...(!isOpen && {
+            pl: 0
+          })}
+          {...(router.pathname.split("/")[1] === "settings" && {
             bg: "gray.800",
             _before: {
               content: "''",
@@ -200,16 +219,22 @@ export const Sidebar = () => {
               top: "0",
               height: "full",
               width: "2px",
-              backgroundColor: "primary.300",
-            },
+              backgroundColor: "primary.300"
+            }
           })}
           href="/settings"
+          _hover={hoverEffect}
         >
-          <HStack>
+          <HStack
+            {...(!isOpen && {
+              justifyContent: "center"
+            })}
+            width="full"
+          >
             <Icon
               fontSize="24px"
               color={
-                "setting" === router.pathname.split("/")[1]
+                router.pathname.split("/")[1] === "setting"
                   ? "var(--chakra-colors-primary-300)"
                   : "var(--chakra-colors-gray-10)"
               }

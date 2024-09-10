@@ -9,7 +9,7 @@ import {
   SkeletonText,
   Text,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { InputError } from "@/components/InputError";
@@ -19,7 +19,7 @@ import { ImportedReviewBox } from "./ImportedReviewBox";
 enum IMPORT_REVIEW_STEP {
   importForm = "importForm",
   preview = "preview",
-  review = "review",
+  review = "review"
 }
 interface ImportReviewProps {
   onClose: UseDisclosureProps["onClose"];
@@ -28,7 +28,7 @@ export const ImportReview = ({ onClose }: ImportReviewProps) => {
   const {
     register,
     formState: { errors },
-    handleSubmit,
+    handleSubmit
   } = useForm<{
     link: string;
   }>({ mode: "all" });
@@ -54,12 +54,12 @@ export const ImportReview = ({ onClose }: ImportReviewProps) => {
             <Input
               placeholder="https://x.com/"
               {...register("link", {
-                required: "This field is a required field",
-                pattern: {
-                  value: /^(https:\/\/(www\.)?)?x\.com\/[^\/]+\/status\/.+$/,
-                  message:
-                    "That doesn’t look like a valid X URL. Please try again.",
-                },
+                required: "This field is a required field"
+                // pattern: {
+                //   value: /^(https:\/\/(www\.)?)?x\.com\/[^\/]+\/status\/.+$/,
+                //   message:
+                //     "That doesn’t look like a valid X URL. Please try again."
+                // }
               })}
             />
             {!errors.link ? (
@@ -146,9 +146,11 @@ export const ImportReview = ({ onClose }: ImportReviewProps) => {
               Please check your tweet preview and confirm to import.
             </Text>
           </VStack>
-          <ImportedReviewBox isChild />
+          <ImportedReviewBox
+          // isChild
+          />
         </VStack>
-      ),
+      )
     }),
     []
   );

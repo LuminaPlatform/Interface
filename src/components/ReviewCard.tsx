@@ -5,14 +5,15 @@ import {
   Stack,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
-import { Badge } from "./Badge";
 import { reviewStatuses } from "@/constant";
-import { ModalBase } from "./ModalBase";
 import { ReviewDetail } from "@/modules/reviews/components/ReviewDetail";
 import { Project, Review } from "@/modules/projects/types";
+import { generateImageSrc } from "@/utils";
 import { getHighlightedText } from "./globalSearch/HighlightText";
+import { ModalBase } from "./ModalBase";
+import { Badge } from "./Badge";
 
 interface ReviewCardProps {
   review: Review;
@@ -26,7 +27,7 @@ export const ReviewCard = ({
   showProjectName,
   project,
   highlightNeeded = false,
-  search,
+  search
 }: ReviewCardProps) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -115,10 +116,7 @@ export const ReviewCard = ({
                 maxH={{ base: "250px", md: "initial" }}
                 order={{ base: "0", md: "1" }}
               >
-                <Img
-                  src={`${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${review.files.id}`}
-                  alt="banner"
-                />
+                <Img src={generateImageSrc(review.files.id)} alt="banner" />
               </AspectRatio>
             )}
             <Text
@@ -141,7 +139,7 @@ export const ReviewCard = ({
                 alt="writer"
                 src={
                   review.user?.profile_id
-                    ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${review.user?.profile_id}`
+                    ? generateImageSrc(review.user?.profile_id)
                     : "/assets/images/default-avatar.png"
                 }
                 width={{ base: "16px", md: "24px" }}

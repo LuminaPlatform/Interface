@@ -4,11 +4,11 @@ export const distributeTabs = [
   {
     id: 0,
     title: "My Distribution",
-    query: "my-distributions",
+    query: "my-distributions"
   },
   {
     id: 1,
     title: "Community Distributions",
-    query: "community",
-  },
+    query: "community"
+  }
 ];

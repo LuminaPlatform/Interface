@@ -2,16 +2,18 @@ import {
   GridItem,
   HStack,
   Img,
+  Spinner,
   Tag,
   TagLabel,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
-import { WizardContentBase } from "./Base";
-import { interestsFakeData } from "@/constant";
 import { useFormContext, useWatch } from "react-hook-form";
 import { SetupWizardForm } from "@/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { apiKeys } from "@/api/apiKeys";
+import { axiosClient } from "@/config/axios";
+import { WizardContentBase } from "./Base";
 import { InputError } from "../InputError";
 
 export const Interests = () => {
@@ -20,8 +22,36 @@ export const Interests = () => {
     clearErrors,
     setValue,
     control,
-    formState: { errors },
+    formState: { errors }
   } = useFormContext<SetupWizardForm>();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [interestsData, setInterestsData] = useState([]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    axiosClient
+      .post(apiKeys.fetch, {
+        0: {
+          model: "ProjectCategory",
+          model_id: "None",
+          orders: [],
+          graph: {
+            fetch_fields: [
+              {
+                name: "*"
+              }
+            ]
+          }
+        }
+      })
+      .then((res) => {
+        setInterestsData(res.data[0]);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
 
   const { interests } = useWatch({ control });
 
@@ -58,28 +88,36 @@ export const Interests = () => {
           personalize your experience and connect you with like-minded users.
         </Text>
         <HStack flexWrap="wrap" gap="8px" mt="16px">
-          {interestsFakeData.map((item) => (
-            <Tag
-              cursor="pointer"
-              onClick={() => {
-                const index = interests.findIndex((tag) => tag === item.id);
+          {isLoading ? (
+            <Spinner color="primary.300" />
+          ) : (
+            interestsData.map((item) => (
+              <Tag
+                cursor="pointer"
+                onClick={() => {
+                  const index = interests.findIndex((tag) => tag === item.id);
 
-                if (index !== -1) {
-                  setValue(
-                    "interests",
-                    interests.filter((tag) => tag !== item.id)
-                  );
-                } else {
-                  setValue("interests", [...interests, item.id]);
+                  if (index !== -1) {
+                    setValue(
+                      "interests",
+                      interests.filter((tag) => tag.id !== item.id)
+                    );
+                  } else {
+                    setValue("interests", [...interests, item]);
+                  }
+                }}
+                size="md"
+                variant={
+                  interests.find((interest) => interest.id === item.id)
+                    ? "lightOrange"
+                    : "dark"
                 }
-              }}
-              size="md"
-              variant={interests.includes(item.id) ? "lightOrange" : "dark"}
-              key={item.id}
-            >
-              <TagLabel>{item.title}</TagLabel>
-            </Tag>
-          ))}
+                key={item.id}
+              >
+                <TagLabel>{item.name}</TagLabel>
+              </Tag>
+            ))
+          )}
         </HStack>
         {!!errors.interests && (
           <InputError errorMessage={errors.interests.message} />

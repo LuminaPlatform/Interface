@@ -1,10 +1,10 @@
 import { UseDisclosureProps, VStack } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { Dispatch, SetStateAction } from "react";
-import { SettingsModalBody, SettingsModalsForm } from "../../types";
 import { OTP } from "@/components/modals/OTP";
 import { useOTPVerification } from "@/hooks/auth";
 import { useCustomToast } from "@/hooks/bases";
+import { SettingsModalBody, SettingsModalsForm } from "../../types";
 
 interface PasswordOTPModalProps extends UseDisclosureProps {
   setModalBody: Dispatch<SetStateAction<SettingsModalBody>>;
@@ -12,7 +12,7 @@ interface PasswordOTPModalProps extends UseDisclosureProps {
 
 export const PasswordOTPModal = ({
   onClose,
-  setModalBody,
+  setModalBody
 }: PasswordOTPModalProps) => {
   const { control } = useFormContext<SettingsModalsForm>();
   const { email } = useWatch<SettingsModalsForm>({ control });
@@ -31,7 +31,7 @@ export const PasswordOTPModal = ({
                 return toast({
                   title: error.response.data.error_message,
                   description: error.response.data.error_detail,
-                  status: "error",
+                  status: "error"
                 });
               },
               onSuccess: () => {
@@ -39,9 +39,9 @@ export const PasswordOTPModal = ({
                 onClose();
                 return toast({
                   description: "You are logged in",
-                  status: "success",
+                  status: "success"
                 });
-              },
+              }
             }
           );
         }}

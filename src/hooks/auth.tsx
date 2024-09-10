@@ -1,12 +1,17 @@
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
-import { ApiErrorType } from "@/types";
+import { ApiErrorType, STEP_MODAL } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { setCookie } from "cookies-next";
 import { useEffect, useState } from "react";
-import { useCustomToast, useDispatchAuthorization } from "./bases";
+import {
+  useCustomToast,
+  useDispatchAuthorization,
+  useDispatchModalSteps,
+  useWalletModal
+} from "./bases";
 
 type UseEmailSignUpInputs = {
   email: string;
@@ -20,9 +25,9 @@ export const useEmailSignUp = () => {
   >({
     mutationFn: ({ email, password }) =>
       axiosClient.post<any, { data: string }, UseEmailSignUpInputs>(
-        apiKeys["auth"]["signup"]["email"],
+        apiKeys.auth.signup.email,
         { email, password }
-      ),
+      )
   });
 };
 
@@ -42,10 +47,14 @@ export const useEmailLogin = () => {
       formData.append("password", password);
 
       return axios.post<any, { data: { access_token: string } }>(
-        `${process.env.NEXT_PUBLIC_BASE_API_URL}${apiKeys["auth"]["login"]["email"]}`,
+        `${
+          process.env.NODE_ENV === "production"
+            ? process.env.NEXT_PUBLIC_BASE_API_URL
+            : process.env.NEXT_PUBLIC_DEV_BASE_API_URL
+        }${apiKeys.auth.login.email}`,
         formData
       );
-    },
+    }
   });
 };
 
@@ -56,10 +65,10 @@ type UseOTPInputs = {
 export const useOTPVerification = () => {
   return useMutation<{ data: string }, AxiosError<ApiErrorType>, UseOTPInputs>({
     mutationFn: ({ email, code }) =>
-      axiosClient.post<any, { data: string }, UseOTPInputs>(
-        apiKeys["auth"]["otp"],
-        { email, code }
-      ),
+      axiosClient.post<any, { data: string }, UseOTPInputs>(apiKeys.auth.otp, {
+        email,
+        code
+      })
   });
 };
 
@@ -68,21 +77,24 @@ export const usePlatformLogin = (callback: () => void) => {
   const toast = useCustomToast();
   const dispatchAuthorization = useDispatchAuthorization();
 
+  const { onOpen } = useWalletModal();
+  const dispatchWalletConnectStep = useDispatchModalSteps();
+
   useEffect(() => {
     if (authorizationCode) {
       axiosClient
         .get(apiKeys.auth.login.google.cb, {
           params: {
-            code: authorizationCode,
-          },
+            code: authorizationCode
+          }
         })
         .then((res) => {
           setCookie(ACCESS_TOKEN_COOKIE_KEY, res.data.access_token);
           axiosClient
             .get(apiKeys.auth.isAuthorized, {
               headers: {
-                Authorization: `Bearer ${res.data.access_token}`,
-              },
+                Authorization: `Bearer ${res.data.access_token}`
+              }
             })
             .then((userDataResponse) => userDataResponse.data)
             .then((user) => {
@@ -90,8 +102,12 @@ export const usePlatformLogin = (callback: () => void) => {
               callback();
               return toast({
                 description: "You are logged in",
-                status: "success",
+                status: "success"
               });
+            })
+            .then(() => {
+              dispatchWalletConnectStep(STEP_MODAL.setupWizard);
+              onOpen();
             });
         });
     }
@@ -112,7 +128,8 @@ export const usePlatformLogin = (callback: () => void) => {
             openedWindow.close();
           }
         } catch (e) {
-          console.log("Error:", e);
+          // eslint-disable-next-line no-console
+          console.log(e);
         }
       }, 1000);
     });

@@ -4,7 +4,7 @@ import {
   Img,
   Text,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { AllBadges } from "./AllBadges";
 
@@ -26,7 +26,7 @@ export const BasicBadge = ({ badgeType, onClose }: BasicBadgeProps) => {
         {...(badgeType === Badges.HOLDER && {
           outline: "1px solid",
           outlineOffset: "1px",
-          outlineColor: "primary.300",
+          outlineColor: "primary.300"
         })}
       />
       <Text fontFamily="lexend" fontSize="xl" fontWeight="600" color="gray.0">

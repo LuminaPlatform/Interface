@@ -1,5 +1,5 @@
 import { ModalBase } from "@/components/ModalBase";
-import { textTruncator } from "@/utils";
+import { generateImageSrc, textTruncator } from "@/utils";
 import {
   Button,
   Code,
@@ -8,18 +8,18 @@ import {
   Stack,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useGlobalUserData } from "@/hooks/bases";
-import { useDispatchUserProfile, useUserProfile } from "../hooks";
 import { ACCESS_TOKEN_COOKIE_KEY, xDomain } from "@/constant";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import { getCookie } from "cookies-next";
 import { useState } from "react";
 import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
-import { UsersModal } from "./UsersModal";
 import { Avatar } from "@/components/AvatarText";
+import { UsersModal } from "./UsersModal";
+import { useDispatchUserProfile, useUserProfile } from "../hooks";
 
 const ModalHeader = ({ text }: { text: string }) => (
   <Text
@@ -42,12 +42,12 @@ export const UserInfo = () => {
   const {
     isOpen: followersIsOpen,
     onOpen: followersOnOpen,
-    onClose: followersOnClose,
+    onClose: followersOnClose
   } = useDisclosure();
   const {
     isOpen: followingIsOpen,
     onOpen: followingOnOpen,
-    onClose: followingOnClose,
+    onClose: followingOnClose
   } = useDisclosure();
 
   const dispatchProfile = useDispatchUserProfile();
@@ -55,7 +55,7 @@ export const UserInfo = () => {
   const [
     ,
     // isLoading
-    setLoading,
+    setLoading
   ] = useState(false);
 
   const hasWallet = !!userInfo.wallet;
@@ -75,14 +75,14 @@ export const UserInfo = () => {
         badgeSize="48px"
         src={
           userInfo.user?.profile_id
-            ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${userInfo.user?.profile_id}`
+            ? generateImageSrc(userInfo.user?.profile_id)
             : "/assets/images/default-avatar.png"
         }
         hasBadge
         imageStyle={{
           width: { base: "100px", md: "186px" },
           height: { base: "100px", md: "186px" },
-          objectFit: "contain",
+          objectFit: "contain"
         }}
       />
 
@@ -137,16 +137,16 @@ export const UserInfo = () => {
                         "0": {
                           model_name: "User",
                           params: {
-                            following: [userInfo.user.id],
+                            following: [userInfo.user.id]
                           },
-                          id: globalUser.user.id,
-                        },
+                          id: globalUser.user.id
+                        }
                       })
                       .then((res) => {
                         dispatchProfile({
                           ...userInfo,
                           followers: [...userInfo.followers, res.data[0]],
-                          isCurrentProfileFollowed: true,
+                          isCurrentProfileFollowed: true
                         });
                       })
                       .finally(() => {
@@ -173,17 +173,17 @@ export const UserInfo = () => {
                           "0": {
                             model_name: "User",
                             params: {
-                              following: [userInfo.user.id],
+                              following: [userInfo.user.id]
                             },
-                            id: globalUser.user.id,
-                          },
+                            id: globalUser.user.id
+                          }
                         },
                         {
                           headers: {
                             Authorization: `Bearer ${getCookie(
                               ACCESS_TOKEN_COOKIE_KEY
-                            )}`,
-                          },
+                            )}`
+                          }
                         }
                       )
                       .then((res) => {
@@ -193,7 +193,7 @@ export const UserInfo = () => {
                         dispatchProfile({
                           ...userInfo,
                           followers: [...filteredFollowers],
-                          isCurrentProfileFollowed: false,
+                          isCurrentProfileFollowed: false
                         });
                       })
                       .finally(() => {

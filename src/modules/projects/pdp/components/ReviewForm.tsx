@@ -1,22 +1,23 @@
+// TODO should fix this lints
+
+/* eslint-disable consistent-return */
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-shadow */
 import { Controller, useForm, useWatch } from "react-hook-form";
 import {
-  Box,
   Button,
   chakra,
   FormControl,
   FormLabel,
   FormLabelProps,
   HStack,
-  Img,
   Input,
   Text,
   Tooltip,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
-import { ReviewForm as ReviewFormType } from "../types";
 import { TbInfoCircleFilled, TbPhotoPlus } from "react-icons/tb";
-import { IoMdCloseCircle } from "react-icons/io";
 import { fileLimitation } from "@/config/fileLimitation";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
@@ -27,16 +28,17 @@ import { AxiosError } from "axios";
 import { getCookie } from "cookies-next";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { useState } from "react";
+import { ReviewForm as ReviewFormType } from "../types";
 import {
   useProjectData,
   useProjectDataDispatch,
-  useProjectReviewsDispatch,
+  useProjectReviewsDispatch
 } from "../hooks";
+import { PreviewSelectedMedia } from "./PreviewSelectedMedia";
 
 const labelProps: FormLabelProps = {
-  color: "gray.60",
   fontSize: "xs",
-  fontWeight: "500",
+  fontWeight: "500"
 };
 const descriptionThreshold = 2048;
 const ChakraForm = chakra("form");
@@ -54,13 +56,13 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
     handleSubmit,
     control,
     setValue,
-    reset,
+    reset
   } = useForm<ReviewFormType>({
     defaultValues: {
       description: "",
-      medias: [],
+      medias: []
     },
-    mode: "all",
+    mode: "all"
   });
   const toast = useCustomToast();
   const dispatchProject = useProjectDataDispatch();
@@ -75,15 +77,15 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
           title: data.title,
           description: data.description,
           project_id: +query.projectId,
-          viewpoint: status,
-        },
-      },
+          viewpoint: status
+        }
+      }
     };
     axiosClient
-      .post(apiKeys["create"], modelData, {
+      .post(apiKeys.create, modelData, {
         headers: {
-          Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`,
-        },
+          Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+        }
       })
       .then(async (response) => {
         if (response.status === 201) {
@@ -94,7 +96,7 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
             .then((response) => {
               dispatchProject({
                 ...project,
-                viewpoints: response.data.viewpoints,
+                viewpoints: response.data.viewpoints
               });
               return response;
             })
@@ -106,13 +108,16 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
                 JSON.stringify({
                   model: "Review",
                   id: response.data[0].id,
-                  field: "files",
+                  field: "files"
                 })
               );
               if (medias.length !== 0) {
                 return axiosClient
-                  .post(apiKeys.file, formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
+                  .post(apiKeys.file.file, formData, {
+                    headers: {
+                      "Content-Type": "multipart/form-data",
+                      Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                    }
                   })
                   .then(() => {
                     return axiosClient.post(apiKeys.fetch, {
@@ -123,38 +128,38 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
                         graph: {
                           fetch_fields: [
                             {
-                              name: "*",
+                              name: "*"
                             },
                             {
                               name: "user",
                               graph: {
                                 fetch_fields: [
                                   {
-                                    name: "display_name",
+                                    name: "display_name"
                                   },
                                   {
-                                    name: "id",
+                                    name: "id"
                                   },
                                   {
-                                    name: "profile_id",
-                                  },
-                                ],
-                              },
+                                    name: "profile_id"
+                                  }
+                                ]
+                              }
                             },
                             {
                               name: "files",
                               graph: {
                                 fetch_fields: [
                                   {
-                                    name: "*",
-                                  },
-                                ],
-                              },
-                            },
-                          ],
+                                    name: "*"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
                         },
-                        condition: {},
-                      },
+                        condition: {}
+                      }
                     });
                   });
               }
@@ -169,38 +174,38 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
                     graph: {
                       fetch_fields: [
                         {
-                          name: "*",
+                          name: "*"
                         },
                         {
                           name: "user",
                           graph: {
                             fetch_fields: [
                               {
-                                name: "display_name",
+                                name: "display_name"
                               },
                               {
-                                name: "id",
+                                name: "id"
                               },
                               {
-                                name: "profile_id",
-                              },
-                            ],
-                          },
+                                name: "profile_id"
+                              }
+                            ]
+                          }
                         },
                         {
                           name: "files",
                           graph: {
                             fetch_fields: [
                               {
-                                name: "*",
-                              },
-                            ],
-                          },
-                        },
-                      ],
+                                name: "*"
+                              }
+                            ]
+                          }
+                        }
+                      ]
                     },
-                    condition: {},
-                  },
+                    condition: {}
+                  }
                 });
               }
               return resp;
@@ -214,13 +219,13 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
       .then(() => {
         return toast({
           description: "Your review is submitted.",
-          status: "success",
+          status: "success"
         });
       })
       .catch((err: AxiosError<{ error_message: string }>) => {
         toast({
           description: err.response.data.error_message,
-          status: "error",
+          status: "error"
         });
       })
       .finally(() => {
@@ -229,6 +234,14 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
   };
   const { description, medias } = useWatch<ReviewFormType>({ control });
 
+  const handleRemoveMedia = (media: File) => {
+    const filteredMedias = medias.filter(
+      (item) =>
+        item.type + item.name + item.size !==
+        media.type + media.name + media.size
+    );
+    setValue("medias", filteredMedias);
+  };
   return (
     <ChakraForm
       display="flex"
@@ -237,7 +250,11 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
       onSubmit={handleSubmit(onSubmit)}
       width="full"
     >
-      <FormControl isInvalid={!!errors.title}>
+      <FormControl
+        isInvalid={!!errors.title}
+        _focusWithin={{ color: "gray.40" }}
+        color="gray.60"
+      >
         <FormLabel {...labelProps}>Title *</FormLabel>
         <Input
           variant="outline"
@@ -245,8 +262,8 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
           {...register("title", {
             required: {
               value: true,
-              message: "Enter a title for your review",
-            },
+              message: "Enter a title for your review"
+            }
           })}
         />
         {!!errors.title && (
@@ -255,7 +272,11 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
           </Text>
         )}
       </FormControl>
-      <FormControl isInvalid={!!errors.description}>
+      <FormControl
+        _focusWithin={{ color: "gray.40" }}
+        color="gray.60"
+        isInvalid={!!errors.description}
+      >
         <FormLabel {...labelProps}>Describe your experience *</FormLabel>
         <Controller
           control={control}
@@ -263,12 +284,12 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
           rules={{
             required: {
               value: true,
-              message: "Enter a description for your review",
+              message: "Enter a description for your review"
             },
             maxLength: {
               value: descriptionThreshold,
-              message: `Max length exceeded (${descriptionThreshold})`,
-            },
+              message: `Max length exceeded (${descriptionThreshold})`
+            }
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
@@ -281,14 +302,7 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
             />
           )}
         />
-        <HStack
-          width="full"
-          justifyContent={
-            (!!errors.description && errors.description.type) === "maxLength"
-              ? "space-between"
-              : "flex-end"
-          }
-        >
+        <HStack width="full" justifyContent="space-between">
           {!!errors.description && (
             <Text fontSize="xs" color="red.200">
               {errors.description.message}
@@ -296,12 +310,13 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
           )}
           <Text
             color={
-              (!!errors.description && errors.description.type) === "maxLength"
+              !!errors.description && errors.description.type === "maxLength"
                 ? "red.200"
                 : "gray.80"
             }
             fontSize="xs"
             fontWeight="500"
+            ml="auto"
           >
             {description.length}/{descriptionThreshold}
           </Text>
@@ -344,9 +359,17 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
               width="124px"
               height="70px"
               justifyContent="center"
+              color="gray.200"
+              _hover={{
+                borderColor: "primary.200",
+                color: "primary.200",
+                svg: {
+                  color: "var(--chakra-colors-primary-200) !important"
+                }
+              }}
             >
               <TbPhotoPlus color="var(--chakra-colors-gray-200)" />
-              <Text color="gray.200" fontSize="xs" fontWeight="700">
+              <Text fontSize="xs" fontWeight="700">
                 Upload images
               </Text>
             </VStack>
@@ -358,7 +381,7 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
               visibility="hidden"
               {...register("medias", {
                 validate: fileLimitation,
-                required: false,
+                required: false
               })}
               onChange={(e) => {
                 if (
@@ -382,36 +405,10 @@ export const ReviewForm = ({ onClose, status }: ReviewFormProps) => {
             )}
           </FormControl>
           {medias.map((media) => (
-            <Box position="relative" key={media.type + media.name + media.size}>
-              <IoMdCloseCircle
-                fontSize="20px"
-                style={{
-                  top: "-8px",
-                  left: "-8px",
-                  position: "absolute",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  const filteredMedias = medias.filter(
-                    (item) =>
-                      item.type + item.name + item.size !==
-                      media.type + media.name + media.size
-                  );
-                  setValue("medias", filteredMedias);
-                }}
-                color="var(--chakra-colors-red-200)"
-              />
-              <Img
-                margin={0}
-                borderRadius="8px"
-                minW="124px"
-                minH="70px"
-                w="124px"
-                h="70px"
-                objectFit="cover"
-                src={URL.createObjectURL(media)}
-              />
-            </Box>
+            <PreviewSelectedMedia
+              media={media}
+              handleRemoveMedia={handleRemoveMedia}
+            />
           ))}
         </HStack>
       </VStack>
