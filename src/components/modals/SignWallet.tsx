@@ -6,20 +6,17 @@ import {
   useWalletModal
 } from "@/hooks/bases";
 import { STEP_MODAL } from "@/types";
-import {
-  Box,
-  Img,
-  Spinner,
-  Text,
-  useOutsideClick,
-  VStack
-} from "@chakra-ui/react";
+import { Box, Img, Spinner, Text, VStack } from "@chakra-ui/react";
 import { AxiosError } from "axios";
 import { motion } from "framer-motion";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
-import { useAccount, useDisconnect, useSignMessage } from "wagmi";
+import {
+  useAccount,
+  //  useDisconnect,
+  useSignMessage
+} from "wagmi";
 
 import Image from "next/image";
 
@@ -35,7 +32,7 @@ export const SignWallet = () => {
 
   const { onClose } = useWalletModal();
   const { isConnected, address } = useAccount();
-  const { disconnect } = useDisconnect();
+  // const { disconnect } = useDisconnect();
 
   const [
     ,
@@ -44,7 +41,6 @@ export const SignWallet = () => {
   ] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const walletSignRef = useRef();
   // useEffect(() => {
   //   const timestampRegex =
   //     /Timestamp: (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)/;
@@ -94,20 +90,8 @@ export const SignWallet = () => {
     }
   }, [signMessageData]);
 
-  useOutsideClick({
-    ref: walletSignRef,
-    handler: () => {
-      onClose();
-      dispatchSteps(STEP_MODAL.wallet);
-      if (isConnected && !signMessageData) {
-        disconnect();
-      }
-    }
-  });
-
   return (
     <VStack
-      ref={walletSignRef}
       as={motion.div}
       exit={{
         opacity: 0
@@ -148,18 +132,19 @@ export const SignWallet = () => {
             {SignWalletText}
           </Text>
 
-          <Box
-            mt="16px"
-            animation="spin 4s linear infinite" // CSS animation property
-            sx={{
-              "@keyframes spin": {
-                // Defining keyframes for rotation
-                "0%": { transform: "rotate(0deg)" },
-                "100%": { transform: "rotate(360deg)" }
-              }
-            }}
-          >
-            <Img src="/assets/images/spinner.png" />
+          <Box mt="16px">
+            <motion.div
+              animate={{
+                rotate: [0, 360] // Keyframes for rotation from 0 to 360 degrees
+              }}
+              transition={{
+                duration: 4, // Duration of the spin
+                ease: "linear", // Linear easing for smooth continuous spin
+                repeat: Infinity // Infinite loop
+              }}
+            >
+              <Img src="/assets/images/spinner.png" />
+            </motion.div>
           </Box>
 
           {/* <HStack width="full">
