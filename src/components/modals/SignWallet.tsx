@@ -135,12 +135,12 @@ export const SignWallet = () => {
           <Box mt="16px">
             <motion.div
               animate={{
-                rotate: [0, 360] // Keyframes for rotation from 0 to 360 degrees
+                rotate: [0, 360]
               }}
               transition={{
-                duration: 4, // Duration of the spin
-                ease: "linear", // Linear easing for smooth continuous spin
-                repeat: Infinity // Infinite loop
+                duration: 4,
+                ease: "linear",
+                repeat: Infinity
               }}
             >
               <Img src="/assets/images/spinner.png" />
