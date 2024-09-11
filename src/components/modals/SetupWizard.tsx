@@ -74,9 +74,9 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
             "0": {
               model_name: "User",
               params: {
-                x_username: globalUser.twitter?.data?.username
+                x_username: globalUser?.twitter?.data?.username
               },
-              id: globalUser.user.id
+              id: globalUser?.user?.id
             }
           },
           {
@@ -101,7 +101,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
           "proposal",
           JSON.stringify({
             model: "User",
-            id: globalUser.user.id,
+            id: globalUser?.user?.id,
             field: "profile_id"
           })
         );
@@ -123,7 +123,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
                     display_name: nickname,
                     profile_id: res.data.id
                   },
-                  id: globalUser.user.id
+                  id: globalUser?.user?.id
                 }
               },
               {
@@ -139,7 +139,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
             dispatchGlobalUser({
               ...globalUser,
               user: {
-                ...globalUser.user,
+                ...globalUser?.user,
                 display_name: nickname,
                 profile_id: id,
                 username
@@ -157,7 +157,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
               url: profile,
               proposal: {
                 model: "User",
-                id: globalUser.user.id,
+                id: globalUser?.user?.id,
                 field: "profile_id"
               }
             },
@@ -179,7 +179,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
                   display_name: nickname,
                   profile_id: imageFile.id
                 },
-                id: globalUser.user.id
+                id: globalUser?.user?.id
               }
             },
             {
@@ -193,7 +193,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
             dispatchGlobalUser({
               ...globalUser,
               user: {
-                ...globalUser.user,
+                ...globalUser?.user,
                 display_name: nickname,
                 username
               }
@@ -215,7 +215,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
               params: {
                 interested_categories: interests.map((item) => item.id)
               },
-              id: globalUser.user.id
+              id: globalUser?.user?.id
             }
           },
           {
@@ -233,7 +233,7 @@ const Stepper = ({ activeStep, setActiveStep }: StepperProps) => {
     }
   ];
 
-  const isConnect = useGlobalUserData().user.x_username;
+  const isConnect = useGlobalUserData()?.user?.x_username;
 
   const stepsComponent = useMemo(() => {
     return [

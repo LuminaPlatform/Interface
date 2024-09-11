@@ -57,7 +57,7 @@ export const ChangePasswordModal = ({
             params: {
               password: values.password
             },
-            id: userInfo?.user.id
+            id: userInfo?.user?.id
           }
         },
         {
@@ -82,7 +82,7 @@ export const ChangePasswordModal = ({
         setLoading(false);
       });
   };
-  const { email } = userInfo.user;
+  const { email } = userInfo?.user;
   return (
     <VStack rowGap="16px" width="full">
       <FormControl pb="32px">

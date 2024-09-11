@@ -97,7 +97,7 @@ export const AccountSecurity = () => {
           }));
         });
     }
-  }, [userInfo.user.x_username]);
+  }, [userInfo?.user?.x_username]);
 
   const modals = useMemo<modalsBodyType>(() => {
     return {
@@ -196,7 +196,7 @@ export const AccountSecurity = () => {
                         params: {
                           email_public: !email.isPublic
                         },
-                        id: userInfo.user.id
+                        id: userInfo?.user?.id
                       }
                     },
                     {

@@ -51,7 +51,7 @@ export const handleStorageChange = (dispatch: any, globalUser: any) => {
     const { ...data } = JSON.parse(localStorage.getItem(TWITTER_INFO));
     dispatch({
       ...globalUser,
-      user: { ...globalUser.user, x_username: data.data.username },
+      user: { ...globalUser?.user, x_username: data?.data?.username },
       twitter: data
     });
     localStorage.removeItem(TWITTER_INFO);
