@@ -47,6 +47,7 @@ export const ModalBase = ({
           bg="gray.900"
           padding="16px"
           position="relative"
+          borderRadius="16px"
         >
           {modalHeader && <ModalHeader pb="0">{modalHeader}</ModalHeader>}
           {showCloseButton && (
