@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development && next dev",
+    "dev": "cross-env NODE_ENV=development next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -47,6 +47,7 @@
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "5.12.1",
     "@typescript-eslint/parser": "^8.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-airbnb": "18.2.1",
     "eslint-config-next": "14.1.4",
