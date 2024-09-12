@@ -1,25 +1,23 @@
 import { chakra, Text, VStack } from "@chakra-ui/react";
-import { UserInfoEditable } from "../components/UserInfoEditable";
 import { useState } from "react";
-import { useGlobalUserData } from "@/hooks/bases";
 import { FormProvider, useForm } from "react-hook-form";
+import { UserInfoEditable } from "../components/UserInfoEditable";
 import { Wallet } from "../components/Wallet";
 import { AccountSecurity } from "../components/AccountSecurity";
 import { Interests } from "../components/Interests";
 import { settingsFormType } from "../types";
 
 const ChakraForm = chakra("form");
+
 export const Index = () => {
   const [isEditable, setEditable] = useState(false);
-
-  const { user } = useGlobalUserData();
 
   // TODO should add default value
   const { ...methods } = useForm<settingsFormType>({
     mode: "onChange",
     defaultValues: {
-      profile: user.profile_picture,
-    },
+      profile: null
+    }
   });
 
   return (

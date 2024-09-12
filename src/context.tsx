@@ -4,22 +4,26 @@ import {
   Dispatch,
   PropsWithChildren,
   SetStateAction,
+  useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
+import { getCookie } from "cookies-next";
 import { Project } from "./modules/projects/types";
 import { AuthenticationData, STEP_MODAL } from "./types";
 import { getUserInformation } from "./api";
-import { useAuthorization } from "./hooks/bases";
+import { axiosClient } from "./config/axios";
+import { apiKeys } from "./api/apiKeys";
+import { ACCESS_TOKEN_COOKIE_KEY } from "./constant";
 
 export const IsSidebarOpen = createContext(true);
 export const DispatchIsSidebarOpen = createContext<
   Dispatch<SetStateAction<boolean>>
 >(() => {});
 
-interface IsSidebarOpenProviderProps extends PropsWithChildren {}
+type IsSidebarOpenProviderProps = PropsWithChildren;
 export const IsSidebarOpenProvider = ({
-  children,
+  children
 }: IsSidebarOpenProviderProps) => {
   const [state, setState] = useState(true);
   return (
@@ -33,9 +37,9 @@ export const IsSidebarOpenProvider = ({
 
 export const WalletConnectData = createContext<UseDisclosureProps>({});
 
-interface WalletConnectProviderProps extends PropsWithChildren {}
+type WalletConnectProviderProps = PropsWithChildren;
 export const WalletConnectProvider = ({
-  children,
+  children
 }: WalletConnectProviderProps) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   return (
@@ -49,8 +53,10 @@ export const SelectedProjects = createContext<Array<Project>>([]);
 export const SetSelectedProjects =
   createContext<Dispatch<SetStateAction<Project[]>>>(undefined);
 
-interface SelectedProjectProviderProps extends PropsWithChildren {}
-export const SelectedProjectProvider = ({ children }: SelectedProjectProviderProps) => {
+type SelectedProjectProviderProps = PropsWithChildren;
+export const SelectedProjectProvider = ({
+  children
+}: SelectedProjectProviderProps) => {
   const [state, setState] = useState<Array<Project>>([]);
   return (
     <SelectedProjects.Provider value={state}>
@@ -70,10 +76,13 @@ interface AuthorizationProviderProps extends PropsWithChildren {
 }
 export const AuthorizationProvider = ({
   children,
-  data,
+  data
 }: AuthorizationProviderProps) => {
-  const [user, setUser] = useState(() => data);
+  const [user, setUser] = useState(data);
 
+  useEffect(() => {
+    setUser(data);
+  }, [data]);
   return (
     <Authorization.Provider value={user}>
       <SetAuthorization.Provider value={setUser}>
@@ -86,7 +95,7 @@ export const AuthorizationProvider = ({
 export const ModalSteps = createContext<STEP_MODAL>(STEP_MODAL.wallet);
 export const SetModalSteps =
   createContext<Dispatch<SetStateAction<STEP_MODAL>>>(undefined);
-interface ModalStepsProviderProps extends PropsWithChildren {}
+type ModalStepsProviderProps = PropsWithChildren;
 export const ModalStepsProvider = ({ children }: ModalStepsProviderProps) => {
   const [state, setState] = useState(STEP_MODAL.wallet);
   return (
@@ -98,11 +107,30 @@ export const ModalStepsProvider = ({ children }: ModalStepsProviderProps) => {
   );
 };
 
-export const GlobalUser = createContext<{ user: any; wallet: any }>(undefined);
-export const SetGlobalUser =
-  createContext<Dispatch<SetStateAction<{ user: any; wallet: any }>>>(
-    undefined
-  );
+export const GlobalUser = createContext<{
+  user: any;
+  wallet: any;
+  followers: any;
+  followings: any;
+  twitter?: any;
+  projectCategories: any;
+  interestedExpertises: any;
+  userRole: any;
+}>(undefined);
+export const SetGlobalUser = createContext<
+  Dispatch<
+    SetStateAction<{
+      user: any;
+      wallet: any;
+      followers: any;
+      followings: any;
+      twitter?: any;
+      projectCategories: any;
+      interestedExpertises: any;
+      userRole: any;
+    }>
+  >
+>(undefined);
 
 interface GlobalUserProviderProps extends PropsWithChildren {
   userData: any;
@@ -110,26 +138,95 @@ interface GlobalUserProviderProps extends PropsWithChildren {
 
 export const GlobalUserProvider = ({
   children,
-  userData,
+  userData
 }: GlobalUserProviderProps) => {
-  const [state, setState] = useState<{ user: any; wallet: any }>(
-    userData ?? undefined
-  );
+  const [state, setState] = useState<{
+    user: any;
+    wallet: any;
+    followers: any;
+    followings: any;
+    twitter?: any;
+    projectCategories: any;
+    interestedExpertises: any;
+    userRole: any;
+  }>(userData ?? undefined);
 
-  const userBaseData = useAuthorization();
+  const userBaseData = useContext(Authorization);
 
   useEffect(() => {
-    if (!userData && !!userBaseData) {
-      getUserInformation(userBaseData.id.toString()).then((data) => {
-        if (!!data) {
-          setState({
-            user: data[0][0],
-            wallet: data[1],
-          });
-        }
-      });
+    if (userBaseData) {
+      getUserInformation(
+        userBaseData.id.toString(),
+        getCookie(ACCESS_TOKEN_COOKIE_KEY)
+      )
+        .then(async (data) => {
+          const expertises = await axiosClient
+            .post(
+              apiKeys.fetch,
+              {
+                0: {
+                  model: "User.interested_expertises",
+                  model_id: userBaseData.id.toString(),
+                  orders: [],
+                  graph: {
+                    fetch_fields: [
+                      {
+                        name: "*"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                }
+              }
+            )
+            .then((res) => res.data[0]);
+          const userRole = await axiosClient
+            .post(
+              apiKeys.fetch,
+              {
+                "0": {
+                  model: "User.roles",
+                  model_id: userBaseData.id.toString(),
+                  orders: [],
+                  graph: { fetch_fields: [{ name: "*" }] },
+                  condition: {}
+                }
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                }
+              }
+            )
+            .then((res) => res.data[0] ?? []);
+          return {
+            ...data,
+            5: expertises,
+            6: userRole
+          };
+        })
+        .then((data) => {
+          if (data) {
+            setState({
+              user: data[0][0],
+              wallet: data[1],
+              followers: data[2],
+              followings: data[3],
+              projectCategories: data[4],
+              interestedExpertises: data[5],
+              twitter: {},
+              userRole: data[6]
+            });
+          }
+        });
+    } else {
+      setState(undefined);
     }
-  }, [userBaseData]);
+  }, [userBaseData, userData]);
 
   return (
     <GlobalUser.Provider value={state}>

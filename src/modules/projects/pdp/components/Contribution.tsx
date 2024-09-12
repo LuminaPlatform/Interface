@@ -1,30 +1,33 @@
 "use client";
+
 import {
   GridItem,
   HStack,
   SimpleGrid,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { TbChevronRight } from "react-icons/tb";
-import { useProjectData } from "../hooks";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useGlobalUserData } from "@/hooks/bases";
+import { useProjectData, useProjectReviews } from "../hooks";
 import { Reviews } from "./Reviews";
 import { Feedback } from "./Feedback";
 import { ProjectLink } from "./ProjectLink";
 
 export const Contribution = () => {
   const project = useProjectData();
+  const reviews = useProjectReviews();
   const {
     id,
     content: {
       contributionLinks,
       contributionDescription,
       impactDescription,
-      impactMetrics,
-    },
+      impactMetrics
+    }
   } = project;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,7 +47,15 @@ export const Contribution = () => {
     setImpactHeight(impactRef?.current?.clientHeight);
   }, [impactRef?.current?.clientHeight]);
 
-  console.log({ height: impactRef?.current?.clientHeight });
+  const globalUser = useGlobalUserData();
+
+  const hasAccessWriteReview = useMemo(
+    () =>
+      !!globalUser?.userRole.find((role: any) =>
+        role.name.includes("BETA_USER")
+      ),
+    [globalUser]
+  );
 
   return (
     <VStack width="full">
@@ -57,26 +68,28 @@ export const Contribution = () => {
         >
           Reviews
         </Text>
-        <HStack>
-          <Text
-            color="primary.200"
-            fontSize="md"
-            fontWeight="700"
-            as={Link}
-            href={`/projects/${id}/reviews`}
-          >
-            Show All Reviews
-          </Text>
-          <TbChevronRight
-            size="16px"
-            color="var(--chakra-colors-primary-200)"
-          />
-        </HStack>
+        {reviews.length !== 0 && (
+          <HStack>
+            <Text
+              color="primary.200"
+              fontSize="md"
+              fontWeight="700"
+              as={Link}
+              href={`/projects/${id}/reviews`}
+            >
+              Show All Reviews
+            </Text>
+            <TbChevronRight
+              size="16px"
+              color="var(--chakra-colors-primary-200)"
+            />
+          </HStack>
+        )}
       </HStack>
       <SimpleGrid width="full" gap="24px" columns={{ base: 1, lg: 3 }}>
         <GridItem
+          h={hasAccessWriteReview && reviews?.length !== 0 ? "384px" : "276px"}
           overflow="auto"
-          maxH="384px"
           order={{ base: "1", lg: "0" }}
           colSpan={{ base: 1, lg: 2 }}
         >
@@ -85,7 +98,7 @@ export const Contribution = () => {
         <GridItem
           order={{ base: "0", lg: "1" }}
           colSpan={{ base: 1, lg: 1 }}
-          bg="gray.700"
+          bg="rgba(38, 38, 41, 0.6)"
           borderRadius="10px"
           p="16px"
         >

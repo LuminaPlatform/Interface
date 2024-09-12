@@ -5,35 +5,38 @@ import {
   InputGroup,
   InputLeftElement,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
-import { SettingsModalsForm } from "../../types";
 import { TbMail } from "react-icons/tb";
 import { InputError } from "@/components/InputError";
-import { SettingsModalFooter } from "../EmailFooter";
 import { useState } from "react";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import {
   useCustomToast,
   useDispatchGlobalUserData,
-  useGlobalUserData,
+  useGlobalUserData
 } from "@/hooks/bases";
 import { AxiosError } from "axios";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { getCookie } from "cookies-next";
+import { SettingsModalFooter } from "../EmailFooter";
+import { SettingsModalsForm } from "../../types";
 
-interface EditEmailModalProps extends UseDisclosureProps {}
+type EditEmailModalProps = UseDisclosureProps;
 export const EditEmailModal = ({ onClose }: EditEmailModalProps) => {
   const {
     register,
     formState: { errors },
-    handleSubmit,
+    handleSubmit
   } = useFormContext<SettingsModalsForm>();
   const [isLoading, setLoading] = useState(false);
   const { wallet } = useGlobalUserData();
 
   const dispatchGlobalUser = useDispatchGlobalUserData();
   const toast = useCustomToast();
+  const globalUser = useGlobalUserData();
   return (
     <VStack rowGap="16px" width="full">
       <FormControl pb="32px">
@@ -53,12 +56,12 @@ export const EditEmailModal = ({ onClose }: EditEmailModalProps) => {
             {...register("email", {
               required: {
                 value: true,
-                message: "Email is a required field",
+                message: "Email is a required field"
               },
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Enter a valid Email",
-              },
+                message: "Enter a valid Email"
+              }
             })}
           />
         </InputGroup>
@@ -72,27 +75,39 @@ export const EditEmailModal = ({ onClose }: EditEmailModalProps) => {
         submitHandler={handleSubmit((values) => {
           setLoading(true);
           axiosClient
-            .post(apiKeys.update, {
-              "0": {
-                model_name: "User",
-                params: {
-                  email: values.email,
-                },
-                id: 1,
+            .post(
+              apiKeys.update,
+              {
+                "0": {
+                  model_name: "User",
+                  params: {
+                    email: values.email
+                  },
+                  id: globalUser?.user?.id
+                }
               },
-            })
+              {
+                headers: {
+                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                }
+              }
+            )
             .then((response) => {
-              dispatchGlobalUser({ user: response.data[0], wallet });
+              dispatchGlobalUser({
+                ...globalUser,
+                user: response.data[0],
+                wallet
+              });
               onClose();
               return toast({
                 status: "success",
-                description: `Your email is updated`,
+                description: `Your email is updated`
               });
             })
-            .catch((errors: AxiosError<{ error_message: string }>) => {
+            .catch((error: AxiosError<{ error_message: string }>) => {
               return toast({
                 status: "error",
-                description: errors.response.data?.error_message,
+                description: error.response.data?.error_message
               });
             })
             .finally(() => {

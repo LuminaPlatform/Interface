@@ -2,11 +2,15 @@ import { Button, HStack, Img, Text, VStack } from "@chakra-ui/react";
 import { NextPageContext } from "next";
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as Sentry from "@sentry/nextjs";
+import Error from "next/error";
 
-interface ErrorProps{
-  statusCode:number
+interface ErrorProps {
+  statusCode: number;
 }
-function Error({ statusCode }: ErrorProps) {
+function CustomErrorPage({ statusCode }: ErrorProps) {
+  // eslint-disable-next-line no-console
   console.log(
     statusCode
       ? `An error ${statusCode} occurred on server`
@@ -54,11 +58,11 @@ function Error({ statusCode }: ErrorProps) {
   );
 }
 
-Error.getInitialProps = ({ res, err }: NextPageContext) => {
-  const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
-  return { statusCode };
+CustomErrorPage.getInitialProps = async (ctx: NextPageContext) => {
+  await Sentry.captureUnderscoreErrorException(ctx);
+  return Error.getInitialProps(ctx);
 };
-Error.getLayout = function getLayout(page: ReactElement) {
+CustomErrorPage.getLayout = function getLayout(page: ReactElement) {
   return <>{page}</>;
 };
-export default Error;
+export default CustomErrorPage;

@@ -7,7 +7,7 @@ import { useProjectData } from "../hooks";
 export const FeedbackResult = ({
   hasAccessWriteReview,
   setStatus,
-  status,
+  status
 }: {
   status: string;
   hasAccessWriteReview: boolean;
@@ -38,21 +38,29 @@ export const FeedbackResult = ({
             cursor: "pointer",
             onClick: () => {
               setStatus(result.name);
-            },
+            }
           })}
+          _hover={{
+            svg: {
+              color: `${result.colorScheme}.300`
+            }
+          }}
         >
           <Box
             color={
-              !hasAccessWriteReview ? `${result.colorScheme}.300` : "gray.0"
+              !hasAccessWriteReview || status === result.name
+                ? `${result.colorScheme}.300`
+                : "gray.0"
             }
             as={result.icon}
           />
           <Box
             transition="outline 0.2s"
             outline="1px solid"
-            outlineColor="gray.0"
+            outlineColor={hasAccessWriteReview ? "gray.0" : "transparent"}
             borderRadius="6px"
             width="full"
+            flex={1}
             pos="relative"
             overflow="hidden"
             height="28px"
@@ -64,16 +72,18 @@ export const FeedbackResult = ({
               width: `${percentageCalculator(+viewpoints[result.name])}%`,
               height: "full",
               bg: `${result.colorScheme}.300`,
-              zIndex: 0,
+              zIndex: 0
             }}
-            {...((!hasAccessWriteReview || status === result.name) && {
-              outlineColor: `${result.colorScheme}.300`,
-            })}
+            {...(status === result.name &&
+              hasAccessWriteReview && {
+                outlineColor: `${result.colorScheme}.300`
+              })}
             {...(hasAccessWriteReview && {
               _hover: {
-                outlineColor: `${result.colorScheme}.300`,
-              },
+                outlineColor: `${result.colorScheme}.300`
+              }
             })}
+            backgroundColor="gray.600"
           >
             <Text
               color="gray.0"
@@ -88,8 +98,14 @@ export const FeedbackResult = ({
               {result.name}
             </Text>
           </Box>
-          <Text fontSize="xs" fontWeight="700" color="gray.0" width="30px">
-            {viewpoints[result.name]}
+          <Text
+            whiteSpace="nowrap"
+            fontSize="xs"
+            fontWeight="700"
+            color="gray.0"
+            width="30px"
+          >
+            {percentageCalculator(viewpoints[result.name]).toFixed(0)}%
           </Text>
         </HStack>
       ))}

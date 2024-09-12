@@ -21,7 +21,7 @@ import {
   MenuList,
   MenuItem,
   Divider,
-  Stack,
+  Stack
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -30,7 +30,7 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   SortingState,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
 import {
   TbArrowNarrowDown,
@@ -39,15 +39,13 @@ import {
   TbBookmarkPlus,
   TbDotsVertical,
   TbExternalLink,
-  TbInfoCircle,
+  TbInfoCircle
 } from "react-icons/tb";
 import { useForm } from "react-hook-form";
-import { maximumAllocated } from "../constants";
-import { CustomInput } from "./CustomInput";
 import {
   useCustomToast,
   useDispatchSelectedProjects,
-  useSelectedProjects,
+  useSelectedProjects
 } from "@/hooks/bases";
 import { ACCESS_TOKEN_COOKIE_KEY, distributionRoundId } from "@/constant";
 import { axiosClient } from "@/config/axios";
@@ -55,6 +53,8 @@ import { apiKeys } from "@/api/apiKeys";
 import { getCookie } from "cookies-next";
 import { AxiosError } from "axios";
 import { useRouter } from "next/router";
+import { maximumAllocated } from "../constants";
+import { CustomInput } from "./CustomInput";
 // TODO should fix any type
 
 const columnHelper = createColumnHelper<any>();
@@ -82,9 +82,9 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
         projects: globalSelectedProjects.map((item: any) => ({
           ...item,
           value: 0,
-          percent: 0,
-        })),
-      },
+          percent: 0
+        }))
+      }
     });
 
   const calculateTotalAllocated = () => {
@@ -115,7 +115,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
       if (!projectsInFormId.includes(item.id)) {
         setValue("projects", [
           ...getValues("projects"),
-          { ...item, value: item.value ?? 0, percent: item.percent ?? 0 },
+          { ...item, value: item.value ?? 0, percent: item.percent ?? 0 }
         ]);
       } else {
         setValue(
@@ -132,7 +132,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
     () => [
       columnHelper.accessor("id", {
         cell: (info) => info.row.index + 1,
-        header: () => "#",
+        header: () => "#"
       }),
       columnHelper.accessor("project", {
         header: () => "Project",
@@ -164,7 +164,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
               />
             </Link>
           </HStack>
-        ),
+        )
       }),
       columnHelper.accessor("allocated", {
         header: () => (
@@ -210,7 +210,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                         setValue("totalAllocated", calculateTotalAllocated());
                       }
                     }
-                  },
+                  }
                 })}
                 padding="9px 12px"
                 variant="outline"
@@ -220,7 +220,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
             </InputGroup>
           );
         },
-        enableSorting: false,
+        enableSorting: false
       }),
       columnHelper.display({
         id: "percent",
@@ -274,7 +274,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                         setValue("totalAllocated", calculateTotalAllocated());
                       }
                     }
-                  },
+                  }
                 })}
                 padding="9px 12px"
                 variant="outline"
@@ -283,7 +283,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
             </InputGroup>
           );
         },
-        enableSorting: false,
+        enableSorting: false
       }),
       columnHelper.display({
         id: "actions",
@@ -296,7 +296,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                   bg="transparent"
                   _hover={{
                     bg: "gray.600",
-                    dropShadow: "1px 4px 16px 0px #00000040",
+                    dropShadow: "1px 4px 16px 0px #00000040"
                   }}
                   _active={{}}
                   as={Button}
@@ -340,7 +340,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                       const tempProjectValues = {
                         value: getValues("projects")?.[findIndex]?.value ?? 0,
                         percent:
-                          getValues("projects")?.[findIndex]?.percent ?? 0,
+                          getValues("projects")?.[findIndex]?.percent ?? 0
                       };
 
                       dispatchGlobalSelectedProjects((prev) =>
@@ -361,8 +361,8 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                                   {
                                     ...tempProject,
                                     value: tempProjectValues.value,
-                                    percent: tempProjectValues.percent,
-                                  },
+                                    percent: tempProjectValues.percent
+                                  }
                                 ]);
 
                                 onClose();
@@ -376,7 +376,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                               Undo
                             </Button>
                           </HStack>
-                        ),
+                        )
                       });
                     }}
                     bg="rgba(11, 11, 15)"
@@ -398,15 +398,15 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
             </Box>
           );
         },
-        enableSorting: false,
-      }),
+        enableSorting: false
+      })
     ],
     [
       dispatchGlobalSelectedProjects,
       getValues,
       globalSelectedProjects,
       register,
-      setValue,
+      setValue
     ]
   );
 
@@ -415,10 +415,10 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     state: {
-      sorting,
+      sorting
     },
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel()
   });
 
   return (
@@ -455,12 +455,12 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                       header.index === 0
                         ? "39px"
                         : header.index === 1
-                        ? "calc(100% - 361px)"
-                        : header.index === 2
-                        ? "186px"
-                        : header.index === 3
-                        ? "80px"
-                        : "56px"
+                          ? "calc(100% - 361px)"
+                          : header.index === 2
+                            ? "186px"
+                            : header.index === 3
+                              ? "80px"
+                              : "56px"
                     }
                     fontFamily="satoshi"
                     borderColor="gray.600"
@@ -495,8 +495,8 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
               <Tr
                 _last={{
                   td: {
-                    border: "none",
-                  },
+                    border: "none"
+                  }
                 }}
                 key={row.id}
               >
@@ -546,7 +546,7 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
             // updates is the api body name :(
             const updates = hasAmountProjects.map((item) => ({
               project_id: item.id,
-              amount: +item.value,
+              amount: +item.value
             }));
 
             axiosClient
@@ -554,26 +554,26 @@ export const ProjectList = ({ onOpen, search }: ProjectListProps) => {
                 apiKeys.distribute,
                 {
                   distribution_round_id: id,
-                  updates,
+                  updates
                 },
                 {
                   headers: {
                     Authorization: `Bearer ${getCookie(
                       ACCESS_TOKEN_COOKIE_KEY
-                    )}`,
-                  },
+                    )}`
+                  }
                 }
               )
               .then((response) => {
                 toast({
                   status: "success",
-                  description: response.data?.message,
+                  description: response.data?.message
                 });
               })
               .catch((error: AxiosError<{ error_message: string }>) => {
                 toast({
                   status: "error",
-                  description: error.response.data.error_message,
+                  description: error.response.data.error_message
                 });
               });
           })}

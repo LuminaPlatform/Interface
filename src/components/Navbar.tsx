@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Alert,
   AlertIcon,
@@ -12,59 +13,74 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
-  Portal,
   Text,
   useDisclosure,
   VStack,
+  useOutsideClick
 } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useState } from "react";
-import { ConnectModal } from "./modals/Connect";
+import { useMemo, useRef, useState } from "react";
 import {
   useAuthorization,
   useGlobalUserData,
-  useWalletModal,
+  useWalletModal
 } from "@/hooks/bases";
-import {
-  TbBell,
-  TbLogout,
-  TbSearch,
-  TbSettings2,
-  TbUserCircle,
-} from "react-icons/tb";
-import Link from "next/link";
-import { BadgeModal } from "./modals/badges/Badge";
+import { TbLogout, TbSearch, TbSettings2, TbUserCircle } from "react-icons/tb";
 import { Badges } from "@/types";
+import dynamic from "next/dynamic";
+import { generateImageSrc } from "@/utils";
+import { useRouter } from "next/router";
+import { ConnectModal } from "./modals/Connect";
+import { BadgeModal } from "./modals/badges/Badge";
 import { Logout } from "./modals/Logout";
-import { NotificationItem } from "./NotificationItem";
-import { AnimatePresence, motion } from "framer-motion";
 
 const ProfileBox = () => {
   const userData = useGlobalUserData();
   const user = userData?.user;
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: menuIsOpen,
+    onClose: menuOnClose,
+    onOpen: menuOnOpen
+  } = useDisclosure();
+
+  const menuRef = useRef();
+
+  useOutsideClick({
+    ref: menuRef,
+    handler: menuOnClose
+  });
+
+  const router = useRouter();
 
   if (!user) {
     return null;
   }
 
   return (
-    <>
-      <Menu>
+    <Box ref={menuRef}>
+      <Menu onOpen={menuOnOpen} isOpen={menuIsOpen} onClose={menuOnClose}>
         <MenuButton as={Box} display="flex">
           <HStack width="full">
             <Img
               rounded="full"
               width="32px"
               height="32px"
-              src={user?.profile_picture ?? "/assets/images/default-avatar.png"}
+              src={
+                user?.profile_id
+                  ? generateImageSrc(user.profile_id)
+                  : "/assets/images/default-avatar.png"
+              }
               alt="user"
             />
-            <Text color="gray.10" fontSize="md" fontWeight="200">
+            <Text
+              width="100px"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              color="gray.10"
+              fontSize="md"
+              fontWeight="200"
+            >
               {user.display_name ?? user.email}
             </Text>
           </HStack>
@@ -83,7 +99,11 @@ const ProfileBox = () => {
               rounded="full"
               width="64px"
               height="64px"
-              src={user.profile_picture ?? "/assets/images/default-avatar.png"}
+              src={
+                user?.profile_id
+                  ? generateImageSrc(user.profile_id)
+                  : "/assets/images/default-avatar.png"
+              }
               alt="profile"
             />
             <Text
@@ -91,6 +111,10 @@ const ProfileBox = () => {
               color="gray.0"
               fontSize="xl"
               fontWeight="600"
+              width="full"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
             >
               {user.display_name ?? user.email}
             </Text>
@@ -102,8 +126,10 @@ const ProfileBox = () => {
               height="48px"
               variant="primaryDark"
               width="full"
-              as={Link}
-              href={`/profile/${user?.id}`}
+              onClick={() => {
+                menuOnClose();
+                router.push(`/profile/${user?.id}`);
+              }}
             >
               <HStack width="full" justifyContent="flex-start" columnGap="8px">
                 <TbUserCircle fontSize="20px" />
@@ -116,8 +142,10 @@ const ProfileBox = () => {
               height="48px"
               variant="primaryDark"
               width="full"
-              as={Link}
-              href="/settings"
+              onClick={() => {
+                menuOnClose();
+                router.push("/settings");
+              }}
             >
               <HStack width="full" justifyContent="flex-start" columnGap="8px">
                 <TbSettings2 fontSize="20px" />
@@ -141,104 +169,29 @@ const ProfileBox = () => {
         </MenuList>
       </Menu>
       <Logout isOpen={isOpen} onClose={onClose} />
-    </>
-  );
-};
-
-const NotificationEmptyState = () => {
-  return (
-    <VStack rowGap="16px" width="full">
-      <Img src="/assets/images/notif-empty-state.png" />
-      <Text
-        fontFamily="lexend"
-        color="gray.10"
-        fontWeight="600"
-        fontSize="xl"
-        width="full"
-        textAlign="center"
-      >
-        No new notifications right now. Stay tuned!
-      </Text>
-    </VStack>
-  );
-};
-
-interface NotificationBodyProps {
-  messages: any[];
-  setMessages: Dispatch<SetStateAction<any>>;
-}
-const NotificationBody = ({ messages, setMessages }: NotificationBodyProps) => {
-  return (
-    <VStack
-      maxHeight="398px"
-      overflowY="auto"
-      overflowX="hidden"
-      rowGap="16px"
-      width="full"
-      height="fit-content"
-    >
-      <HStack width="full" justifyContent="space-between">
-        <Text
-          fontWeight="600"
-          fontFamily="lexend"
-          fontSize="xl"
-          color="gray.10"
-        >
-          Notifications
-        </Text>
-        <Button
-          onClick={() => {
-            setMessages([]);
-          }}
-          px="0"
-          size="md"
-          color="gray.60"
-          _hover={{ color: "gray.0", bg: "transparent" }}
-          _active={{
-            color: "orange.300",
-            bg: "transparent",
-          }}
-          bg="transparent"
-        >
-          Clear All
-        </Button>
-      </HStack>
-      <VStack width="full" rowGap="16px">
-        <AnimatePresence>
-          {messages.map((item, index) => (
-            <motion.div
-              key={item}
-              exit={{
-                transform: "translateX(400px)",
-                opacity: 0,
-              }}
-              transition={{ delay: index * 0.2, duration: 0.2 }}
-            >
-              <NotificationItem
-                key={item}
-                message="A Badge Holder is now following you. You can now vote and review projects. Share your thoughts!"
-                isSeen
-                title="You've been upgraded!"
-                ctaText="CTA"
-                cta={() => {}}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </VStack>
-    </VStack>
+    </Box>
   );
 };
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
-  const [messages, setMessages] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
   const { isOpen: badgeIsOpen, onClose: badgeOnClose } = useDisclosure();
 
   const { isOpen, onClose, onOpen } = useWalletModal();
 
   const authorization = useAuthorization();
+
+  const NotificationContainer = useMemo(() => {
+    if (authorization) {
+      return dynamic(() =>
+        import("./Notification").then(
+          (modules) => modules.NotificationContainer
+        )
+      );
+    }
+    return null;
+  }, [authorization]);
 
   return (
     <>
@@ -278,7 +231,7 @@ const Navbar = () => {
             border="1px solid"
             borderColor="gray.200"
             _hover={{
-              borderColor: "gray.300",
+              borderColor: "gray.300"
             }}
             _active={{ borderColor: "gray.400" }}
             _focus={{ borderColor: "gray.400" }}
@@ -290,72 +243,13 @@ const Navbar = () => {
             fontWeight="regular"
             _placeholder={{
               fontWeight: "regular",
-              color: "gray.100",
+              color: "gray.100"
             }}
             borderRadius="27px"
             placeholder="Search"
           />
         </InputGroup>
-        {!!authorization && (
-          <Box cursor="pointer" onClick={() => {}} position="relative">
-            {true && (
-              <Text
-                textAlign="center"
-                fontSize="10px"
-                fontWeight="bold"
-                margin="0px !important"
-                padding="0px"
-                lineHeight="16px"
-                rounded="full"
-                minHeight="16px"
-                minWidth="16px"
-                bg="red.300"
-                color="gray.0"
-                position="absolute"
-                right="-5px"
-                top="-5px"
-              >
-                1
-              </Text>
-            )}
-            <Popover>
-              <PopoverTrigger>
-                <Button
-                  maxWidth="24px"
-                  maxH="24px"
-                  minWidth="24px"
-                  padding="0"
-                  width="fit-content"
-                  bg="transparent"
-                  _hover={{ bg: "transparent" }}
-                  _active={{ bg: "transparent" }}
-                >
-                  <TbBell fontSize="24px" color="var(--chakra-colors-gray-0)" />
-                </Button>
-              </PopoverTrigger>
-              <Portal>
-                <PopoverArrow bg="transparent" color="transparent" />
-                <PopoverContent
-                  p="24px 0px"
-                  borderRadius="12px"
-                  border="none"
-                  bg="gray.800"
-                >
-                  <PopoverBody>
-                    {messages.length === 0 ? (
-                      <NotificationEmptyState />
-                    ) : (
-                      <NotificationBody
-                        messages={messages}
-                        setMessages={setMessages}
-                      />
-                    )}
-                  </PopoverBody>
-                </PopoverContent>
-              </Portal>
-            </Popover>
-          </Box>
-        )}
+        {!!authorization && <NotificationContainer />}
         <HStack cursor="pointer" columnGap="8px">
           {!authorization ? (
             <Button
@@ -374,7 +268,7 @@ const Navbar = () => {
       </HStack>
       <ConnectModal isOpen={isOpen} onClose={onClose} />
       <BadgeModal
-        badgeType={Badges["HOLDER"]}
+        badgeType={Badges.HOLDER}
         isOpen={badgeIsOpen}
         onClose={badgeOnClose}
       />

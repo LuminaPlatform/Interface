@@ -1,30 +1,48 @@
 import { ActionCard } from "@/components/ActionCard";
 import { ModalBase } from "@/components/ModalBase";
 import { Stack, Text, useDisclosure, VStack } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { TbBrandX, TbLock, TbMail, TbPencil } from "react-icons/tb";
+import { FormProvider, useForm } from "react-hook-form";
+import { useDispatchGlobalUserData, useGlobalUserData } from "@/hooks/bases";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import { getCookie } from "cookies-next";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { handleStorageChange, handleTwitterLogin } from "@/utils";
 import { EmailVerifyModal } from "./modals/EmailVerifyModal";
 import { SettingsModalBody, SettingsModalsForm } from "../types";
 import { EmailOTP } from "./modals/EmailOTPModal";
-import { FormProvider, useForm } from "react-hook-form";
 import { EditEmailModal } from "./modals/EditEmailModal";
 import { SetPasswordModal } from "./modals/SetPasswordModal";
 import { ChangePasswordModal } from "./modals/ChangePasswordModal";
 import { PasswordOTPModal } from "./modals/PasswordOTPModal";
 import { SettingsModalsHeader } from "./SettingsModalHeader";
-import { useGlobalUserData } from "@/hooks/bases";
-import { axiosClient } from "@/config/axios";
-import { apiKeys } from "@/api/apiKeys";
 
 type modalsBodyType = {
-  [key in SettingsModalBody]: { component: JSX.Element; header: string };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+  [key in SettingsModalBody]: { component: ReactNode; header: string };
 };
 
 export const AccountSecurity = () => {
   const userInfo = useGlobalUserData();
+  const dispatchGlobalUser = useDispatchGlobalUserData();
+
+  useEffect(() => {
+    window.addEventListener("storage", () =>
+      handleStorageChange(dispatchGlobalUser, userInfo)
+    );
+
+    return () => {
+      window.removeEventListener("storage", () =>
+        handleStorageChange(dispatchGlobalUser, userInfo)
+      );
+    };
+  }, []);
+
   const methods = useForm<SettingsModalsForm>({
     mode: "all",
-    reValidateMode: "onChange",
+    reValidateMode: "onChange"
   });
 
   // TODO should fix this type
@@ -42,16 +60,44 @@ export const AccountSecurity = () => {
     // TODO should give the status enum from back
     isVerified: userInfo?.user?.status === "ACTIVE",
     isPublic: !!userInfo?.user?.email_public,
-    isLoading: false,
+    isLoading: false
   });
   const [twitter, setTwitter] = useState({
-    isConnect: true,
-    isSecure: false,
-    isLoading: false,
+    isConnect: userInfo?.user?.x_username,
+    isLoading: false
   });
   const [password, setPassword] = useState({
-    isSet: !!userInfo?.user?.password,
+    isSet: !!userInfo?.user?.password
   });
+  useEffect(() => {
+    if (userInfo?.user?.x_username) {
+      axiosClient
+        .post(
+          apiKeys.update,
+          {
+            "0": {
+              model_name: "User",
+              params: {
+                x_username: userInfo.twitter?.data?.username
+              },
+              id: userInfo?.user?.id
+            }
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+            }
+          }
+        )
+        .then(() => {
+          setTwitter((prev) => ({
+            ...prev,
+            isConnect: userInfo?.user?.x_username,
+            isLoading: false
+          }));
+        });
+    }
+  }, [userInfo?.user?.x_username]);
 
   const modals = useMemo<modalsBodyType>(() => {
     return {
@@ -59,34 +105,34 @@ export const AccountSecurity = () => {
         component: (
           <EmailVerifyModal onClose={onClose} setModalBody={setModalBody} />
         ),
-        header: "Verify Your Email",
+        header: "Verify Your Email"
       },
       [SettingsModalBody.emailOTP]: {
         component: <EmailOTP onClose={onClose} setModalBody={setModalBody} />,
-        header: "Verify Your Email",
+        header: "Verify Your Email"
       },
       [SettingsModalBody.changeEmail]: {
         component: <EditEmailModal onClose={onClose} />,
-        header: "Edit Your Email",
+        header: "Edit Your Email"
       },
       [SettingsModalBody.changePassword]: {
         component: (
           <ChangePasswordModal onClose={onClose} setModalBody={setModalBody} />
         ),
-        header: "Change Your Password",
+        header: "Change Your Password"
       },
       [SettingsModalBody.setPassword]: {
         component: (
           <SetPasswordModal setPassword={setPassword} onClose={onClose} />
         ),
-        header: "Set a Password",
+        header: "Set a Password"
       },
       [SettingsModalBody.passwordOTP]: {
         component: (
           <PasswordOTPModal onClose={onClose} setModalBody={setModalBody} />
         ),
-        header: "Reset Password",
-      },
+        header: "Reset Password"
+      }
     };
   }, []);
 
@@ -118,28 +164,23 @@ export const AccountSecurity = () => {
         <Stack width="full" rowGap="16px">
           <ActionCard
             logo={TbBrandX}
-            actionCardId={0}
             text="Connect to X"
-            secure={{
-              isLoading: twitter.isLoading,
-              isPublic: !twitter.isSecure,
-              setPublic: () => handleSetPublic(setTwitter),
-              showPublic: twitter.isConnect,
-            }}
             connect={{
               showConnect: true,
               isConnect: false,
               buttonText: twitter.isConnect ? "Edit" : "Connect",
-              handleClick: () => {},
+              handleClick: () => {
+                setTwitter((prev) => ({ ...prev, isLoading: true }));
+                handleTwitterLogin();
+              },
               ...(twitter.isConnect && {
-                buttonIcon: <TbPencil fontSize="14px" />,
-              }),
+                buttonIcon: <TbPencil fontSize="14px" />
+              })
             }}
           />
 
           <ActionCard
             logo={TbMail}
-            actionCardId={1}
             text={email.isVerified ? "Change Your Email" : "Verify Your Email"}
             secure={{
               isLoading: email.isLoading,
@@ -147,15 +188,23 @@ export const AccountSecurity = () => {
               setPublic: () => {
                 setEmail((prev) => ({ ...prev, isLoading: true }));
                 axiosClient
-                  .post(apiKeys.update, {
-                    "0": {
-                      model_name: "User",
-                      params: {
-                        email_public: !email.isPublic,
-                      },
-                      id: userInfo.user.id,
+                  .post(
+                    apiKeys.update,
+                    {
+                      "0": {
+                        model_name: "User",
+                        params: {
+                          email_public: !email.isPublic
+                        },
+                        id: userInfo?.user?.id
+                      }
                     },
-                  })
+                    {
+                      headers: {
+                        Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                      }
+                    }
+                  )
                   .then(() => {
                     handleSetPublic(setEmail);
                   })
@@ -163,7 +212,7 @@ export const AccountSecurity = () => {
                     setEmail((prev) => ({ ...prev, isLoading: false }))
                   );
               },
-              showPublic: email.isVerified,
+              showPublic: email.isVerified
             }}
             connect={{
               showConnect: true,
@@ -177,13 +226,12 @@ export const AccountSecurity = () => {
                 }
               },
               ...(email.isVerified && {
-                buttonIcon: <TbPencil fontSize="14px" />,
-              }),
+                buttonIcon: <TbPencil fontSize="14px" />
+              })
             }}
           />
           <ActionCard
             logo={TbLock}
-            actionCardId={3}
             text="Change Your Password"
             connect={{
               showConnect: true,
@@ -197,8 +245,8 @@ export const AccountSecurity = () => {
                 }
               },
               ...(password.isSet && {
-                buttonIcon: <TbPencil fontSize="14px" />,
-              }),
+                buttonIcon: <TbPencil fontSize="14px" />
+              })
             }}
           />
         </Stack>

@@ -7,69 +7,26 @@ import {
   TagLabel,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { TbPlus } from "react-icons/tb";
+import { apiKeys } from "@/api/apiKeys";
+import { useDispatchGlobalUserData, useGlobalUserData } from "@/hooks/bases";
+import { axiosClient } from "@/config/axios";
 import { InterestModalBody } from "../types";
 import { CategoryModal } from "./modals/CategoryModal";
 import { SettingsModalsHeader } from "./SettingsModalHeader";
 
-const projectData = [
-  {
-    id: 0,
-    title: "DeFi",
-  },
-  {
-    id: 1,
-    title: "DeFi1",
-  },
-  {
-    id: 2,
-    title: "DeFi2",
-  },
-  {
-    id: 3,
-    title: "DeFi3",
-  },
-  {
-    id: 4,
-    title: "DeFi4",
-  },
-  {
-    id: 5,
-    title: "DeFi5",
-  },
-];
-const peopleData = [
-  {
-    id: 0,
-    title: "DeFi",
-  },
-  {
-    id: 1,
-    title: "DeFi1",
-  },
-  {
-    id: 2,
-    title: "DeFi2",
-  },
-  {
-    id: 3,
-    title: "DeFi3",
-  },
-  {
-    id: 4,
-    title: "DeFi4",
-  },
-  {
-    id: 5,
-    title: "DeFi5",
-  },
-];
+interface CategoryItem {
+  id: number;
+  name: string;
+}
+
 export const Interests = () => {
-  const [projects, setProjects] = useState([]);
-  const [selectedPeoples, setSelectedPeoples] = useState([]);
+  const globalUser = useGlobalUserData();
+  const [isLoading, setLoading] = useState(false);
+  const dispatchGlobalUser = useDispatchGlobalUserData();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -81,28 +38,26 @@ export const Interests = () => {
     [InterestModalBody.projects]: {
       component: (
         <CategoryModal
+          type="CATEGORIES"
           onClose={onClose}
-          selectedData={projects}
-          setData={setProjects}
+          selectedData={globalUser?.projectCategories}
           title="Choose categories that align with your interests to discover projects you’ll love to follow and participate in!"
-          data={projectData}
         />
       ),
-      header: "Project",
+      header: "Project"
     },
     [InterestModalBody.people]: {
       component: (
         <CategoryModal
+          type="PEOPLE"
           onClose={onClose}
-          selectedData={selectedPeoples}
-          setData={setSelectedPeoples}
+          selectedData={globalUser?.interestedExpertises}
           title="Pick categories based on what the people you want to follow are great at.
         This way, you connect with the right crowd!"
-          data={peopleData}
         />
       ),
-      header: "People",
-    },
+      header: "People"
+    }
   };
 
   return (
@@ -146,7 +101,7 @@ export const Interests = () => {
             </Button>
           </HStack>
           <HStack width="full" flexWrap="wrap">
-            {projects.map((item) => (
+            {globalUser?.projectCategories.map((item: CategoryItem) => (
               <Tag
                 key={item.id}
                 minWidth="75px"
@@ -155,12 +110,41 @@ export const Interests = () => {
                 columnGap="8px"
               >
                 <CloseButton
+                  disabled={isLoading}
                   w="16px"
                   height="16px"
                   size="sm"
                   color="gray.300"
+                  onClick={() => {
+                    setLoading(true);
+                    axiosClient
+                      .post(apiKeys.relation.remove, {
+                        "0": {
+                          model_name: "User",
+                          params: {
+                            interested_categories: [item.id]
+                          },
+                          id: globalUser?.user?.id
+                        }
+                      })
+                      .then(() => {
+                        const filteredProjectCategories =
+                          globalUser?.projectCategories.filter(
+                            (category: CategoryItem) => category.id !== item.id
+                          );
+                        dispatchGlobalUser({
+                          ...globalUser,
+                          projectCategories: filteredProjectCategories
+                        });
+                      })
+                      .finally(() => {
+                        setLoading(false);
+                      });
+                  }}
                 />
-                <TagLabel>{item.title}</TagLabel>
+                <TagLabel fontSize="md" fontWeight="700">
+                  {item.name}
+                </TagLabel>
               </Tag>
             ))}
           </HStack>
@@ -184,7 +168,7 @@ export const Interests = () => {
             </Button>
           </HStack>
           <HStack width="full" flexWrap="wrap">
-            {selectedPeoples.map((item) => (
+            {globalUser?.interestedExpertises.map((item: CategoryItem) => (
               <Tag
                 key={item.id}
                 minWidth="75px"
@@ -197,8 +181,36 @@ export const Interests = () => {
                   height="16px"
                   size="sm"
                   color="gray.300"
+                  onClick={() => {
+                    setLoading(true);
+                    axiosClient
+                      .post(apiKeys.relation.remove, {
+                        "0": {
+                          model_name: "User",
+                          params: {
+                            interested_expertises: [item.id]
+                          },
+                          id: globalUser?.user?.id
+                        }
+                      })
+                      .then(() => {
+                        const filteredExpertises =
+                          globalUser?.interestedExpertises.filter(
+                            (category: CategoryItem) => category.id !== item.id
+                          );
+                        dispatchGlobalUser({
+                          ...globalUser,
+                          interestedExpertises: filteredExpertises
+                        });
+                      })
+                      .finally(() => {
+                        setLoading(false);
+                      });
+                  }}
                 />
-                <TagLabel>{item.title}</TagLabel>
+                <TagLabel fontSize="md" fontWeight="700">
+                  {item.name}
+                </TagLabel>
               </Tag>
             ))}
           </HStack>

@@ -2,13 +2,15 @@ import { VStack } from "@chakra-ui/react";
 
 import EmptyPage from "@/components/EmptyPage";
 import { ReviewCard } from "@/components/ReviewCard";
+import { useRouter } from "next/router";
 import { useReviewsData } from "../hooks";
 
 const TabBody = () => {
   const reviews = useReviewsData();
+  const { query } = useRouter();
 
   return (
-    <VStack rowGap="16px" py="16px">
+    <VStack key={(query?.tab as string) ?? "for_you"} rowGap="16px" py="16px">
       {reviews.length === 0 ? (
         <EmptyPage
           description="Looks like you haven’t followed anyone yet! To see reviews, explore in other categories.

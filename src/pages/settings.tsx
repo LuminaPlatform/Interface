@@ -5,7 +5,7 @@ import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import {
   useAuthorization,
   useDispatchGlobalUserData,
-  useGlobalUserData,
+  useGlobalUserData
 } from "@/hooks/bases";
 import { Index } from "@/modules/settings/page/Index";
 import { GetServerSidePropsContext } from "next";
@@ -21,16 +21,26 @@ const Settings = ({ user }: SettingsProps) => {
   const dispatchUserInfo = useDispatchGlobalUserData();
   const {
     0: [userData],
-    1: wallet,
+    1: wallet
   } = user;
 
   const router = useRouter();
 
   useEffect(() => {
     if (!userInfo && !!userBaseData) {
-      dispatchUserInfo({ user: userData, wallet });
+      dispatchUserInfo({
+        user: userData,
+        wallet,
+        // TODO shoud get from api
+        followers: [],
+        followings: [],
+        projectCategories: [],
+        interestedExpertises: [],
+        userRole: [],
+        twitter: ""
+      });
     } else if (!userBaseData) {
-      router.replace("/projects");
+      router.replace("/404");
     }
   }, [userBaseData]);
   return <Index />;
@@ -39,42 +49,71 @@ const Settings = ({ user }: SettingsProps) => {
 export default Settings;
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const accessToken = ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
-  if (!accessToken) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/projects",
-      },
-    };
-  }
   try {
+    const accessToken =
+      ctx?.req?.cookies?.[ACCESS_TOKEN_COOKIE_KEY] ?? undefined;
+
+    if (!accessToken) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/404"
+        }
+      };
+    }
     const userBaseData = await axiosClient.get(apiKeys.auth.isAuthorized, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+        Authorization: `Bearer ${accessToken}`
+      }
     });
-    const userInformation = await getUserInformation(userBaseData.data.id);
+    const userInterests = await axiosClient
+      .post(
+        apiKeys.fetch,
+        {
+          0: {
+            model: "User.interested_expertises",
+            model_id: userBaseData.data.id,
+            orders: [],
+            graph: {
+              fetch_fields: [
+                {
+                  name: "*"
+                }
+              ]
+            }
+          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        }
+      )
+      .then((res) => res.data[0] ?? []);
+    const userInformation = await getUserInformation(
+      userBaseData.data.id,
+      accessToken
+    );
 
     if (!userInformation) {
       return {
         redirect: {
           permanent: false,
-          destination: "/projects",
-        },
+          destination: "/projects"
+        }
       };
     }
     return {
-      props: { user: userInformation },
+      props: {
+        user: { ...userInformation, interestedExpertises: userInterests }
+      }
     };
   } catch (error) {
-    console.log(error);
-
     return {
       redirect: {
-        permanent: false,
-        destination: "/projects",
-      },
+        destination: "/500",
+        permanent: false
+      }
     };
   }
 };
