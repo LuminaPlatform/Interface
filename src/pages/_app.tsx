@@ -69,9 +69,6 @@ export default function App({
     };
   }, [pathname, searchParams]);
 
-  // eslint-disable-next-line no-console
-  console.log(pathname);
-
   return (
     <>
       {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID ? (
