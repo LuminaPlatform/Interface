@@ -51,7 +51,7 @@ const WalletItem = ({
           params: {
             public: !isPublic
           },
-          id: globalUser.user.id
+          id: globalUser?.user?.id
         }
       })
       .then(() => {

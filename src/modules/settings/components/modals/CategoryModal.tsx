@@ -168,7 +168,7 @@ export const CategoryModal = ({
                 "0": {
                   model_name: "User",
                   params,
-                  id: globalUser.user.id
+                  id: globalUser?.user?.id
                 }
               })
               .then(() => {

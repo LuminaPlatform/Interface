@@ -77,7 +77,7 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
                     params: {
                       following: [user.id]
                     },
-                    id: globalUser.user.id
+                    id: globalUser?.user?.id
                   }
                 },
                 {
@@ -93,7 +93,7 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
                   .post(apiKeys.fetch, {
                     0: {
                       model: "User.following",
-                      model_id: globalUser.user.id,
+                      model_id: globalUser?.user?.id,
                       orders: [],
                       graph: {
                         fetch_fields: [
@@ -182,7 +182,7 @@ const UserFollowBox = ({ item, type }: UserFollowBoxProps) => {
           hasBadge
           imageStyle={{ width: "64px", height: "64px", objectFit: "contain" }}
         />
-        {item.id !== globalUser?.user.id &&
+        {item.id !== globalUser?.user?.id &&
           !!globalUser &&
           (isFollowed ? (
             <Button
@@ -211,7 +211,7 @@ const UserFollowBox = ({ item, type }: UserFollowBoxProps) => {
                         params: {
                           following: [item.id]
                         },
-                        id: globalUser.user.id
+                        id: globalUser?.user?.id
                       }
                     },
                     {
@@ -227,7 +227,7 @@ const UserFollowBox = ({ item, type }: UserFollowBoxProps) => {
                       .post(apiKeys.fetch, {
                         0: {
                           model: "User.following",
-                          model_id: globalUser.user.id,
+                          model_id: globalUser?.user?.id,
                           orders: [],
                           graph: {
                             fetch_fields: [

@@ -9,7 +9,7 @@ import { ActionCard } from "../ActionCard";
 
 export const ConnectSocial = () => {
   const globalUser = useGlobalUserData();
-  const isConnect = useMemo(() => globalUser.user.x_username, [globalUser]);
+  const isConnect = useMemo(() => globalUser?.user?.x_username, [globalUser]);
 
   const dispatchGlobalUser = useDispatchGlobalUserData();
 

@@ -114,7 +114,7 @@ const Index = () => {
         placeholder="Search Project"
       />
       <Box width="full" overflow="auto">
-        {projects.length === 0 ? <EmptyState /> : <Table search={search} />}
+        {projects?.length === 0 ? <EmptyState /> : <Table search={search} />}
       </Box>
     </VStack>
   );

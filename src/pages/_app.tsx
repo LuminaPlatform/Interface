@@ -20,13 +20,18 @@ import NextAdapterApp from "next-query-params/app";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
-import { usePathname, useSearchParams } from "next/navigation";
-import NProgress from "nprogress";
-import "nprogress/nprogress.css";
-import { ReactElement, ReactNode, useEffect } from "react";
-import { useRouter } from "next/router";
+import { ReactElement, ReactNode } from "react";
 import { AuthenticationData } from "@/types";
 import { NextPage } from "next";
+import "nprogress/nprogress.css";
+import dynamic from "next/dynamic";
+
+const NProgress = dynamic(
+  () => import("../components/NProgress").then((modules) => modules.NProgress),
+  {
+    ssr: false
+  }
+);
 
 const queryClient = new QueryClient();
 
@@ -49,25 +54,7 @@ export default function App({
   baseUserData: AuthenticationData;
   userAllData: any;
 }) {
-  const getLayout = Component.getLayout || commonLayout;
-
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  NProgress.configure({ showSpinner: false });
-
-  useEffect(() => {
-    router.events.on("routeChangeStart", () => {
-      NProgress.start();
-    });
-    NProgress.done();
-    return () => {
-      router.events.off("routeChangeStart", () => {
-        NProgress.start();
-      });
-    };
-  }, [pathname, searchParams]);
+  const getLayout = Component?.getLayout || commonLayout;
 
   return (
     <>
@@ -87,6 +74,7 @@ export default function App({
                   <AuthorizationProvider data={baseUserData}>
                     <SelectedProjectProvider>
                       <GlobalUserProvider userData={userAllData}>
+                        <NProgress />
                         {getLayout(<Component {...pageProps} />)}
                       </GlobalUserProvider>
                     </SelectedProjectProvider>

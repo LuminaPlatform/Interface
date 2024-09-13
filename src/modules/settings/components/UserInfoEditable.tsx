@@ -56,7 +56,7 @@ export const UserInfoEditable = ({
       "proposal",
       JSON.stringify({
         model: "User",
-        id: userInfo.user.id,
+        id: userInfo?.user?.id,
         field: "profile_id"
       })
     );
@@ -76,7 +76,7 @@ export const UserInfoEditable = ({
         dispatchUserInfo({
           ...userInfo,
           user: {
-            ...userInfo.user,
+            ...userInfo?.user,
             profile_id: res.data.id
           }
         });
@@ -175,7 +175,7 @@ export const UserInfoEditable = ({
                 fontWeight="600"
                 fontFamily="lexend"
               >
-                {userInfo?.user.display_name}
+                {userInfo?.user?.display_name}
               </Text>
               {isEditable && (
                 <TbEdit
@@ -186,7 +186,7 @@ export const UserInfoEditable = ({
               )}
             </HStack>
             <Text color="gray.60" fontSize="lg" fontWeight="500">
-              {userInfo?.user.username}
+              {userInfo?.user?.username}
             </Text>
           </VStack>
         </HStack>

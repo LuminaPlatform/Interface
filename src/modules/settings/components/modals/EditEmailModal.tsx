@@ -83,7 +83,7 @@ export const EditEmailModal = ({ onClose }: EditEmailModalProps) => {
                   params: {
                     email: values.email
                   },
-                  id: globalUser.user.id
+                  id: globalUser?.user?.id
                 }
               },
               {

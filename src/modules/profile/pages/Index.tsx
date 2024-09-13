@@ -42,7 +42,7 @@ export const Index = () => {
         })
         .then((res) => {
           const id = res.data[0][0]?.id;
-          const isFollowed = id === +query.userId;
+          const isFollowed = id === +query?.userId;
 
           profileDispatch({
             ...userProfile,

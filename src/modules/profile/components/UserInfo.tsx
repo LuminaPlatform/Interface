@@ -62,7 +62,7 @@ export const UserInfo = () => {
 
   const globalUser = useGlobalUserData();
 
-  const isSelfUser = globalUser?.user?.id === userInfo.user.id;
+  const isSelfUser = globalUser?.user?.id === userInfo?.user?.id;
   return (
     <Stack
       flexDirection={{ base: "column", md: "row" }}
@@ -74,8 +74,8 @@ export const UserInfo = () => {
       <Avatar
         badgeSize="48px"
         src={
-          userInfo.user?.profile_id
-            ? generateImageSrc(userInfo.user?.profile_id)
+          userInfo?.user?.profile_id
+            ? generateImageSrc(userInfo?.user?.profile_id)
             : "/assets/images/default-avatar.png"
         }
         hasBadge
@@ -100,10 +100,10 @@ export const UserInfo = () => {
                 fontFamily="lexend"
                 color="gray.10"
               >
-                {userInfo.user.display_name}
+                {userInfo?.user?.display_name}
               </Text>
-              {userInfo.user.email && (
-                <Link href={`mailto:${userInfo.user.email}`}>
+              {userInfo?.user?.email && (
+                <Link href={`mailto:${userInfo?.user?.email}`}>
                   <TbMail
                     cursor="pointer"
                     fontSize="24px"
@@ -111,11 +111,11 @@ export const UserInfo = () => {
                   />
                 </Link>
               )}
-              {userInfo.user.x_username && (
+              {userInfo?.user?.x_username && (
                 <Link
-                  title={`${xDomain}/${userInfo.user.x_username}`}
+                  title={`${xDomain}/${userInfo?.user?.x_username}`}
                   rel="noreferrer noopener"
-                  href={`${xDomain}/${userInfo.user.x_username}`}
+                  href={`${xDomain}/${userInfo?.user?.x_username}`}
                   target="_blank"
                 >
                   <TbBrandX
@@ -137,9 +137,9 @@ export const UserInfo = () => {
                         "0": {
                           model_name: "User",
                           params: {
-                            following: [userInfo.user.id]
+                            following: [userInfo?.user?.id]
                           },
-                          id: globalUser.user.id
+                          id: globalUser?.user?.id
                         }
                       })
                       .then((res) => {
@@ -173,9 +173,9 @@ export const UserInfo = () => {
                           "0": {
                             model_name: "User",
                             params: {
-                              following: [userInfo.user.id]
+                              following: [userInfo?.user?.id]
                             },
-                            id: globalUser.user.id
+                            id: globalUser?.user?.id
                           }
                         },
                         {
@@ -211,7 +211,7 @@ export const UserInfo = () => {
             fontSize="lg"
             textAlign={{ base: "center", md: "left" }}
           >
-            {userInfo.user.username}
+            {userInfo?.user?.username}
           </Text>
           {hasWallet && (
             <Code
