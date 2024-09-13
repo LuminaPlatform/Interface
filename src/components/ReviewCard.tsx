@@ -138,8 +138,8 @@ export const ReviewCard = ({
                 rounded="full"
                 alt="writer"
                 src={
-                  review.user?.profile_id
-                    ? generateImageSrc(review.user?.profile_id)
+                  review?.user?.profile_id
+                    ? generateImageSrc(review?.user?.profile_id)
                     : "/assets/images/default-avatar.png"
                 }
                 width={{ base: "16px", md: "24px" }}
@@ -147,7 +147,7 @@ export const ReviewCard = ({
               />
 
               <Text color="gray.40" fontSize={{ base: "sm", md: "md" }}>
-                {review.user.display_name}
+                {review?.user?.display_name}
               </Text>
             </HStack>
             <HStack fontWeight="500" fontSize="xs" color="gray.80">

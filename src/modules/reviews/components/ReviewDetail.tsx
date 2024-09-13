@@ -63,15 +63,15 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
               rounded="full"
               alt="writer"
               src={
-                review.user?.profile_id
-                  ? generateImageSrc(review.user?.profile_id)
+                review?.user?.profile_id
+                  ? generateImageSrc(review?.user?.profile_id)
                   : "/assets/images/default-avatar.png"
               }
               width={{ base: "16px", md: "24px" }}
               height={{ base: "16px", md: "24px" }}
             />
             <Text color="gray.40" fontSize={{ base: "sm", md: "md" }}>
-              {review.user.display_name}
+              {review?.user?.display_name}
             </Text>
           </HStack>
         </VStack>

@@ -44,7 +44,7 @@ export default Profile;
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   try {
     const { params } = ctx;
-    const userId = params.userId as string;
+    const userId = params?.userId as string;
 
     const fetchPlan = await axiosClient
       .post(apiKeys.fetch, {

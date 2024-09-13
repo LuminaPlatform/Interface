@@ -68,7 +68,7 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
         <Input
           placeholder="Username"
           variant="outline"
-          defaultValue={globalUser.user?.username}
+          defaultValue={globalUser?.user?.username}
           {...register("username", {
             required: {
               value: true,
@@ -95,7 +95,7 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
         <Input
           placeholder="Nickname"
           variant="outline"
-          defaultValue={globalUser.user?.display_name}
+          defaultValue={globalUser?.user?.display_name}
           {...register("nickname", {
             required: {
               value: true,
@@ -136,7 +136,7 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
                       username: values.username,
                       display_name: values.nickname
                     },
-                    id: globalUser.user.id
+                    id: globalUser?.user?.id
                   }
                 },
                 {

@@ -413,7 +413,7 @@ const Table = ({ search, highlightNeeded }: TableProps) => {
           ))}
         </Tbody>
       </ChakraTable>
-      {projectsData.length !== 0 && !search && (
+      {projectsData?.length !== 0 && !search && (
         <HStack alignItems="center" width="full" justifyContent="center">
           <Flex columnGap="10px" alignItems="center">
             <Button
