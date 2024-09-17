@@ -72,13 +72,13 @@ export const UserInfo = () => {
       alignItems={{ base: "center", md: "stretch" }}
     >
       <Avatar
-        badgeSize="48px"
+        hasBadge={false}
+        badgeSize="0"
         src={
           userInfo?.user?.profile_id
             ? generateImageSrc(userInfo?.user?.profile_id)
             : "/assets/images/default-avatar.png"
         }
-        hasBadge
         imageStyle={{
           width: { base: "100px", md: "186px" },
           height: { base: "100px", md: "186px" },
