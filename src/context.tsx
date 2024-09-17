@@ -9,6 +9,7 @@ import {
   useState
 } from "react";
 import { getCookie } from "cookies-next";
+import { useRouter } from "next/router";
 import { Project } from "./modules/projects/types";
 import { AuthenticationData, STEP_MODAL } from "./types";
 import { getUserInformation } from "./api";
@@ -153,11 +154,17 @@ export const GlobalUserProvider = ({
 
   const userBaseData = useContext(Authorization);
 
+  const { query } = useRouter();
+
+  // Check this route is profile or not to check id
+  const { userId } = query;
+
   useEffect(() => {
-    if (userBaseData) {
+    if (userBaseData && !state) {
       getUserInformation(
         userBaseData.id.toString(),
-        getCookie(ACCESS_TOKEN_COOKIE_KEY)
+        getCookie(ACCESS_TOKEN_COOKIE_KEY),
+        userId ? +userId === +userBaseData.id : true
       )
         .then(async (data) => {
           const expertises = await axiosClient
@@ -223,8 +230,6 @@ export const GlobalUserProvider = ({
             });
           }
         });
-    } else {
-      setState(undefined);
     }
   }, [userBaseData, userData]);
 
