@@ -22,6 +22,7 @@ export const apiKeys = {
     wallet: {
       add: "/auth/wallet/add"
     },
+    changePassword: "/auth/password/change",
 
     resetPassword: {
       verify: "/auth/password/reset/verify",
