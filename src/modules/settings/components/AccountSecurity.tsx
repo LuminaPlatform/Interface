@@ -69,6 +69,19 @@ export const AccountSecurity = () => {
   const [password, setPassword] = useState({
     isSet: !!userInfo?.user?.password
   });
+
+  useEffect(() => {
+    axiosClient
+      .get(apiKeys.auth.passwordStatus, {
+        headers: {
+          Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+        }
+      })
+      .then((res) => {
+        setPassword((prev) => ({ ...prev, isSet: res.data.is_password_set }));
+      });
+  }, []);
+
   useEffect(() => {
     if (userInfo?.user?.x_username) {
       axiosClient
