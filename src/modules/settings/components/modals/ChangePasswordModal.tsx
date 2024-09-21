@@ -50,15 +50,10 @@ export const ChangePasswordModal = ({
     setLoading(true);
     axiosClient
       .post(
-        apiKeys.update,
+        apiKeys.auth.changePassword,
         {
-          "0": {
-            model_name: "User",
-            params: {
-              password: values.password
-            },
-            id: userInfo?.user?.id
-          }
+          new_password: values.password,
+          current_password: values.currentPassword
         },
         {
           headers: {
@@ -67,6 +62,7 @@ export const ChangePasswordModal = ({
         }
       )
       .then(() => {
+        onClose();
         return toast({
           status: "success",
           description: "Your password is changed."
