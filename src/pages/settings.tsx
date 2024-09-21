@@ -92,7 +92,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       .then((res) => res.data[0] ?? []);
     const userInformation = await getUserInformation(
       userBaseData.data.id,
-      accessToken
+      accessToken,
+      true
     );
 
     if (!userInformation) {
