@@ -308,7 +308,7 @@ const Table = ({ search }: { search: string }) => {
                   px="8px"
                   fontSize="xs"
                   fontWeight="bold"
-                  key={item.id}
+                  key={item}
                   color={value?.color.txt}
                   bg={value?.color.bg}
                 >
