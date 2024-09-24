@@ -11,7 +11,7 @@ import { reviewStatuses } from "@/constant";
 import { ReviewDetail } from "@/modules/reviews/components/ReviewDetail";
 import { Project, Review } from "@/modules/projects/types";
 import { generateImageSrc } from "@/utils";
-import { getHighlightedText } from "./globalSearch/HighlightText";
+import { getHighlightedText } from "./HighlightText";
 import { ModalBase } from "./ModalBase";
 import { Badge } from "./Badge";
 

@@ -5,7 +5,7 @@ import { Project, Review } from "@/modules/projects/types";
 import { reviewStatuses } from "@/constant";
 import { ModalBase } from "../ModalBase";
 import { Badge } from "../Badge";
-import { getHighlightedText } from "./HighlightText";
+import { getHighlightedText } from "../HighlightText";
 
 interface ReviewCardProps {
   title: string;

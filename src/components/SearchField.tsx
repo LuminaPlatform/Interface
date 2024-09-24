@@ -14,29 +14,31 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import {
-  TbChevronRight,
-  TbFiles,
-  TbMessage,
-  TbSearch,
-  TbUsers,
-  TbX
-} from "react-icons/tb";
+import { TbChevronRight, TbFiles, TbSearch, TbX } from "react-icons/tb";
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Swiper, SwiperSlide } from "swiper/react";
+import { SwiperSlide } from "swiper/react";
 import { apiKeys } from "@/api/apiKeys";
 import { axiosClient } from "@/config/axios";
-import PeopleCard from "./globalSearch/PeopleCard";
-import ProjectCard from "./globalSearch/ProjectCard";
-import ReviewCard from "./globalSearch/ReviewCard";
 
-const SearchField = () => {
+import ProjectCard from "./globalSearch/ProjectCard";
+// import { ReviewCard } from "./ReviewCard";
+// import { HorizontalSwiper } from "./HorizontalSwiper";
+
+import { HorizontalSwiper } from "./HorizontalSwiper";
+
+export const SearchField = () => {
   const [searchedProjects, setSearchedProjects] = useState([]);
   const [searchedReviews, setSearchedReviews] = useState([]);
   const [searchedUsers, setSearchedUsers] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState("");
+
+  const notFound =
+    !isLoading &&
+    !searchedUsers.length &&
+    !searchedProjects.length &&
+    !searchedReviews.length;
 
   const searchBarRef = React.useRef();
 
@@ -48,7 +50,7 @@ const SearchField = () => {
   });
 
   useEffect(() => {
-    if (search !== "") {
+    if (search) {
       setIsLoading(true);
 
       axiosClient
@@ -91,15 +93,8 @@ const SearchField = () => {
               operator: "LIKE",
               value: search
             }
-          }
-        })
-        .then((res) => {
-          setSearchedProjects(res.data[0]);
-        });
-
-      axiosClient
-        .post(apiKeys.fetch, {
-          "0": {
+          },
+          "1": {
             model: "Review",
             model_id: "None",
             orders: [],
@@ -132,15 +127,8 @@ const SearchField = () => {
               operator: "LIKE",
               value: search
             }
-          }
-        })
-        .then((res) => {
-          setSearchedReviews(res.data[0]);
-        });
-
-      axiosClient
-        .post(apiKeys.fetch, {
-          "0": {
+          },
+          "2": {
             model: "User",
             model_id: "None",
             orders: [],
@@ -160,26 +148,22 @@ const SearchField = () => {
           }
         })
         .then((res) => {
-          setSearchedUsers(res.data[0]);
+          setSearchedProjects(res.data[0]);
+          setSearchedReviews(res.data[1]);
+          setSearchedUsers(res.data[2]);
         })
         .finally(() => setIsLoading(false));
-
-      // setIsLoading(false);
     }
   }, [search]);
 
   return (
-    <VStack position="relative">
-      <InputGroup
-        display={{ base: "none", md: "inline-block" }}
-        width="395px"
-        height="40ox"
-      >
+    <VStack position="relative" ref={searchBarRef} w="full" maxW="395px">
+      <InputGroup display="inline-block" height="40ox">
         <InputLeftElement>
           <TbSearch
             size={24}
             color={
-              search === ""
+              !search
                 ? "var(--chakra-colors-gray-100)"
                 : "var(--chakra-colors-gray-40)"
             }
@@ -190,7 +174,7 @@ const SearchField = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           bg="gray.700"
-          border={search === "" ? "1px solid" : 0}
+          border={!search ? "1px solid" : 0}
           borderColor="gray.200"
           _hover={{
             borderColor: "gray.300"
@@ -208,10 +192,10 @@ const SearchField = () => {
             color: "gray.100"
           }}
           borderRadius="27px"
-          borderBottomRadius={search === "" ? "27px" : "0"}
+          borderBottomRadius={!search ? "27px" : "0"}
           placeholder="Search"
         />
-        {search !== "" && (
+        {search && (
           <InputRightElement
             onClick={() => {
               setSearch("");
@@ -223,9 +207,10 @@ const SearchField = () => {
         )}
       </InputGroup>
 
-      <Fade ref={searchBarRef} in={search !== ""}>
+      <Fade in={!!search}>
         <VStack
-          width="395px"
+          w="full"
+          maxW="395px"
           maxH="580px"
           bg="gray.700"
           zIndex="dropdown"
@@ -262,14 +247,10 @@ const SearchField = () => {
                 }
               }}
             >
-              {!isLoading &&
-                !searchedUsers.length &&
-                !searchedProjects.length &&
-                !searchedReviews.length && (
-                  <Text textColor="gray.60">Non found</Text>
-                )}
+              {notFound && <Text textColor="gray.60">Not found</Text>}
               {isLoading && <Spinner color="primary.300" />}
-              {!!searchedUsers.length && !isLoading && (
+
+              {/* {!!searchedUsers.length && !isLoading && (
                 <VStack w="full" gap="12px" alignItems="start">
                   <HStack w="full" justifyContent="space-between">
                     <HStack gap="6px">
@@ -278,14 +259,16 @@ const SearchField = () => {
                         People
                       </Text>
                     </HStack>
-                    <Link
-                      onClick={() => {
-                        setSearch("");
-                      }}
-                      href="/search"
-                    >
+                    <Link href="/search">
                       <HStack gap="4px" mr="-4px">
-                        <Text color="gray.60" fontSize="12px">
+                        <Text
+                          color="gray.60"
+                          fontSize="12px"
+                          fontWeight="700"
+                          _hover={{
+                            textDecoration: "underline"
+                          }}
+                        >
                           Show All
                         </Text>
                         <TbChevronRight color="var(--chakra-colors-gray-60)" />
@@ -294,13 +277,7 @@ const SearchField = () => {
                   </HStack>
 
                   <Box w="full" overflow="hidden" whiteSpace="nowrap" pb="4px">
-                    <Swiper
-                      direction="horizontal"
-                      spaceBetween={8}
-                      slidesPerView="auto"
-                      freeMode
-                      style={{ overflow: "visible" }}
-                    >
+                    <HorizontalSwiper>
                       {searchedUsers.map((item) => (
                         <SwiperSlide
                           key={item?.id}
@@ -310,21 +287,17 @@ const SearchField = () => {
                           }}
                         >
                           <PeopleCard
-                            id={item?.id.toString()}
+                            key={item?.id}
                             setSearch={setSearch}
                             search={search}
-                            name={
-                              item?.username ||
-                              item?.x_username ||
-                              item?.display_name
-                            }
+                            item={item}
                           />
                         </SwiperSlide>
                       ))}
-                    </Swiper>
+                    </HorizontalSwiper>
                   </Box>
                 </VStack>
-              )}
+              )} */}
 
               {!!searchedProjects.length && !isLoading && (
                 <VStack w="full" gap="12px" alignItems="start">
@@ -335,14 +308,16 @@ const SearchField = () => {
                         Projects
                       </Text>
                     </HStack>
-                    <Link
-                      onClick={() => {
-                        setSearch("");
-                      }}
-                      href="/search"
-                    >
+                    <Link href="/search">
                       <HStack gap="4px" mr="-4px">
-                        <Text color="gray.60" fontSize="12px" fontWeight="700">
+                        <Text
+                          color="gray.60"
+                          fontSize="12px"
+                          fontWeight="700"
+                          _hover={{
+                            textDecoration: "underline"
+                          }}
+                        >
                           Show All
                         </Text>
                         <TbChevronRight color="var(--chakra-colors-gray-60)" />
@@ -351,36 +326,30 @@ const SearchField = () => {
                   </HStack>
 
                   <Box w="full" overflow="hidden" whiteSpace="nowrap" pb="4px">
-                    <Swiper
-                      direction="horizontal"
-                      spaceBetween={8}
-                      slidesPerView="auto"
-                      freeMode
-                      style={{ overflow: "visible" }}
-                    >
+                    <HorizontalSwiper>
                       {searchedProjects.map((item) => (
                         <SwiperSlide
-                          key={item?.id}
+                          key={item.id}
                           style={{
                             width: "auto",
-                            display: "inline-flex"
+                            display: "inline-flex",
+                            alignItems: "flex-start"
                           }}
                         >
                           <ProjectCard
-                            id={item?.id.toString()}
+                            key={item.id}
                             setSearch={setSearch}
-                            name={item.name}
                             search={search}
-                            imageUrl={item.content.profile?.profileImageUrl}
+                            item={item}
                           />
                         </SwiperSlide>
                       ))}
-                    </Swiper>
+                    </HorizontalSwiper>
                   </Box>
                 </VStack>
               )}
 
-              {!!searchedReviews.length && !isLoading && (
+              {/* {!!searchedReviews.length && !isLoading && (
                 <VStack w="full" gap="12px" alignItems="start">
                   <HStack w="full" justifyContent="space-between">
                     <HStack gap="6px">
@@ -389,14 +358,16 @@ const SearchField = () => {
                         Reviews
                       </Text>
                     </HStack>
-                    <Link
-                      onClick={() => {
-                        setSearch("");
-                      }}
-                      href="/search"
-                    >
+                    <Link href="/search">
                       <HStack gap="4px" mr="-4px">
-                        <Text color="gray.60" fontSize="12px" fontWeight="700">
+                        <Text
+                          color="gray.60"
+                          fontSize="12px"
+                          fontWeight="700"
+                          _hover={{
+                            textDecoration: "underline"
+                          }}
+                        >
                           Show All
                         </Text>
                         <TbChevronRight color="var(--chakra-colors-gray-60)" />
@@ -417,10 +388,18 @@ const SearchField = () => {
                         review={item.id}
                         viewpoint={item.viewpoint}
                       />
+                      // <ReviewCard
+                      //   project={item.project}
+                      //   showProjectName
+                      //   review={item}
+                      //   key={item.id}
+                      //   highlightNeeded
+                      //   search={search}
+                      // />
                     ))}
                   </VStack>
                 </VStack>
-              )}
+              )} */}
             </VStack>
           </VStack>
         </VStack>
@@ -428,5 +407,3 @@ const SearchField = () => {
     </VStack>
   );
 };
-
-export default SearchField;

@@ -1,16 +1,16 @@
 import { HStack, Img, Text } from "@chakra-ui/react";
 import React from "react";
 import Link from "next/link";
-import { getHighlightedText } from "./HighlightText";
+import { getHighlightedText } from "../HighlightText";
 
 interface PeopleCardProps {
-  name: string;
+  item: any;
   search: string;
-  id: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const PeopleCard = ({ name, search, id, setSearch }: PeopleCardProps) => {
+const PeopleCard = ({ item, search, setSearch }: PeopleCardProps) => {
+  const name = item?.username || item?.x_username || item?.display_name;
   return (
     <HStack
       bg="gray.600"
@@ -20,7 +20,7 @@ const PeopleCard = ({ name, search, id, setSearch }: PeopleCardProps) => {
       gap="4px"
       cursor="pointer"
       as={Link}
-      href={`/profile/${id}`}
+      href={`/profile/${item.id}`}
       onClick={() => setSearch("")}
     >
       <Img
@@ -30,10 +30,11 @@ const PeopleCard = ({ name, search, id, setSearch }: PeopleCardProps) => {
         height="32px"
         minH="32px"
         src={
-          !!id
-            ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${id}`
+          item.id
+            ? `${process.env.NEXT_PUBLIC_BASE_FILE_URL}/${item.id}`
             : "/assets/images/default-img.png"
         }
+        alt={name}
       />
 
       <Text color="gray.0" fontSize="16px">

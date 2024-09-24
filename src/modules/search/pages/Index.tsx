@@ -9,21 +9,38 @@ import {
   Text,
   VStack
 } from "@chakra-ui/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { StringParam, useQueryParams } from "use-query-params";
 import { ProjectSearch } from "@/modules/distribute/components/ProjectSearch";
-import { axiosClient } from "@/config/axios";
-import { apiKeys } from "@/api/apiKeys";
-import { ReviewCard } from "@/components/ReviewCard";
-import PeopleCard from "../components/peopleCard";
-import ProjectsTab from "../components/ProjectsTab";
-import { searchTabs } from "../constants";
+// import { searchTabs } from "../constants";
+import { PeopleTab } from "../components/PeopleTab";
+import { ReviewTab } from "../components/ReviewTab";
+import { ProjectsTab } from "../components/ProjectsTab";
 
 const Index = () => {
   const [search, setSearch] = useState("");
-  const [searchedProjects, setSearchedProjects] = useState([]);
-  const [searchedReviews, setSearchedReviews] = useState([]);
-  const [searchedUsers, setSearchedUsers] = useState([]);
+  const searchState = { search, setSearch };
+
+  const searchTabs = [
+    {
+      id: 0,
+      title: "People",
+      query: "people",
+      comp: <PeopleTab searchState={searchState} />
+    },
+    {
+      id: 1,
+      title: "Projects",
+      query: "projects",
+      comp: <ProjectsTab searchState={searchState} />
+    },
+    {
+      id: 2,
+      title: "Reviews",
+      query: "reviews",
+      comp: <ReviewTab searchState={searchState} />
+    }
+  ];
 
   const [query, setQuery] = useQueryParams({
     tab: StringParam
@@ -35,165 +52,6 @@ const Index = () => {
         : 0,
     [query.tab]
   );
-
-  useEffect(() => {
-    if (search !== "") {
-      axiosClient
-        .post(apiKeys.fetch, {
-          0: {
-            model: "Project",
-            model_id: "None",
-            orders: [],
-            graph: {
-              fetch_fields: [
-                {
-                  name: "id"
-                },
-                {
-                  name: "name"
-                },
-                {
-                  name: "logo_id"
-                },
-                { name: "content.fundingSources" },
-                { name: "content.includedInBallots" },
-                { name: "content.lists.count" },
-                { name: "content.profile" },
-                { name: "content.impactCategory" }
-              ]
-            },
-            condition: {
-              __type__: "SimpleFetchCondition",
-              field: "name",
-              operator: "LIKE",
-              value: search
-            }
-          }
-        })
-        .then((res) => {
-          setSearchedProjects(res.data[0]);
-        });
-
-      axiosClient
-        .post(apiKeys.fetch, {
-          0: {
-            model: "Review",
-            model_id: "None",
-            orders: [],
-            graph: {
-              fetch_fields: [
-                {
-                  name: "*"
-                },
-                {
-                  name: "files",
-                  graph: {
-                    fetch_fields: [
-                      {
-                        name: "*"
-                      }
-                    ]
-                  }
-                },
-                {
-                  name: "user",
-                  graph: {
-                    fetch_fields: [
-                      {
-                        name: "display_name"
-                      },
-                      {
-                        name: "id"
-                      },
-                      {
-                        name: "profile_id"
-                      }
-                    ]
-                  }
-                },
-                {
-                  name: "project",
-                  graph: {
-                    fetch_fields: [
-                      {
-                        name: "id"
-                      },
-                      {
-                        name: "name"
-                      },
-                      {
-                        name: "logo_id"
-                      },
-                      { name: "content.fundingSources" },
-                      { name: "content.includedInBallots" },
-                      { name: "content.applicantType" },
-                      { name: "content.websiteUrl" },
-                      { name: "content.bio" },
-                      { name: "content.profile" },
-                      { name: "content.applicant" },
-                      { name: "content.contributionDescription" },
-                      { name: "content.contributionLinks" },
-                      { name: "content.impactDescription" },
-                      { name: "content.impactMetrics" },
-                      { name: "content.impactCategory" }
-                    ]
-                  }
-                }
-              ]
-            },
-            condition: {
-              __type__: "SimpleFetchCondition",
-              field: "title",
-              operator: "LIKE",
-              value: search
-            }
-          }
-        })
-        .then((res) => {
-          setSearchedReviews(res.data[0]);
-        });
-
-      axiosClient
-        .post(apiKeys.fetch, {
-          "0": {
-            model: "User",
-            model_id: "None",
-            orders: [],
-            graph: {
-              fetch_fields: [
-                {
-                  name: "*"
-                },
-                {
-                  name: "wallets",
-                  graph: {
-                    fetch_fields: [
-                      {
-                        name: "*"
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-
-            condition: {
-              __type__: "SimpleFetchCondition",
-              field: "username",
-              operator: "LIKE",
-              value: search
-            }
-          }
-        })
-        .then((res) => {
-          setSearchedUsers(res.data[0]);
-        });
-    } else {
-      setSearchedProjects([]);
-      setSearchedUsers([]);
-      setSearchedReviews([]);
-    }
-  }, [search]);
 
   return (
     <VStack
@@ -216,7 +74,7 @@ const Index = () => {
         </Text>
       </HStack>
 
-      <Tabs index={activeTab} width="full">
+      <Tabs isLazy index={activeTab} width="full">
         <TabList borderColor="gray.400">
           {searchTabs.map((tab) => (
             <Tab
@@ -241,47 +99,7 @@ const Index = () => {
         <TabPanels w="full" p="0">
           {searchTabs.map((item) => (
             <TabPanel w="full" p="0" key={item.id}>
-              {item.id === 0 ? (
-                <VStack w="full" gap="16px">
-                  {searchedUsers.map((users: any) => (
-                    <PeopleCard
-                      key={users?.id}
-                      id={users?.id.toString()}
-                      setSearch={setSearch}
-                      search={search}
-                      email={users.email}
-                      name={
-                        users?.username ||
-                        users?.x_username ||
-                        users?.display_name
-                      }
-                      walletAddress={users.wallets?.address}
-                    />
-                  ))}
-                </VStack>
-              ) : item.id === 1 ? (
-                searchedProjects.length !== 0 ? (
-                  <ProjectsTab search={search} />
-                ) : (
-                  <Text color="white" />
-                )
-              ) : // <Text color={"white"}>i'm tired</Text>
-              searchedReviews.length !== 0 ? (
-                <VStack w="full" gap="16px">
-                  {searchedReviews.map((reviews) => (
-                    <ReviewCard
-                      project={reviews.project}
-                      showProjectName
-                      review={reviews}
-                      key={reviews.id}
-                      highlightNeeded
-                      search={search}
-                    />
-                  ))}
-                </VStack>
-              ) : (
-                <Text color="white" />
-              )}
+              {item.comp}
             </TabPanel>
           ))}
         </TabPanels>

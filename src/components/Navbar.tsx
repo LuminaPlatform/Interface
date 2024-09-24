@@ -13,7 +13,8 @@ import {
   Text,
   useDisclosure,
   VStack,
-  useOutsideClick
+  useOutsideClick,
+  Stack
 } from "@chakra-ui/react";
 import React, { useMemo, useRef } from "react";
 import {
@@ -29,7 +30,7 @@ import { useRouter } from "next/router";
 import { ConnectModal } from "./modals/Connect";
 import { BadgeModal } from "./modals/badges/Badge";
 import { Logout } from "./modals/Logout";
-import SearchField from "./SearchField";
+import { SearchField } from "./SearchField";
 
 const ProfileBox = () => {
   const userData = useGlobalUserData();
@@ -206,31 +207,33 @@ const Navbar = () => {
           understanding.
         </Text>
       </Alert>
-      <HStack
+      <Stack
         fontFamily="satoshi"
         justifyContent={{ base: "flex-start", md: "flex-end" }}
         columnGap="24px"
         width="full"
+        direction={{ base: "column-reverse", md: "row" }}
       >
         <SearchField />
-
-        {!!authorization && <NotificationContainer />}
-        <HStack cursor="pointer" columnGap="8px">
-          {!authorization ? (
-            <Button
-              onClick={onOpen}
-              borderRadius="8px"
-              height="40px"
-              px="28px"
-              variant="primary"
-            >
-              Connect
-            </Button>
-          ) : (
-            <ProfileBox />
-          )}
+        <HStack gap="24px">
+          {!!authorization && <NotificationContainer />}
+          <HStack cursor="pointer" columnGap="8px">
+            {!authorization ? (
+              <Button
+                onClick={onOpen}
+                borderRadius="8px"
+                height="40px"
+                px="28px"
+                variant="primary"
+              >
+                Connect
+              </Button>
+            ) : (
+              <ProfileBox />
+            )}
+          </HStack>
         </HStack>
-      </HStack>
+      </Stack>
       <ConnectModal isOpen={isOpen} onClose={onClose} />
       <BadgeModal
         badgeType={Badges.HOLDER}

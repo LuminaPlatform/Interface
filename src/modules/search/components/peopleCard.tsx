@@ -5,12 +5,12 @@ import { textTruncator } from "@/utils";
 import { TbBrandX, TbMail, TbUserCheck, TbUserPlus } from "react-icons/tb";
 import { Avatar } from "@/components/AvatarText";
 import { xDomain } from "@/constant";
-import { getHighlightedText } from "@/components/globalSearch/HighlightText";
 import {
   useAuthorization,
   useGlobalUserData,
   useWalletModal
 } from "@/hooks/bases";
+import { getHighlightedText } from "@/components/HighlightText";
 
 interface PeopleCardProps {
   name: string;
@@ -21,7 +21,7 @@ interface PeopleCardProps {
   setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const PeopleCard = ({
+export const PeopleCard = ({
   name,
   search,
   id,
@@ -175,5 +175,3 @@ const PeopleCard = ({
     </HStack>
   );
 };
-
-export default PeopleCard;

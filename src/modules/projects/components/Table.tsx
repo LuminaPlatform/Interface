@@ -29,7 +29,7 @@ import Link from "next/link";
 import { currencyScale, pageThreshold, primaryCategories } from "@/constant";
 import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
 import { useRouter } from "next/router";
-import { getHighlightedText } from "@/components/globalSearch/HighlightText";
+import { getHighlightedText } from "@/components/HighlightText";
 import { useProjects } from "../hooks";
 
 const CheckMarkIcon = () => (
