@@ -29,6 +29,7 @@ import Link from "next/link";
 import { currencyScale, pageThreshold, primaryCategories } from "@/constant";
 import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
 import { useRouter } from "next/router";
+import { getHighlightedText } from "@/components/HighlightText";
 import { useProjects } from "../hooks";
 
 const CheckMarkIcon = () => (
@@ -126,8 +127,10 @@ export const ArrowDown = () => (
   </svg>
 );
 
+
 const Table = ({ search }: { search: string }) => {
   const [isPaginationLoading, setPaginationLoading] = useState(false);
+
   const router = useRouter();
   const page = router.query?.page ?? 1;
   const projectsData = useProjects();
@@ -167,7 +170,9 @@ const Table = ({ search }: { search: string }) => {
                 textAlign="left"
                 whiteSpace="nowrap"
               >
-                {info.row.original.name}
+                {highlightNeeded
+                  ? getHighlightedText(info.row.original.name, search)
+                  : info.row.original.name}
               </ChakraLink>
               <Icon
                 size={18}

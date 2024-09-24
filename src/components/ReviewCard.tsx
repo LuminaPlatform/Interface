@@ -11,6 +11,7 @@ import { reviewStatuses } from "@/constant";
 import { ReviewDetail } from "@/modules/reviews/components/ReviewDetail";
 import { Project, Review } from "@/modules/projects/types";
 import { generateImageSrc } from "@/utils";
+import { getHighlightedText } from "./HighlightText";
 import { ModalBase } from "./ModalBase";
 import { Badge } from "./Badge";
 
@@ -18,11 +19,15 @@ interface ReviewCardProps {
   review: Review;
   showProjectName: boolean;
   project: Project;
+  highlightNeeded?: boolean;
+  search?: string;
 }
 export const ReviewCard = ({
   review,
   showProjectName,
-  project
+  project,
+  highlightNeeded = false,
+  search
 }: ReviewCardProps) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -87,7 +92,9 @@ export const ReviewCard = ({
               fontWeight="600"
               fontSize={{ base: "lg", md: "xl" }}
             >
-              {review.title}
+              {highlightNeeded
+                ? getHighlightedText(review.title, search)
+                : review.title}
             </Text>
             <Badge
               title={foundReviewStatus?.name}

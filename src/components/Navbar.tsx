@@ -7,24 +7,22 @@ import {
   Button,
   HStack,
   Img,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Menu,
   MenuButton,
   MenuList,
   Text,
   useDisclosure,
   VStack,
-  useOutsideClick
+  useOutsideClick,
+  Stack
 } from "@chakra-ui/react";
-import { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef } from "react";
 import {
   useAuthorization,
   useGlobalUserData,
   useWalletModal
 } from "@/hooks/bases";
-import { TbLogout, TbSearch, TbSettings2, TbUserCircle } from "react-icons/tb";
+import { TbLogout, TbSettings2, TbUserCircle } from "react-icons/tb";
 import { Badges } from "@/types";
 import dynamic from "next/dynamic";
 import { generateImageSrc } from "@/utils";
@@ -32,9 +30,11 @@ import { useRouter } from "next/router";
 import { ConnectModal } from "./modals/Connect";
 import { BadgeModal } from "./modals/badges/Badge";
 import { Logout } from "./modals/Logout";
+import { SearchField } from "./SearchField";
 
 const ProfileBox = () => {
   const userData = useGlobalUserData();
+
   const user = userData?.user;
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
@@ -174,8 +174,6 @@ const ProfileBox = () => {
 };
 
 const Navbar = () => {
-  const [search, setSearch] = useState("");
-
   const { isOpen: badgeIsOpen, onClose: badgeOnClose } = useDisclosure();
 
   const { isOpen, onClose, onOpen } = useWalletModal();
@@ -209,63 +207,33 @@ const Navbar = () => {
           understanding.
         </Text>
       </Alert>
-      <HStack
+      <Stack
         fontFamily="satoshi"
         justifyContent={{ base: "flex-start", md: "flex-end" }}
         columnGap="24px"
         width="full"
+        direction={{ base: "column-reverse", md: "row" }}
       >
-        <InputGroup
-          display={{ base: "none", md: "inline-block" }}
-          width="311px"
-          height="40ox"
-        >
-          <InputLeftElement>
-            <TbSearch size={24} color="var(--chakra-colors-gray-100)" />
-          </InputLeftElement>
-          <Input
-            px="16px"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            bg="gray.600"
-            border="1px solid"
-            borderColor="gray.200"
-            _hover={{
-              borderColor: "gray.300"
-            }}
-            _active={{ borderColor: "gray.400" }}
-            _focus={{ borderColor: "gray.400" }}
-            boxShadow="none !important"
-            outline="none"
-            fontFamily="satoshi"
-            fontSize="md"
-            color="gray.100"
-            fontWeight="regular"
-            _placeholder={{
-              fontWeight: "regular",
-              color: "gray.100"
-            }}
-            borderRadius="27px"
-            placeholder="Search"
-          />
-        </InputGroup>
-        {!!authorization && <NotificationContainer />}
-        <HStack cursor="pointer" columnGap="8px">
-          {!authorization ? (
-            <Button
-              onClick={onOpen}
-              borderRadius="8px"
-              height="40px"
-              px="28px"
-              variant="primary"
-            >
-              Connect
-            </Button>
-          ) : (
-            <ProfileBox />
-          )}
+        <SearchField />
+        <HStack gap="24px">
+          {!!authorization && <NotificationContainer />}
+          <HStack cursor="pointer" columnGap="8px">
+            {!authorization ? (
+              <Button
+                onClick={onOpen}
+                borderRadius="8px"
+                height="40px"
+                px="28px"
+                variant="primary"
+              >
+                Connect
+              </Button>
+            ) : (
+              <ProfileBox />
+            )}
+          </HStack>
         </HStack>
-      </HStack>
+      </Stack>
       <ConnectModal isOpen={isOpen} onClose={onClose} />
       <BadgeModal
         badgeType={Badges.HOLDER}
