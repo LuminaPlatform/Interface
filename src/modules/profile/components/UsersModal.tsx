@@ -97,9 +97,18 @@ const UnFollowModal = ({ onClose, user }: UnFollowModalProps) => {
                       orders: [],
                       graph: {
                         fetch_fields: [
-                          {
-                            name: "*"
-                          }
+                          { name: "id" },
+                          { name: "email_public" },
+                          { name: "display_name" },
+                          { name: "profile_id" },
+                          { name: "pined_wallet_id" },
+                          { name: "status" },
+                          { name: "terms_of_service_signature" },
+                          { name: "info" },
+                          { name: "createTimestamp" },
+                          { name: "setting" },
+                          { name: "x_username" },
+                          { name: "username" }
                         ]
                       }
                     }
@@ -231,9 +240,18 @@ const UserFollowBox = ({ item, type }: UserFollowBoxProps) => {
                           orders: [],
                           graph: {
                             fetch_fields: [
-                              {
-                                name: "*"
-                              }
+                              { name: "id" },
+                              { name: "email_public" },
+                              { name: "display_name" },
+                              { name: "profile_id" },
+                              { name: "pined_wallet_id" },
+                              { name: "status" },
+                              { name: "terms_of_service_signature" },
+                              { name: "info" },
+                              { name: "createTimestamp" },
+                              { name: "setting" },
+                              { name: "x_username" },
+                              { name: "username" }
                             ]
                           }
                         }

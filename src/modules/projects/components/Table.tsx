@@ -127,12 +127,10 @@ export const ArrowDown = () => (
   </svg>
 );
 
-interface TableProps {
-  search: string;
-  highlightNeeded?: boolean;
-}
 
-const Table = ({ search, highlightNeeded }: TableProps) => {
+const Table = ({ search }: { search: string }) => {
+  const [isPaginationLoading, setPaginationLoading] = useState(false);
+
   const router = useRouter();
   const page = router.query?.page ?? 1;
   const projectsData = useProjects();
@@ -316,7 +314,7 @@ const Table = ({ search, highlightNeeded }: TableProps) => {
                   px="8px"
                   fontSize="xs"
                   fontWeight="bold"
-                  key={item.id}
+                  key={item}
                   color={value?.color.txt}
                   bg={value?.color.bg}
                 >
@@ -417,10 +415,18 @@ const Table = ({ search, highlightNeeded }: TableProps) => {
         <HStack alignItems="center" width="full" justifyContent="center">
           <Flex columnGap="10px" alignItems="center">
             <Button
+              isDisabled={+page === 1 || isPaginationLoading}
               onClick={() => {
-                // if (page !== limit) {
-                router.push(`/projects?page=${+page + 1}`);
-                // }
+                setPaginationLoading(true);
+                if (+page !== 1) {
+                  router
+                    .push(`/projects?page=${+page - 1}`, undefined, {
+                      scroll: false
+                    })
+                    .then(() => {
+                      setPaginationLoading(false);
+                    });
+                }
               }}
               variant="ghost"
             >
@@ -430,11 +436,18 @@ const Table = ({ search, highlightNeeded }: TableProps) => {
               {page}
             </Text>
             <Button
-              isDisabled={+page === 1}
+              isDisabled={isPaginationLoading}
               onClick={() => {
-                if (+page !== 1) {
-                  router.push(`/projects?page=${+page - 1}`);
-                }
+                setPaginationLoading(true);
+                // if (page !== limit) {
+                router
+                  .push(`/projects?page=${+page + 1}`, undefined, {
+                    scroll: false
+                  })
+                  .then(() => {
+                    setPaginationLoading(false);
+                  });
+                // }
               }}
               variant="ghost"
             >
