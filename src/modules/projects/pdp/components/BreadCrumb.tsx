@@ -2,7 +2,11 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { TbChevronRight } from "react-icons/tb";
-export const BreadCrumb = () => {
+
+interface BreadCrumbProps {
+  projectName: string;
+}
+export const BreadCrumb = ({ projectName }: BreadCrumbProps) => {
   const router = useRouter();
 
   return (
@@ -28,7 +32,11 @@ export const BreadCrumb = () => {
                 color="gray.20"
                 href={`/${path}`}
               >
-                {index === 0 ? "RetroPGF3 Projects" : item}
+                {index === 0
+                  ? "RetroPGF3 Projects"
+                  : Object.is(NaN, Number(item))
+                    ? "review"
+                    : projectName}
               </BreadcrumbLink>
             </BreadcrumbItem>
           );

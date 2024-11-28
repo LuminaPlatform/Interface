@@ -8,6 +8,7 @@ export const Statuses = ({ status, setStatus }: StatusesProps) => {
     <HStack gap="16px" flexWrap="wrap">
       {reviewStatuses.map((item) => (
         <Badge
+          height="32px"
           cursor="pointer"
           onClick={() => setStatus(item.name)}
           key={item.id}
@@ -15,14 +16,15 @@ export const Statuses = ({ status, setStatus }: StatusesProps) => {
           colorScheme={item.colorScheme}
           icon={item.icon}
           fontSize="md"
+          borderRadius="17px"
           {...(item.name !== status && {
             color: "gray.80",
             border: "1px solid",
             borderColor: "gray.80",
             bg: "transparent",
             iconsProps: {
-              color: "gray.200",
-            },
+              color: "gray.200"
+            }
           })}
         />
       ))}

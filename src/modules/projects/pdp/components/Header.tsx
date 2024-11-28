@@ -1,12 +1,12 @@
 import { TbBookmarkFilled, TbBookmarkPlus } from "react-icons/tb";
 import { Button, Stack } from "@chakra-ui/react";
-import { useProjectData } from "../hooks";
 import {
+  useAuthorization,
   useDispatchSelectedProjects,
-  useSelectedProjects,
+  useSelectedProjects
 } from "@/hooks/bases";
 import { useMemo } from "react";
-import { useAccount } from "wagmi";
+import { useProjectData } from "../hooks";
 import { BreadCrumb } from "./BreadCrumb";
 
 export const Header = () => {
@@ -14,20 +14,21 @@ export const Header = () => {
   const selectedProjects = useSelectedProjects();
 
   const project = useProjectData();
-
-  const { isConnected } = useAccount();
+  const { name } = project;
 
   const isProjectSelected = useMemo(() => {
     return selectedProjects.find((item) => item.id === project.id);
   }, [project.id, selectedProjects]);
+
+  const isAuthorized = useAuthorization();
   return (
     <Stack
       width="full"
       justifyContent={{ md: "space-between" }}
       flexDirection={{ base: "column", md: "row" }}
     >
-      <BreadCrumb />
-      {isConnected && (
+      <BreadCrumb projectName={name} />
+      {!!isAuthorized && (
         <Button
           onClick={() => {
             if (isProjectSelected) {

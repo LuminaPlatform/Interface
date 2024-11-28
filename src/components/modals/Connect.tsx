@@ -1,50 +1,35 @@
-import {
-  Button,
-  HStack,
-  Icon,
-  Img,
-  Text,
-  UseDisclosureProps,
-  VStack,
-} from "@chakra-ui/react";
-import { ModalBase } from "../ModalBase";
+import { Img, Text, UseDisclosureProps, VStack } from "@chakra-ui/react";
 import { LuWallet } from "react-icons/lu";
-import { IconType } from "react-icons";
 import { MdOutlineMailOutline } from "react-icons/md";
-import { FaArrowRightLong } from "react-icons/fa6";
 import { useEffect, useMemo } from "react";
-import {
-  ModalForm,
-  OTPFormType,
-  STEP_MODAL,
-  WalletModalBodyProps,
-} from "@/types";
-import { Login } from "./Login";
-import { MethodSeparator } from "../MethodSeparator";
-import { Register } from "./Register";
+import { ModalForm, OTPFormType, STEP_MODAL } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
-import { Connectors } from "./Connectors";
-import { OTP } from "./OTP";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import {
   useCustomToast,
   useDispatchAuthorization,
   useDispatchModalSteps,
   useModalSteps,
-  useWalletModal,
+  useWalletModal
 } from "@/hooks/bases";
 import { useEmailLogin, useOTPVerification } from "@/hooks/auth";
-import { SetupWizard } from "./SetupWizard";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { setCookie } from "cookies-next";
-import { SignWallet } from "./SignWallet";
 import { useAccount, useSignMessage } from "wagmi";
 import { VerifiedAccount } from "@/modules/settings/components/modals/VerifiedAccount";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
+import { Login } from "./Login";
+import { MethodSeparator } from "../MethodSeparator";
+import { Register } from "./Register";
+import { Connectors } from "./Connectors";
+import { OTP } from "./OTP";
+import { SetupWizard } from "./SetupWizard";
+import { SignWallet } from "./SignWallet";
+import { IconButton } from "./IconButton";
+import { ModalBase } from "../ModalBase";
 
-interface OTPContainerProps extends WalletModalBodyProps {}
-const OTPContainer = ({}: OTPContainerProps) => {
+const OTPContainer = () => {
   const dispatchSteps = useDispatchModalSteps();
 
   const { getValues } = useFormContext<ModalForm>();
@@ -67,7 +52,7 @@ const OTPContainer = ({}: OTPContainerProps) => {
               return toast({
                 title: error.response.data.error_message,
                 description: error.response.data.error_detail,
-                status: "error",
+                status: "error"
               });
             },
             onSuccess: () => {
@@ -82,8 +67,8 @@ const OTPContainer = ({}: OTPContainerProps) => {
                     return axiosClient
                       .get(apiKeys.auth.isAuthorized, {
                         headers: {
-                          Authorization: `Bearer ${loginData.data.access_token}`,
-                        },
+                          Authorization: `Bearer ${loginData.data.access_token}`
+                        }
                       })
                       .then((userDataResponse) => userDataResponse.data)
                       .then((user) => {
@@ -91,56 +76,18 @@ const OTPContainer = ({}: OTPContainerProps) => {
                         dispatchSteps(STEP_MODAL.verified);
                         return toast({
                           description: "You are logged in",
-                          status: "success",
+                          status: "success"
                         });
                       });
-                  },
+                  }
                 }
               );
-            },
+            }
           }
         );
       }}
       backIconHandler={() => dispatchSteps(STEP_MODAL.register)}
     />
-  );
-};
-interface IconButtonProps {
-  onClick: () => void;
-  icon?: IconType | string;
-  text: string;
-}
-
-export const IconButton = ({ onClick, icon, text }: IconButtonProps) => {
-  return (
-    <Button
-      bg="gray.700"
-      _hover={{
-        bg: "gray.800",
-      }}
-      _active={{
-        bg: "gray.900",
-      }}
-      height="48px"
-      px="12px"
-      width="full"
-      justifyContent="space-between"
-      onClick={onClick}
-      display="flex"
-    >
-      <HStack>
-        {icon &&
-          (typeof icon === "string" ? (
-            <Img width="30px" src={icon} />
-          ) : (
-            <Icon fontSize={21} color="gray.0" as={icon} />
-          ))}
-        <Text color="gray.40" fontSize="md" fontWeight="700">
-          {text}
-        </Text>
-      </HStack>
-      <FaArrowRightLong color="var(--chakra-colors-gray-0)" />
-    </Button>
   );
 };
 
@@ -149,13 +96,13 @@ interface ConnectProps {
   isOpen: UseDisclosureProps["isOpen"];
 }
 
-const ModalBody = ({}: WalletModalBodyProps) => {
+const ModalBody = () => {
   const dispatchSteps = useDispatchModalSteps();
   return (
     <VStack
       as={motion.div}
       exit={{
-        opacity: 0,
+        opacity: 0
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -183,7 +130,7 @@ const ModalBody = ({}: WalletModalBodyProps) => {
         />
         <MethodSeparator />
         <IconButton
-          text="Join by Email"
+          text="Login by Email"
           onClick={() => {
             dispatchSteps(STEP_MODAL.login);
           }}
@@ -197,8 +144,8 @@ const ModalBody = ({}: WalletModalBodyProps) => {
 export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
   const { onOpen } = useWalletModal();
   const methods = useForm<ModalForm>({
-    mode: "all",
-    reValidateMode: "onChange",
+    mode: "onSubmit",
+    reValidateMode: "onChange"
   });
 
   const step = useModalSteps();
@@ -223,7 +170,7 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
       [STEP_MODAL.otp]: <OTPContainer />,
       [STEP_MODAL.setupWizard]: <SetupWizard />,
       [STEP_MODAL.sign]: <SignWallet />,
-      [STEP_MODAL.verified]: <VerifiedAccount />,
+      [STEP_MODAL.verified]: <VerifiedAccount />
     }),
     []
   );
@@ -243,8 +190,8 @@ export const ConnectModal = ({ onClose, isOpen }: ConnectProps) => {
         showCloseButton: false,
 
         ...(STEP_MODAL.setupWizard === step && {
-          size: { base: "lg", md: "2xl", lg: "3xl" },
-        }),
+          size: { base: "lg", md: "2xl", lg: "3xl" }
+        })
       })}
     />
   );

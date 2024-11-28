@@ -5,7 +5,13 @@ interface ModalHeaderProps {
 }
 export const ModalHeader = ({ text }: ModalHeaderProps) => {
   return (
-    <Text textAlign='center' color="gray.0" fontSize="xl" fontWeight="600" fontFamily="lexend">
+    <Text
+      textAlign="center"
+      color="gray.0"
+      fontSize="xl"
+      fontWeight="600"
+      fontFamily="lexend"
+    >
       {text}
     </Text>
   );

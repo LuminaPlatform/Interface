@@ -4,11 +4,11 @@ import {
   Img,
   Text,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { TbLink } from "react-icons/tb";
-import { useProjectData } from "../hooks";
 import Link from "next/link";
+import { useProjectData } from "../hooks";
 import { Statuses } from "./Statuses";
 import { StatusesProps } from "../types";
 import { ReviewForm } from "./ReviewForm";
@@ -21,7 +21,7 @@ interface WriteFeedbackProps {
 const WriteFeedback = ({ setStatus, status, onClose }: WriteFeedbackProps) => {
   const {
     name,
-    content: { bio, profile },
+    content: { bio, profile }
   } = useProjectData();
 
   return (

@@ -3,12 +3,13 @@ import {
   HStack,
   Text,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
-import { ModalBase } from "../ModalBase";
-import { ModalHeader } from "../ModalHeader";
 import { useDispatchModalSteps, useLogout } from "@/hooks/bases";
 import { STEP_MODAL } from "@/types";
+import { useRouter } from "next/router";
+import { ModalBase } from "../ModalBase";
+import { ModalHeader } from "../ModalHeader";
 
 interface LogoutBodyProps {
   onClose: UseDisclosureProps["onClose"];
@@ -16,6 +17,7 @@ interface LogoutBodyProps {
 const LogoutBody = ({ onClose }: LogoutBodyProps) => {
   const handleClose = useLogout();
   const dispatchSteps = useDispatchModalSteps();
+  const router = useRouter();
 
   return (
     <VStack width="full">
@@ -28,9 +30,11 @@ const LogoutBody = ({ onClose }: LogoutBodyProps) => {
         </Button>
         <Button
           onClick={() => {
-            handleClose();
-            onClose();
-            dispatchSteps(STEP_MODAL.wallet);
+            new Promise((res) => res(router.replace("/projects"))).then(() => {
+              handleClose();
+              onClose();
+              dispatchSteps(STEP_MODAL.wallet);
+            });
           }}
           flex={1}
           variant="primary"
@@ -42,7 +46,7 @@ const LogoutBody = ({ onClose }: LogoutBodyProps) => {
     </VStack>
   );
 };
-interface LogoutProps extends UseDisclosureProps {}
+type LogoutProps = UseDisclosureProps;
 export const Logout = ({ isOpen, onClose }: LogoutProps) => {
   return (
     <ModalBase

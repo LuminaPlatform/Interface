@@ -1,6 +1,7 @@
 import { Badge } from "@/components/Badge";
 import { reviewStatuses } from "@/constant";
 import { Project, Review } from "@/modules/projects/types";
+import { generateImageSrc } from "@/utils";
 import { HStack, Img, Text, VStack } from "@chakra-ui/react";
 
 interface ReviewDetailProps {
@@ -30,7 +31,7 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
           rowGap="8px"
           bg="#37373A99"
           width="124px"
-          height="84px"
+          minH="84px"
           borderRadius="9px"
           p="8px 12px"
           justifyContent="center"
@@ -42,7 +43,12 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
             rounded="full"
             alt={project.name}
           />
-          <Text color="gray.40" fontSize="md" fontWeight="500">
+          <Text
+            textAlign="center"
+            color="gray.40"
+            fontSize="md"
+            fontWeight="500"
+          >
             {project.name}
           </Text>
         </VStack>
@@ -55,18 +61,17 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
           <HStack columnGap="8px">
             <Img
               rounded="full"
-              border="1px solid"
-              borderColor="gray.0"
               alt="writer"
               src={
-                review.user.profile_picture ||
-                "/assets/images/default-avatar.png"
+                review?.user?.profile_id
+                  ? generateImageSrc(review?.user?.profile_id)
+                  : "/assets/images/default-avatar.png"
               }
               width={{ base: "16px", md: "24px" }}
               height={{ base: "16px", md: "24px" }}
             />
             <Text color="gray.40" fontSize={{ base: "sm", md: "md" }}>
-              {review.user.display_name}
+              {review?.user?.display_name}
             </Text>
           </HStack>
         </VStack>
@@ -89,14 +94,17 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
       >
         {review.description}
       </Text>
-      {/* TODO should attachment added to model */}
-      {/* <Img
-        width="full"
-        height="full"
-        maxWidth="full"
-        maxHeight="312px"
-        alt="review"
-      /> */}
+      {review?.files && (
+        <Img
+          width="full"
+          height="full"
+          maxWidth="full"
+          maxHeight="312px"
+          alt="review"
+          src={generateImageSrc(review?.files.id)}
+        />
+      )}
+
       <HStack
         bg="gray.900"
         fontWeight="500"
@@ -108,12 +116,17 @@ export const ReviewDetail = ({ review, project }: ReviewDetailProps) => {
         bottom="0"
         justifyContent="flex-end"
       >
-        {/* TODO should add timestamps */}
-        <Text>
-          {new Date().getFullYear()}-{new Date().getMonth() + 1}-
-          {new Date().getDate()}
-        </Text>
-        <Text>17:05</Text>{" "}
+        <HStack fontWeight="500" fontSize="xs" color="gray.80">
+          <Text>
+            {new Date(review.createTimestamp).getFullYear()}-
+            {new Date(review.createTimestamp).getMonth() + 1}-
+            {new Date(review.createTimestamp).getDate()}
+          </Text>
+          <Text>
+            {new Date(review.createTimestamp).getHours()}:
+            {new Date(review.createTimestamp).getMinutes()}
+          </Text>
+        </HStack>
       </HStack>
     </VStack>
   );

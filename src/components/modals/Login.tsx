@@ -1,4 +1,4 @@
-import { ModalForm, STEP_MODAL, WalletModalBodyProps } from "@/types";
+import { ModalForm, STEP_MODAL } from "@/types";
 import {
   Button,
   chakra,
@@ -11,7 +11,7 @@ import {
   InputLeftElement,
   InputRightElement,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -20,32 +20,35 @@ import {
   TbBrandGoogleFilled,
   TbEye,
   TbEyeOff,
-  TbMail,
+  TbMail
 } from "react-icons/tb";
-import { MethodSeparator } from "../MethodSeparator";
 import { FaApple } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { useEmailLogin } from "@/hooks/auth";
+import { useEmailLogin, usePlatformLogin } from "@/hooks/auth";
 import {
   useCustomToast,
   useDispatchAuthorization,
   useDispatchModalSteps,
-  useWalletModal,
+  useWalletModal
 } from "@/hooks/bases";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
 import { setCookie } from "cookies-next";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
+import { MethodSeparator } from "../MethodSeparator";
 
 const ChakraForm = chakra("form");
-export const Login = ({}: WalletModalBodyProps) => {
+export const Login = () => {
   const { mutate } = useEmailLogin();
 
   const {
     register,
     formState: { errors },
-    handleSubmit,
+    handleSubmit
   } = useFormContext<ModalForm>();
+
+  const [isLoading, setLoading] = useState(false);
+
   const toast = useCustomToast();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -54,32 +57,9 @@ export const Login = ({}: WalletModalBodyProps) => {
   const dispatchAuthorization = useDispatchAuthorization();
   const dispatchSteps = useDispatchModalSteps();
 
-  const handleGoogleLogin = async () => {
-    // axiosClient
-    //   .get(apiKeys["auth"]["login"]["google"]["req"])
-    //   .then((response) => {
-    //     const openedWindow = window.open(
-    //       response.data.url,
-    //       "_blank",
-    //       "width=500,height=600"
-    //     );
-    //     const pollTimer = window.setInterval(function () {
-    //       try {
-    //         if (openedWindow.location.href.includes("https://lumina.credit/")) {
-    //           window.clearInterval(pollTimer);
-    //           openedWindow.close();
-    //           const urlParams = new URLSearchParams(
-    //             openedWindow.location.search
-    //           );
-    //           const authorizationCode = urlParams.get("code");
-    //           window.location.href = "/welcome";
-    //         }
-    //       } catch (e) {
-    //         console.log("Error:", e);
-    //       }
-    //     }, 1000);
-    //   });
-  };
+  const handleGoogleLogin = usePlatformLogin(() => {
+    onClose();
+  });
 
   return (
     <ChakraForm
@@ -89,7 +69,7 @@ export const Login = ({}: WalletModalBodyProps) => {
       rowGap="16px"
       as={motion.div}
       exit={{
-        opacity: 0,
+        opacity: 0
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -133,8 +113,8 @@ export const Login = ({}: WalletModalBodyProps) => {
                 required: "Email is required!",
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Enter a valid Email",
-                },
+                  message: "Enter a valid Email"
+                }
               })}
             />
           </InputGroup>
@@ -171,8 +151,8 @@ export const Login = ({}: WalletModalBodyProps) => {
                 required: "Password is required!",
                 minLength: {
                   value: 8,
-                  message: "Password must contain at least 8 characters",
-                },
+                  message: "Password must contain at least 8 characters"
+                }
               })}
             />
           </InputGroup>
@@ -184,21 +164,22 @@ export const Login = ({}: WalletModalBodyProps) => {
         </FormControl>
       </VStack>
       <Button
-        type="button"
+        type="submit"
         variant="primary"
-        isDisabled={!!errors.email || !!errors.password}
+        isDisabled={!!errors.email || !!errors.password || isLoading}
         onClick={handleSubmit(({ email, password }) => {
+          setLoading(true);
           mutate(
             { username: email, password },
             {
-              onSuccess: ({ data: { access_token } }) => {
-                setCookie(ACCESS_TOKEN_COOKIE_KEY, access_token);
+              onSuccess: ({ data: { access_token: accessToken } }) => {
+                setCookie(ACCESS_TOKEN_COOKIE_KEY, accessToken);
                 dispatchSteps(STEP_MODAL.wallet);
                 return axiosClient
                   .get(apiKeys.auth.isAuthorized, {
                     headers: {
-                      Authorization: `Bearer ${access_token}`,
-                    },
+                      Authorization: `Bearer ${accessToken}`
+                    }
                   })
                   .then((userDataResponse) => userDataResponse.data)
                   .then((user) => {
@@ -207,7 +188,7 @@ export const Login = ({}: WalletModalBodyProps) => {
                     onClose();
                     return toast({
                       description: "You are logged in",
-                      status: "success",
+                      status: "success"
                     });
                   });
               },
@@ -215,9 +196,12 @@ export const Login = ({}: WalletModalBodyProps) => {
                 return toast({
                   title: error.response.data.error_message,
                   description: error.response.data.error_detail,
-                  status: "error",
+                  status: "error"
                 });
               },
+              onSettled: () => {
+                setLoading(false);
+              }
             }
           );
         })}
@@ -238,16 +222,18 @@ export const Login = ({}: WalletModalBodyProps) => {
       <MethodSeparator />
       <HStack columnGap="16px" width="full">
         <Button
+          isDisabled={isLoading}
+          type="button"
           bg="none"
           border="1px solid"
           borderColor="primary.50"
           _active={{
             bg: "none",
-            borderColor: "primary.50",
+            borderColor: "primary.50"
           }}
           _hover={{
             bg: "none",
-            borderColor: "primary.50",
+            borderColor: "primary.50"
           }}
           height="48px"
           borderRadius="33px"
@@ -256,21 +242,28 @@ export const Login = ({}: WalletModalBodyProps) => {
           <FaApple color="var(--chakra-colors-primary-50)" fontSize="32px" />
         </Button>
         <Button
+          isDisabled={isLoading}
+          type="button"
           bg="none"
           border="1px solid"
           borderColor="primary.50"
           _active={{
             bg: "none",
-            borderColor: "primary.50",
+            borderColor: "primary.50"
           }}
           _hover={{
             bg: "none",
-            borderColor: "primary.50",
+            borderColor: "primary.50"
           }}
           height="48px"
           borderRadius="33px"
           width="full"
-          onClick={handleGoogleLogin}
+          onClick={() => {
+            setLoading(true);
+            handleGoogleLogin(apiKeys.auth.login.google.req).finally(() => {
+              setLoading(false);
+            });
+          }}
         >
           <TbBrandGoogleFilled
             color="var(--chakra-colors-primary-50)"

@@ -6,18 +6,20 @@ import {
   Input,
   Text,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
-import { settingsFormType } from "../types";
 import { axiosClient } from "@/config/axios";
 import { apiKeys } from "@/api/apiKeys";
 import {
   useCustomToast,
   useDispatchGlobalUserData,
-  useGlobalUserData,
+  useGlobalUserData
 } from "@/hooks/bases";
 import { useState } from "react";
+import { getCookie } from "cookies-next";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { settingsFormType } from "../types";
 
 type UserInfoModalProps = {
   onClose: UseDisclosureProps["onClose"];
@@ -41,12 +43,12 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
+    reset
   } = useFormContext<settingsFormType>();
 
   const [isLoading, setLoading] = useState(false);
 
-  const userInfo = useGlobalUserData();
+  const globalUser = useGlobalUserData();
   const dispatchGlobalUser = useDispatchGlobalUserData();
 
   const toast = useCustomToast();
@@ -66,12 +68,12 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
         <Input
           placeholder="Username"
           variant="outline"
-          defaultValue={userInfo.user?.username}
+          defaultValue={globalUser?.user?.username}
           {...register("username", {
             required: {
               value: true,
-              message: "Username is a required field",
-            },
+              message: "Username is a required field"
+            }
           })}
         />
         {!!errors.username && (
@@ -93,12 +95,12 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
         <Input
           placeholder="Nickname"
           variant="outline"
-          defaultValue={userInfo.user?.display_name}
+          defaultValue={globalUser?.user?.display_name}
           {...register("nickname", {
             required: {
               value: true,
-              message: "Nickname is a required field",
-            },
+              message: "Nickname is a required field"
+            }
           })}
         />
         <Text fontSize="xs" color="gray.60" fontWeight="500">
@@ -125,31 +127,40 @@ export const UserInfoModal = ({ onClose }: UserInfoModalProps) => {
           onClick={handleSubmit((values) => {
             setLoading(true);
             axiosClient
-              .post(apiKeys.update, {
-                "0": {
-                  model_name: "User",
-                  params: {
-                    username: values.username,
-                    display_name: values.nickname,
-                  },
-                  id: userInfo.user.id,
+              .post(
+                apiKeys.update,
+                {
+                  "0": {
+                    model_name: "User",
+                    params: {
+                      username: values.username,
+                      display_name: values.nickname
+                    },
+                    id: globalUser?.user?.id
+                  }
                 },
-              })
+                {
+                  headers: {
+                    Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                  }
+                }
+              )
               .then((response) => {
                 dispatchGlobalUser({
+                  ...globalUser,
                   user: response.data[0],
-                  wallet: userInfo.wallet,
+                  wallet: globalUser.wallet
                 });
                 return toast({
                   status: "success",
-                  description: "Your information is updated",
+                  description: "Your information is updated"
                 });
               })
               .catch(() => {
                 toast({
                   status: "error",
                   // TODO should fix error message
-                  description: "error occurred",
+                  description: "error occurred"
                 });
               })
               .finally(() => {

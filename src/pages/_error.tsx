@@ -3,10 +3,11 @@ import { NextPageContext } from "next";
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
 
-interface ErrorProps{
-  statusCode:number
+interface ErrorProps {
+  statusCode: number;
 }
 function Error({ statusCode }: ErrorProps) {
+  // eslint-disable-next-line no-console
   console.log(
     statusCode
       ? `An error ${statusCode} occurred on server`

@@ -1,5 +1,5 @@
 import { Box, HStack, Link, Text } from "@chakra-ui/react";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { TbBrandGithub, TbExternalLink, TbMap, TbWorld } from "react-icons/tb";
 
 interface ProjectLinkProps {
@@ -15,22 +15,21 @@ export const ProjectLink = ({
   description,
   count,
   url,
-  type,
+  type
 }: ProjectLinkProps) => {
-  const icons: {
-    [key in "CONTRACT_ADDRESS" | "OTHER" | "GITHUB_REPO"]: JSX.Element;
-  } = useMemo(
-    () => ({
-      CONTRACT_ADDRESS: (
-        <TbMap color="var(--chakra-colors-gray-80)" fontSize="20px" />
-      ),
-      OTHER: <TbWorld color="var(--chakra-colors-gray-80)" fontSize="20px" />,
-      GITHUB_REPO: (
-        <TbBrandGithub color="var(--chakra-colors-gray-80)" fontSize="20px" />
-      ),
-    }),
-    []
-  );
+  const icons: Record<"CONTRACT_ADDRESS" | "OTHER" | "GITHUB_REPO", ReactNode> =
+    useMemo(
+      () => ({
+        CONTRACT_ADDRESS: (
+          <TbMap color="var(--chakra-colors-gray-80)" fontSize="20px" />
+        ),
+        OTHER: <TbWorld color="var(--chakra-colors-gray-80)" fontSize="20px" />,
+        GITHUB_REPO: (
+          <TbBrandGithub color="var(--chakra-colors-gray-80)" fontSize="20px" />
+        )
+      }),
+      []
+    );
   return (
     <HStack
       justifyContent="space-between"
@@ -43,6 +42,10 @@ export const ProjectLink = ({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
+      _hover={{
+        boxShadow: "1px 4px 16px 0px #00000040",
+        background: "gray.600"
+      }}
     >
       {type && (
         <Box width="20px" height="20px">

@@ -3,7 +3,7 @@ import {
   ProjectDetail,
   ProjectDetailDispatch,
   ProjectReviews,
-  ProjectReviewsDispatch,
+  ProjectReviewsDispatch
 } from "./context";
 
 export const useProjectData = () => useContext(ProjectDetail);

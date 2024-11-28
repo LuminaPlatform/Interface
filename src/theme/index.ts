@@ -2,7 +2,7 @@ import { extendTheme } from "@chakra-ui/react";
 import { colors } from "./colors";
 
 export const theme = extendTheme({
-  colors: colors,
+  colors,
   components: {
     Button: {
       sizes: {
@@ -10,14 +10,14 @@ export const theme = extendTheme({
           height: "32px",
           borderRadius: "6px",
           fontSize: "xs",
-          fontWeight: "700",
+          fontWeight: "700"
         },
         md: {
           height: "40px",
           borderRadius: "8px",
           fontSize: "md",
-          fontWeight: "700",
-        },
+          fontWeight: "700"
+        }
       },
       baseStyle: {
         fontFamily: "satoshi",
@@ -26,7 +26,7 @@ export const theme = extendTheme({
         paddingInline: "16px",
         borderRadius: "8px",
         fontWeight: "700",
-        fontSize: "md",
+        fontSize: "md"
       },
       variants: {
         primary: {
@@ -34,24 +34,32 @@ export const theme = extendTheme({
           bg: "primary.300",
           _hover: {
             bg: "primary.200",
-            color: "gray.0",
+            color: "gray.0"
           },
           _active: {
             bg: "primary.300",
-            color: "gray.0",
+            color: "gray.0"
           },
           _disabled: {
             bg: "gray.80",
             opacity: 1,
             _hover: {
               bg: "gray.80 !important",
-              opacity: 0.8,
+              opacity: 0.8
             },
             _active: {
               bg: "gray.80 !important",
-              opacity: 0.8,
-            },
-          },
+              opacity: 0.8
+            }
+          }
+        },
+        grayGhost: {
+          backgroundColor: "transparent",
+          color: "gray.60",
+          border: "none",
+          _hover: {
+            color: "gray.0"
+          }
         },
         ghost: {
           color: "primary.200",
@@ -60,13 +68,13 @@ export const theme = extendTheme({
           _hover: {
             textDecoration: "underline",
             color: "primary.200",
-            bg: "none",
+            bg: "none"
           },
           _active: {
             textDecoration: "underline",
             color: "primary.200",
-            bg: "none",
-          },
+            bg: "none"
+          }
         },
         outline: {
           border: "1px solid",
@@ -76,18 +84,18 @@ export const theme = extendTheme({
           _hover: {
             borderColor: "primary.300",
             color: "primary.300",
-            background: "transparent",
+            background: "transparent"
           },
           _active: {
             borderColor: "primary.300",
             color: "primary.300",
-            background: "transparent",
+            background: "transparent"
           },
           _disabled: {
             borderColor: "primary.100",
             color: "primary.100",
-            background: "transparent",
-          },
+            background: "transparent"
+          }
         },
         primaryDark: {
           border: "none",
@@ -96,29 +104,29 @@ export const theme = extendTheme({
           _hover: {
             color: "gray.20",
             background: "#00000040",
-            boxShadow: "1px 4px 16px 0px #00000040",
+            boxShadow: "1px 4px 16px 0px #00000040"
           },
           _active: {
             color: "gray.20",
             background: "#00000040",
-            boxShadow: "1px 4px 16px 0px #00000040",
-          },
-        },
-      },
+            boxShadow: "1px 4px 16px 0px #00000040"
+          }
+        }
+      }
     },
     Checkbox: {
       baseStyle: {
         control: {
-          borderRadius: "6px",
-        },
+          borderRadius: "6px"
+        }
       },
       sizes: {
         md: {
           control: {
             width: "20px",
-            height: "20px",
-          },
-        },
+            height: "20px"
+          }
+        }
       },
       variants: {
         primary: {
@@ -127,19 +135,19 @@ export const theme = extendTheme({
             _hover: {
               border: "1px solid",
               borderColor: "gray.100 !important",
-              bg: "transparent !important",
+              bg: "transparent !important"
             },
             _checked: {
               bg: "primary.300",
               border: "none",
               _hover: {
                 bg: "primary.400 !important",
-                border: "none !important",
-              },
-            },
-          },
-        },
-      },
+                border: "none !important"
+              }
+            }
+          }
+        }
+      }
     },
     Input: {
       variants: {
@@ -149,38 +157,38 @@ export const theme = extendTheme({
             fontSize: "md",
             border: "0.5px solid",
             borderRadius: "12px",
-            color: "gray.100",
+            color: "gray.40",
             borderColor: "gray.100",
             _hover: {
               color: "gray.100",
               backgroundColor: "gray.700",
               border: "none",
-              boxShadow: "none",
+              boxShadow: "none"
             },
             _focus: {
               color: "gray.40",
               borderColor: "gray.100",
-              boxShadow: "none",
+              boxShadow: "none"
             },
             _invalid: {
               color: "gray.40",
               borderColor: "red.200",
               background: "gray.700",
-              boxShadow: "none !important",
+              boxShadow: "none !important"
             },
             _placeholder: {
               fontSize: "md",
-              color: "gray.100",
-            },
-          },
-        },
-      },
+              color: "gray.100"
+            }
+          }
+        }
+      }
     },
     Tag: {
       baseStyle: {
         container: {
-          fontWeight: 700,
-        },
+          fontWeight: 700
+        }
       },
       sizes: {
         md: {
@@ -188,67 +196,67 @@ export const theme = extendTheme({
             height: "32px",
             borderRadius: "17px",
             px: "8px",
-            fontSize: "md",
-          },
+            fontSize: "md"
+          }
         },
         sm: {
           container: {
             height: "24px",
             borderRadius: "12px",
             px: "8px",
-            fontSize: "xs",
-          },
-        },
+            fontSize: "xs"
+          }
+        }
       },
       variants: {
         lightOrange: {
           container: {
             bg: "gray.40",
-            color: "primary.400",
-          },
+            color: "primary.400"
+          }
         },
         darkOrange: {
           container: {
             bg: "gray.600",
-            color: "primary.300",
-          },
+            color: "primary.300"
+          }
         },
         green: {
           container: {
             bg: "green.75",
-            color: "green.400",
-          },
+            color: "green.400"
+          }
         },
         dark: {
           container: {
             bg: "gray.900",
             color: "gray.80",
             border: "1px solid",
-            borderColor: "gray.80",
-          },
-        },
-      },
+            borderColor: "gray.80"
+          }
+        }
+      }
     },
     FormLabel: {
       sizes: {
         sm: {
           fontSize: "xs",
-          fontWeight: 500,
-        },
+          fontWeight: 500
+        }
       },
       variants: {
         primary: {
-          color: "gray.40",
-        },
-      },
+          color: "gray.40"
+        }
+      }
     },
     Modal: {
       sizes: {
         "3xl": {
-          body: { width: "782px" },
-        },
-      },
-    },
+          body: { width: "782px" }
+        }
+      }
+    }
   },
 
   styles: {
@@ -259,23 +267,23 @@ export const theme = extendTheme({
         backgroundColor: "gray.900",
         "*::-webkit-scrollbar": {
           width: "6px",
-          height: "6px",
+          height: "6px"
         },
         "*::-webkit-scrollbar-track": {
-          background: "transparent",
+          background: "transparent"
         },
         "*::-webkit-scrollbar-thumb": {
           borderRadius: "14px",
           background: "rgba(217,217,217,0.3)",
           "&:hover": {
-            background: "rgba(217,217,217,0.5)",
-          },
-        },
+            background: "rgba(217,217,217,0.5)"
+          }
+        }
       },
       body: {
         bg: "transparent",
-        color: "none",
-      },
-    },
-  },
+        color: "none"
+      }
+    }
+  }
 });

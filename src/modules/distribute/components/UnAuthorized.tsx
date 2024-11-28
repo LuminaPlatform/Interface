@@ -6,7 +6,7 @@ export const UnAuthorized = () => {
   return (
     <VStack rowGap="24px">
       <Img mt="24px" src="/assets/images/distribute/unauthorized.png" />
-      <Text textAlign='center' color="gray.50" fontWeight="600" fontSize="28px">
+      <Text textAlign="center" color="gray.50" fontWeight="600" fontSize="28px">
         Connect to Access Voting
       </Text>
       <Text textAlign="center" color="gray.50" fontWeight="500" fontSize="lg">
@@ -16,12 +16,7 @@ export const UnAuthorized = () => {
         community. Ready to make your voice heard? Log in now and let your voice
         count!
       </Text>
-      <Button
-        px="16px"
-        variant="primary"
-        size="md"
-        onClick={onOpen}
-      >
+      <Button px="16px" variant="primary" size="md" onClick={onOpen}>
         Connect Now
       </Button>
     </VStack>

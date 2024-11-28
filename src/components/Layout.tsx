@@ -10,7 +10,7 @@ const Sidebar = dynamic(
   () => import("./sidebar/Sidebar").then((modules) => modules.Sidebar),
   { ssr: false }
 );
-interface LayoutProps extends PropsWithChildren {}
+type LayoutProps = PropsWithChildren;
 const Layout = ({ children }: LayoutProps) => {
   const isSidebarOpen = useIsOpenSidebar();
   return (
@@ -23,7 +23,7 @@ const Layout = ({ children }: LayoutProps) => {
           isSidebarOpen ? sidebarWidth.open : sidebarWidth.close
         } calc(100% - ${
           isSidebarOpen ? sidebarWidth.open : sidebarWidth.close
-        })`,
+        })`
       }}
     >
       <Box

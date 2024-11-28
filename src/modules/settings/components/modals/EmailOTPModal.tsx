@@ -1,10 +1,10 @@
 import { UseDisclosureProps, VStack } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { Dispatch, SetStateAction } from "react";
-import { SettingsModalBody, SettingsModalsForm } from "../../types";
 import { OTP } from "@/components/modals/OTP";
 import { useOTPVerification } from "@/hooks/auth";
 import { useCustomToast } from "@/hooks/bases";
+import { SettingsModalBody, SettingsModalsForm } from "../../types";
 
 interface EmailOTPProps extends UseDisclosureProps {
   setModalBody: Dispatch<SetStateAction<SettingsModalBody>>;
@@ -28,7 +28,7 @@ export const EmailOTP = ({ onClose, setModalBody }: EmailOTPProps) => {
                 return toast({
                   title: error.response.data.error_message,
                   description: error.response.data.error_detail,
-                  status: "error",
+                  status: "error"
                 });
               },
               onSuccess: () => {
@@ -36,9 +36,9 @@ export const EmailOTP = ({ onClose, setModalBody }: EmailOTPProps) => {
                 onClose();
                 return toast({
                   description: "You are logged in",
-                  status: "success",
+                  status: "success"
                 });
-              },
+              }
             }
           );
         }}

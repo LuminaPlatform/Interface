@@ -4,7 +4,7 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   SortingState,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import {
@@ -21,12 +21,12 @@ import {
   Img,
   Link,
   FormLabel,
-  Flex,
+  Flex
 } from "@chakra-ui/react";
 import {
   TbArrowNarrowDown,
   TbArrowNarrowUp,
-  TbExternalLink,
+  TbExternalLink
 } from "react-icons/tb";
 import { useProjects } from "@/modules/projects/hooks";
 // TODO should fix any type
@@ -40,7 +40,7 @@ interface AddProjectTableProps {
 export const AddProjectTable = ({
   selectedProjects,
   setSelectedProjects,
-  search,
+  search
 }: AddProjectTableProps) => {
   const tableData = useProjects();
 
@@ -60,7 +60,7 @@ export const AddProjectTable = ({
   const columns = [
     columnHelper.accessor("id", {
       cell: (info) => info.getValue(),
-      header: () => "#",
+      header: () => "#"
     }),
     columnHelper.accessor("project", {
       header: () => "Project",
@@ -89,7 +89,7 @@ export const AddProjectTable = ({
             <TbExternalLink color="var(--chakra-colors-gray-0)" fontSize="md" />
           </Link>
         </HStack>
-      ),
+      )
     }),
     columnHelper.display({
       id: "isSelected",
@@ -132,7 +132,7 @@ export const AddProjectTable = ({
                 if (event.target.checked) {
                   setSelectedProjects((prev: any) => [
                     ...prev,
-                    info.row.original,
+                    info.row.original
                   ]);
                 } else {
                   setSelectedProjects((prev: any) =>
@@ -145,8 +145,8 @@ export const AddProjectTable = ({
           </Box>
         );
       },
-      enableSorting: false,
-    }),
+      enableSorting: false
+    })
   ];
 
   const table = useReactTable({
@@ -154,10 +154,10 @@ export const AddProjectTable = ({
     columns,
     getCoreRowModel: getCoreRowModel(),
     state: {
-      sorting,
+      sorting
     },
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel()
   });
 
   return (
@@ -208,8 +208,8 @@ export const AddProjectTable = ({
             <Tr
               _last={{
                 td: {
-                  border: "none",
-                },
+                  border: "none"
+                }
               }}
               key={row.id}
             >

@@ -32,7 +32,7 @@ export const Badge = ({
     {icon && (
       <Icon
         as={icon}
-        fontSize="16px"
+        boxSize="16px"
         color={`${colorScheme}.500`}
         {...iconsProps}
       />

@@ -8,9 +8,9 @@ export const wagmiConfig = createConfig({
   chains: [mainnet],
   connectors: [
     // walletConnect({ projectId: walletConnectProjectId }),
-    metaMask(),
+    metaMask()
   ],
   transports: {
-    [mainnet.id]: http(),
-  },
+    [mainnet.id]: http()
+  }
 });

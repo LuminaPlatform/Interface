@@ -9,7 +9,7 @@ import {
   SetGlobalUser,
   SetModalSteps,
   SetSelectedProjects,
-  WalletConnectData,
+  WalletConnectData
 } from "@/context";
 import { useToast, UseToastOptions } from "@chakra-ui/react";
 import { useContext } from "react";
@@ -17,6 +17,9 @@ import { wagmiConfig } from "@/config/wagmi";
 import { useDisconnect } from "wagmi";
 import { deleteCookie } from "cookies-next";
 import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+
+export const useGlobalUserData = () => useContext(GlobalUser);
+export const useDispatchGlobalUserData = () => useContext(SetGlobalUser);
 
 export const useIsOpenSidebar = () => useContext(IsSidebarOpen);
 export const useDispatchIsOpenSidebar = () => useContext(DispatchIsSidebarOpen);
@@ -31,7 +34,7 @@ export const useCustomToast = (args?: UseToastOptions) =>
   useToast({
     position: "bottom-left",
     duration: 3000,
-    ...args,
+    ...args
   });
 
 export const useAuthorization = () => useContext(Authorization);
@@ -39,9 +42,10 @@ export const useDispatchAuthorization = () => useContext(SetAuthorization);
 
 export const useLogout = () => {
   const dispatchAuthorization = useDispatchAuthorization();
+  const dispatchGlobalUser = useDispatchGlobalUserData();
 
   const { disconnect, reset } = useDisconnect({
-    config: wagmiConfig,
+    config: wagmiConfig
   });
 
   return async () => {
@@ -49,11 +53,9 @@ export const useLogout = () => {
     reset();
     deleteCookie(ACCESS_TOKEN_COOKIE_KEY);
     dispatchAuthorization(undefined);
+    dispatchGlobalUser(undefined);
   };
 };
 
 export const useModalSteps = () => useContext(ModalSteps);
 export const useDispatchModalSteps = () => useContext(SetModalSteps);
-
-export const useGlobalUserData = () => useContext(GlobalUser);
-export const useDispatchGlobalUserData = () => useContext(SetGlobalUser);

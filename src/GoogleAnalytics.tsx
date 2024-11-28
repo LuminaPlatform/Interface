@@ -1,12 +1,12 @@
 import Script from "next/script";
 
-const GoogleAnalytics = ({ ga_id }: { ga_id: string }) => (
+const GoogleAnalytics = ({ gaId }: { gaId: string }) => (
   <>
     <Script
       async
       src={`https://www.googletagmanager.com/gtag/js? 
-      id=${ga_id}`}
-    ></Script>
+      id=${gaId}`}
+    />
     <Script
       id="google-analytics"
       dangerouslySetInnerHTML={{
@@ -15,10 +15,10 @@ const GoogleAnalytics = ({ ga_id }: { ga_id: string }) => (
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
 
-          gtag('config', '${ga_id}');
-        `,
+          gtag('config', '${gaId}');
+        `
       }}
-    ></Script>
+    />
   </>
 );
 export default GoogleAnalytics;

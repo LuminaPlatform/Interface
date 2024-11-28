@@ -7,15 +7,16 @@ import {
   ModalHeader,
   ModalOverlay,
   ModalProps,
-  UseDisclosureProps,
+  UseDisclosureProps
 } from "@chakra-ui/react";
+import { ReactNode } from "react";
 
 type ModalBaseProps = {
   onClose: UseDisclosureProps["onClose"];
   isOpen: UseDisclosureProps["isOpen"];
-  modalBody: JSX.Element;
-  modalFooter?: JSX.Element;
-  modalHeader?: JSX.Element;
+  modalBody: ReactNode;
+  modalFooter?: ReactNode;
+  modalHeader?: ReactNode;
   size?: ModalProps["size"];
   closeOnEsc?: ModalProps["closeOnEsc"];
   showCloseButton?: boolean;
@@ -28,7 +29,7 @@ export const ModalBase = ({
   onClose,
   size,
   showCloseButton = true,
-  closeOnEsc,
+  closeOnEsc
 }: ModalBaseProps) => {
   if (isOpen && onClose) {
     return (
@@ -39,13 +40,14 @@ export const ModalBase = ({
         isOpen={isOpen}
         onClose={onClose}
       >
-        <ModalOverlay />
+        <ModalOverlay bg="rgba(38, 38, 41,0.6)" />
         <ModalContent
           minWidth="fit-content"
           fontFamily="satoshi"
           bg="gray.900"
           padding="16px"
           position="relative"
+          borderRadius="16px"
         >
           {modalHeader && <ModalHeader pb="0">{modalHeader}</ModalHeader>}
           {showCloseButton && (

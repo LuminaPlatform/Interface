@@ -8,7 +8,7 @@ import {
   TagLabel,
   Button,
   ButtonProps,
-  Spinner,
+  Spinner
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
@@ -17,7 +17,7 @@ import {
   TbCircleCheckFilled,
   TbEye,
   TbEyeOff,
-  TbPinnedFilled,
+  TbPinnedFilled
 } from "react-icons/tb";
 
 interface ActionCardProps {
@@ -28,7 +28,6 @@ interface ActionCardProps {
     isPin: boolean;
     setPin: (args: unknown) => void;
   };
-  actionCardId: number;
   secure?: {
     isPublic: boolean;
     showPublic: boolean;
@@ -48,7 +47,7 @@ export const ActionCard = ({
   text,
   pin,
   secure,
-  connect,
+  connect
 }: ActionCardProps) => {
   const [isHover, setHover] = useState(false);
 
@@ -70,8 +69,8 @@ export const ActionCard = ({
         bg: "#00000040",
         ".connect_button__actionCard": {
           color: "primary.300",
-          borderColor: "primary.300",
-        },
+          borderColor: "primary.300"
+        }
       }}
     >
       <HStack columnGap="12px">

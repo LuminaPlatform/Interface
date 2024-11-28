@@ -6,14 +6,20 @@ import {
   InputRightElement,
   useBoolean,
   UseDisclosureProps,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
 import { useFormContext, useWatch } from "react-hook-form";
-import { SettingsModalsForm } from "../../types";
 import { TbEye, TbEyeOff } from "react-icons/tb";
 import { InputError } from "@/components/InputError";
-import { SettingsModalFooter } from "../EmailFooter";
 import { Dispatch, SetStateAction, useState } from "react";
+import { axiosClient } from "@/config/axios";
+import { apiKeys } from "@/api/apiKeys";
+import { useCustomToast } from "@/hooks/bases";
+import { getCookie } from "cookies-next";
+import { ACCESS_TOKEN_COOKIE_KEY } from "@/constant";
+import { AxiosError } from "axios";
+import { SettingsModalFooter } from "../EmailFooter";
+import { SettingsModalsForm } from "../../types";
 
 interface SetPasswordModalProps extends UseDisclosureProps {
   setPassword: Dispatch<
@@ -25,19 +31,21 @@ interface SetPasswordModalProps extends UseDisclosureProps {
 
 export const SetPasswordModal = ({
   onClose,
-  setPassword,
+  setPassword
 }: SetPasswordModalProps) => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-    control,
+    control
   } = useFormContext<SettingsModalsForm>();
 
   const [isShow, setShow] = useBoolean(false);
 
   const { password } = useWatch({ control });
-  const [isLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+
+  const toast = useCustomToast();
 
   return (
     <VStack rowGap="16px" width="full">
@@ -74,12 +82,12 @@ export const SetPasswordModal = ({
             {...register("password", {
               required: {
                 value: true,
-                message: "Password is a required field",
+                message: "Password is a required field"
               },
               minLength: {
                 value: 8,
-                message: "Password must contain at least 8 characters",
-              },
+                message: "Password must contain at least 8 characters"
+              }
             })}
           />
         </InputGroup>
@@ -120,17 +128,18 @@ export const SetPasswordModal = ({
             {...register("rePassword", {
               required: {
                 value: true,
-                message: "Password is a required field",
+                message: "Password is a required field"
               },
               minLength: {
                 value: 8,
-                message: "Password must contain at least 8 characters",
+                message: "Password must contain at least 8 characters"
               },
               validate: (value) => {
                 if (value !== password) {
                   return "Your password must match with its confirmation ";
                 }
-              },
+                return null;
+              }
             })}
           />
         </InputGroup>
@@ -144,9 +153,38 @@ export const SetPasswordModal = ({
         isDisabled={!!errors.password || !!errors.rePassword}
         mainButtonText="Set Password"
         submitHandler={handleSubmit(() => {
-          setPassword({
-            isSet: true,
-          });
+          setLoading(true);
+          axiosClient
+            .post(
+              apiKeys.auth.changePassword,
+              {
+                new_password: password
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${getCookie(ACCESS_TOKEN_COOKIE_KEY)}`
+                }
+              }
+            )
+            .then(() => {
+              toast({
+                status: "success",
+                description: "Password updated successfully"
+              });
+              setPassword({
+                isSet: true
+              });
+              onClose();
+            })
+            .catch((error: AxiosError<{ error_detail: string }>) => {
+              toast({
+                status: "error",
+                description: error.response.data.error_detail
+              });
+            })
+            .finally(() => {
+              setLoading(false);
+            });
         })}
       />
     </VStack>
